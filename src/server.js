@@ -12,7 +12,9 @@ app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
 
-app.get("/", (req, res) => res.json({ msg: "MindHive API running!" }));
+app.get("/", (req, res) => {
+  res.redirect("/login.html");
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

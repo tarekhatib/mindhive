@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindHive | Register</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <main class="register-container">
+      <section class="register-card">
+        <div class="logo-wrapper">
+          <img
+            src="./assets/logos/MindHiveLight.svg"
+            alt="MindHive Logo"
+            class="logo"
+          />
+        </div>
+
+        <h2>Create Your Account</h2>
+        <p class="subtitle">Start your journey with us.</p>
+
+        <form action="#" method="POST" novalidate>
+          <div class="name-row">
+            <div class="form-group">
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                placeholder="First Name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                placeholder="Last Name"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-register">Register</button>
+
+          <p class="login-link">
+            Already have an account?
+            <a href="login.html">Log In</a>
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <script src="./js/auth.js"></script>
+  </body>
+</html>

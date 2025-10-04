@@ -1,0 +1,264 @@
+:root {
+  --accent-color: #f9c73b;
+  --background-light: #ffffff;
+  --background-dark: #121212;
+  --text-light: #2d383f;
+  --text-dark: #ffffff;
+  --card-bg-light: #ffffff;
+  --card-bg-dark: #1e1e1e;
+  --input-bg-light: #f5f5f5;
+  --input-bg-dark: #2a2a2a;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-dark: rgba(0, 0, 0, 0.7);
+}
+
+*,
+button,
+input,
+textarea,
+select {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.login-container,
+.register-container,
+.auth-container {
+  width: 80%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+}
+
+.login-card,
+  .register-card {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--card-bg-light);
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    margin: 2rem auto;
+    text-align: center;
+  }
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: var(--background-light);
+    color: var(--text-light);
+  }
+
+  .auth-card {
+    background-color: var(--card-bg-light);
+    box-shadow: 0 4px 12px var(--shadow-light);
+    text-align: center;
+  }
+
+  input,
+  select,
+  textarea {
+    background-color: var(--input-bg-light);
+    color: var(--text-light);
+    border: 1px solid #ccc;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+  }
+
+  input::placeholder {
+    color: #888;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 4px 12px var(--shadow-light);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.logo {
+  width: 200px;
+  height: auto;
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: inherit;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: inherit;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 0;
+  box-sizing: border-box;
+  gap: 0.3rem;
+}
+
+.name-row {
+  display: flex;
+  gap: 10px;
+}
+
+.name-row .form-group {
+  flex: 1;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  margin: 0;
+  font-size: 1rem;
+  padding: 0.65rem 0.9rem;
+  box-sizing: border-box;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-color);
+  background-color: inherit;
+  color: inherit;
+}
+
+button[type="submit"] {
+  background-color: var(--accent-color);
+  color: #000;
+  font-weight: 700;
+  font-size: 1.1rem;
+  width: 100%;
+  display: block;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: center;
+}
+
+button[type="submit"]:hover,
+button[type="submit"]:focus {
+  background-color: #e6b72f;
+  outline: none;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover,
+a:focus {
+  color: #d4a91a;
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-card,
+  .register-card {
+    background-color: var(--card-bg-dark);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  .logo {
+    content: url("../assets/logos/MindHiveDark.svg");
+  }
+  body {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+  }
+
+  .auth-card {
+    background-color: var(--card-bg-dark);
+    box-shadow: 0 4px 12px var(--shadow-dark);
+    text-align: center;
+  }
+
+  input,
+  select,
+  textarea {
+    background-color: var(--input-bg-dark);
+    color: var(--text-dark);
+    border: 1px solid #666;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+  }
+
+  input::placeholder {
+    color: #bbb;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.5rem 1.5rem;
+    max-width: 100%;
+  }
+  .logo {
+    width: 100px;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    margin-bottom: 0.2rem;
+  }
+  .subtitle {
+    margin-bottom: 1rem;
+  }
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.8rem;
+  }
+  button[type="submit"] {
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+  }
+}
