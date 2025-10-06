@@ -7,7 +7,7 @@ const authRoutes = require("./src/routes/auth.routes.js");
 
 dotenv.config();
 
-const app = express();  
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

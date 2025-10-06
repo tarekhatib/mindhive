@@ -12,6 +12,14 @@
   --shadow-dark: rgba(0, 0, 0, 0.7);
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: block;
+}
+
 *,
 button,
 input,
@@ -39,7 +47,7 @@ select {
     width: 100%;
     max-width: 400px;
     background-color: var(--card-bg-light);
-    border-radius: 25px;
+    border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     padding: 2rem;
     margin: 2rem auto;
@@ -56,6 +64,7 @@ select {
     background-color: var(--card-bg-light);
     box-shadow: 0 4px 12px var(--shadow-light);
     text-align: center;
+    border-radius: 20px;
   }
 
   input,
@@ -65,7 +74,7 @@ select {
     color: var(--text-light);
     border: 1px solid #ccc;
     padding: 0.75rem 1rem;
-    border-radius: 6px;
+    border-radius: 10px;
   }
 
   input::placeholder {
@@ -86,7 +95,7 @@ body {
 .auth-card {
   width: 100%;
   max-width: 400px;
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 2rem 2.5rem;
   box-shadow: 0 4px 12px var(--shadow-light);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -151,7 +160,7 @@ input[type="text"] {
   font-size: 1rem;
   padding: 0.65rem 0.9rem;
   box-sizing: border-box;
-  border-radius: 6px;
+  border-radius: 10px;
   transition: background-color 0.3s ease, border-color 0.3s ease,
     color 0.3s ease;
 }
@@ -176,7 +185,7 @@ button[type="submit"] {
   text-align: center;
   padding: 0.75rem 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   align-self: center;
@@ -205,6 +214,7 @@ a:focus {
   .register-card {
     background-color: var(--card-bg-dark);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
   }
 
   .logo {
@@ -219,6 +229,7 @@ a:focus {
     background-color: var(--card-bg-dark);
     box-shadow: 0 4px 12px var(--shadow-dark);
     text-align: center;
+    border-radius: 20px;
   }
 
   input,
@@ -228,7 +239,7 @@ a:focus {
     color: var(--text-dark);
     border: 1px solid #666;
     padding: 0.75rem 1rem;
-    border-radius: 6px;
+    border-radius: 10px;
   }
 
   input::placeholder {
