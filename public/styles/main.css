@@ -282,7 +282,6 @@ a:focus {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ===== Sidebar ===== */
 .sidebar {
   position: fixed;
   top: 0;
@@ -296,7 +295,7 @@ a:focus {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1.5rem 0.8rem 1.5rem 0.4rem;
+  padding: 1.5rem 0.8rem 1.5rem;
   box-sizing: border-box;
 }
 
@@ -319,7 +318,7 @@ a:focus {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  padding: 0.45rem 0.6rem;
+  padding: 0.6rem 0.6rem;
   border-radius: 8px;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
