@@ -1,0 +1,250 @@
+@import url("main.css");
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto; /* enable scrolling */
+  display: block;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+  padding: 1.5rem 0;
+  box-sizing: border-box;
+  z-index: 1000;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1.5rem;
+}
+
+.sidebar-logo img {
+  width: 140px;
+  height: auto;
+}
+
+.sidebar-menu,
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.2rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-menu ul,
+.sidebar-bottom ul,
+.sidebar-menu li,
+.sidebar-bottom li {
+  list-style: none;
+  margin: 0.5rem 0;
+}
+
+.sidebar-menu {
+  margin-top: -4rem;
+}
+
+.sidebar-menu a,
+.sidebar-bottom a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+  align-self: flex-start;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active,
+.sidebar-bottom a:hover,
+.sidebar-bottom a.active {
+  background-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(249, 199, 59, 0.35);
+}
+
+.main-content {
+  margin-left: 260px;
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  background: none;
+}
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  padding: 2rem;
+  width: calc(100% - 280px);
+  max-width: 1250px;
+  margin-left: 260px;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.dashboard-search,
+.dashboard-greeting,
+.calendar-preview,
+.leaderboard-preview {
+  grid-column: 1 / -1;
+}
+
+.dashboard-middle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.card {
+  border-radius: 24px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: none;
+  cursor: pointer;
+}
+
+.pomodoro-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==============================
+   LIGHT MODE
+============================== */
+@media (prefers-color-scheme: light) {
+  .sidebar {
+    background-color: rgba(255, 255, 255, 0.72);
+    color: var(--text-light);
+    box-shadow: 2px 0 15px var(--shadow-light);
+  }
+
+  .sidebar-menu a,
+  .sidebar-bottom a {
+    color: var(--text-light);
+  }
+
+  .sidebar-menu a i,
+  .sidebar-bottom a i {
+    color: var(--text-light);
+  }
+
+  .sidebar-logo img {
+    content: url("../assets/logos/MindHiveLight.svg");
+  }
+
+  .dashboard-container {
+    background-color: var(--background-light);
+    color: var(--text-light);
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 6px 18px var(--shadow-light);
+  }
+
+  .main-content {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* ==============================
+   DARK MODE
+============================== */
+@media (prefers-color-scheme: dark) {
+  .sidebar {
+    background-color: rgba(30, 30, 30, 0.7);
+    color: var(--text-dark);
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebar-menu a,
+  .sidebar-bottom a {
+    color: var(--text-dark);
+  }
+
+  .sidebar-menu a i,
+  .sidebar-bottom a i {
+    color: var(--text-dark);
+  }
+
+  .sidebar-logo img {
+    content: url("../assets/logos/MindHiveDark.svg");
+  }
+
+  .sidebar-menu a:hover,
+  .sidebar-menu a.active,
+  .sidebar-bottom a:hover,
+  .sidebar-bottom a.active {
+    background-color: rgba(249, 199, 59, 0.35);
+    box-shadow: none;
+  }
+
+  .dashboard-container {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+  }
+
+  .card {
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 6px 18px var(--shadow-dark);
+  }
+
+  .main-content {
+    background-color: rgba(18, 18, 18, 0.8);
+  }
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+@media (max-width: 900px) {
+  .dashboard-middle {
+    grid-template-columns: 1fr;
+  }
+}

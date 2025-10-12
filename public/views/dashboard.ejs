@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/dashboard.css" />
+    <title>MindHive Dashboard</title>
+  </head>
+  <body>
+    <%- include('partials/sidebar', { page: 'home' }) %>
+    <div class="dashboard-container">
+      <!-- Search Bar -->
+      <div class="dashboard-search">
+        <input type="text" placeholder="Search for users..." />
+      </div>
+
+      <!-- Greeting Section -->
+      <section class="dashboard-greeting card">
+        <!-- <h2>Hello, = user ? user.first_name : "Student" %> 👋</h2> -->
+        <h2>Hello, Tarek 👋</h2>
+        <p id="dashboard-date">Today’s date: <span></span></p>
+        <p id="dashboard-weather">Weather: <span>Loading...</span></p>
+      </section>
+
+      <!-- Two-column middle layout -->
+      <div class="dashboard-middle">
+        <!-- To-do preview -->
+        <section class="card todo-preview">
+          <h3>Today's To-Do List</h3>
+          <ul id="todo-list">
+            <li>Finish lab report</li>
+            <li>Study for midterm</li>
+            <li>Plan weekend tasks</li>
+          </ul>
+        </section>
+
+        <!-- Pomodoro Timer -->
+        <section class="card pomodoro-card">
+          <div class="pomodoro-timer">
+            <h2 id="pomodoro-time">25:00</h2>
+            <button id="start-timer">Start Focus</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Calendar preview -->
+      <section class="card calendar-preview">
+        <h3>Today's Calendar</h3>
+        <ul>
+          <li>9:00 AM — CS Lecture</li>
+          <li>2:00 PM — Team Meeting</li>
+          <li>5:00 PM — Gym Session</li>
+        </ul>
+      </section>
+
+      <!-- Leaderboard preview -->
+      <section class="card leaderboard-preview">
+        <h3>Leaderboard</h3>
+        <p>Top 3 Students this week:</p>
+        <ol>
+          <li>Tarek — 40 sessions</li>
+          <li>Hasan — 36 sessions</li>
+          <li>Jana — 30 sessions</li>
+        </ol>
+      </section>
+    </div>
+  </body>
+</html>

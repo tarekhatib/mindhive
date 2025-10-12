@@ -1,0 +1,68 @@
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img
+      src="/assets/logos/MindHiveLight.svg"
+      alt="MindHive Logo"
+      class="logo"
+    />
+  </div>
+
+  <nav class="sidebar-menu">
+    <ul>
+      <li>
+        <a href="/dashboard" class="<%= page === 'home' ? 'active' : '' %>"
+          ><i class="fa-solid fa-house"></i> Home</a
+        >
+      </li>
+      <li>
+        <a href="/notes" class="<%= page === 'notes' ? 'active' : '' %>"
+          ><i class="fa-solid fa-note-sticky"></i> Notes</a
+        >
+      </li>
+      <li>
+        <a href="/todos" class="<%= page === 'todos' ? 'active' : '' %>"
+          ><i class="fa-solid fa-list-check"></i> To-Dos</a
+        >
+      </li>
+      <li>
+        <a href="/calendar" class="<%= page === 'calendar' ? 'active' : '' %>"
+          ><i class="fa-solid fa-calendar-days"></i> Calendar</a
+        >
+      </li>
+      <li>
+        <a
+          href="/leaderboard"
+          class="<%= page === 'leaderboard' ? 'active' : '' %>"
+          ><i class="fa-solid fa-trophy"></i> Leaderboard</a
+        >
+      </li>
+      <li>
+        <a
+          href="/notifications"
+          class="<%= page === 'notifications' ? 'active' : '' %>"
+          ><i class="fa-solid fa-bell"></i> Notifications</a
+        >
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <ul>
+      <li>
+        <a href="/profile" class="<%= page === 'profile' ? 'active' : '' %>"
+          ><i class="fa-solid fa-user"></i> Profile</a
+        >
+      </li>
+      <li>
+        <a href="/settings" class="<%= page === 'settings' ? 'active' : '' %>"
+          ><i class="fa-solid fa-gear"></i> Settings</a
+        >
+      </li>
+      <li>
+        <a href="/trash" class="<%= page === 'trash' ? 'active' : '' %>"
+          ><i class="fa-solid fa-trash"></i> Trash</a
+        >
+      </li>
+    </ul>
+  </div>
+</aside>
