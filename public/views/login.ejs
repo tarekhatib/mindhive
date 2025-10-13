@@ -23,12 +23,12 @@
         <h2>Welcome Back</h2>
         <p class="subtitle">Log in to continue your focus journey.</p>
 
-        <form action="#" method="POST" novalidate>
+        <form id="login-form" action="#" method="POST">
           <div class="form-group">
             <input
               type="text"
-              id="userOrEmail"
-              name="userOrEmail"
+              id="identifier"
+              name="identifier"
               placeholder="Username or Email"
               required
             />
@@ -43,6 +43,8 @@
               required
             />
           </div>
+
+          <p id="message" class="message" style="margin: 0; padding: 0"></p>
 
           <button type="submit" class="btn-login">Log In</button>
 

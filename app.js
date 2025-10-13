@@ -19,7 +19,7 @@ app.set("views", path.join(__dirname, "public", "views"));
 
 app.use("/api/auth", authRoutes);
 
-app.get("/", (req, res) => res.redirect("/dashboard"));
+app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
 app.get("/register", (req, res) => res.render("register"));
 app.get("/dashboard", (req, res) => res.render("dashboard"));

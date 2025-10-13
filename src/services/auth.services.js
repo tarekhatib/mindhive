@@ -26,7 +26,7 @@ const registerUser = async ({
         if (err) {
           if (err.code === "ER_DUP_ENTRY")
             return reject({
-              status: 400,
+              status: 409,
               message: "Username or email already exists.",
             });
           return reject({ status: 500, message: "Database error", error: err });
@@ -102,6 +102,24 @@ const refreshAccessToken = async (refreshToken) => {
 const logoutUser = async () => {
   return { message: "Logged out successfully." };
 };
+
+/* const logoutUser = async (refreshToken) => {
+  if (!refreshToken)
+    throw { status: 401, message: "No refresh token provided." };
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      "DELETE FROM refresh_tokens WHERE token = ?",
+      [refreshToken],
+      (err, result) => {
+        if (err) return reject({ status: 500, message: "Database error" });
+        if (result.affectedRows === 0)
+          return reject({ status: 404, message: "Token not found." });
+        resolve({ message: "Logged out successfully." });
+      }
+    );
+  });
+}; */
 
 module.exports = {
   registerUser,

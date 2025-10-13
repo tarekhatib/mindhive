@@ -22,13 +22,13 @@
         <h2>Create Your Account</h2>
         <p class="subtitle">Start your journey with us.</p>
 
-        <form action="#" method="POST" novalidate>
+        <form id="register-form" action="#" method="POST">
           <div class="name-row">
             <div class="form-group">
               <input
                 type="text"
-                id="firstName"
-                name="firstName"
+                id="first_name"
+                name="first_name"
                 placeholder="First Name"
                 required
               />
@@ -36,8 +36,8 @@
             <div class="form-group">
               <input
                 type="text"
-                id="lastName"
-                name="lastName"
+                id="last_name"
+                name="last_name"
                 placeholder="Last Name"
                 required
               />
@@ -77,12 +77,14 @@
           <div class="form-group">
             <input
               type="password"
-              id="confirmPassword"
-              name="confirmPassword"
+              id="confirm_password"
+              name="confirm_password"
               placeholder="Confirm Password"
               required
             />
           </div>
+
+          <p id="message" class="message" style="margin: 0; padding: 0"></p>
 
           <button type="submit" class="btn-register">Register</button>
 
