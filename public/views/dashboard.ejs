@@ -15,15 +15,12 @@
   <body>
     <%- include('partials/sidebar', { page: 'home' }) %>
     <div class="dashboard-container">
-      <!-- Search Bar -->
       <div class="dashboard-search">
         <input type="text" placeholder="Search for users..." />
         <i class="fa-solid fa-magnifying-glass"></i>
       </div>
 
-      <!-- Greeting Section -->
       <section class="dashboard-greeting card">
-        <!-- <h2>Hello, = user ? user.first_name : "Student" %> 👋</h2> -->
         <h2>Hello, Tarek 👋</h2>
         <div id="info">
           <p id="dashboard-date">Today’s date: <span>07/07/2005</span></p>
@@ -31,9 +28,7 @@
         </div>
       </section>
 
-      <!-- Two-column middle layout -->
       <div class="dashboard-middle">
-        <!-- To-do preview -->
         <section class="card todo-preview">
           <h3>Today's To-Do List</h3>
           <ul id="todo-list">
@@ -43,7 +38,6 @@
           </ul>
         </section>
 
-        <!-- Pomodoro Timer -->
         <section class="card pomodoro-card">
           <div class="pomodoro-timer">
             <h2 id="pomodoro-time">25:00</h2>
@@ -52,7 +46,6 @@
         </section>
       </div>
 
-      <!-- Calendar preview -->
       <section class="card calendar-preview">
         <h3>Today's Calendar</h3>
         <ul>
@@ -62,7 +55,6 @@
         </ul>
       </section>
 
-      <!-- Leaderboard preview -->
       <section class="card leaderboard-preview">
         <h3>Leaderboard</h3>
         <p>Top 3 Students this week:</p>
