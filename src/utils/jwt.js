@@ -2,16 +2,34 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
+  return jwt.sign(
+    {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      username: user.username,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "15m",
+    }
+  );
 };
 
 const generateRefreshToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email },
+    {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      username: user.username,
+      email: user.email,
+    },
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" }
+    {
+      expiresIn: "7d",
+    }
   );
 };
 

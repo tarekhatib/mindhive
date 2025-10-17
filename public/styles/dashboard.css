@@ -153,37 +153,8 @@ body {
   font-weight: 700;
 }
 
-.pomodoro-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+#info {
   text-align: center;
-}
-
-.pomodoro-card h2 {
-  font-size: 6.5rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin: auto;
-}
-
-.pomodoro-card button {
-  color: #000;
-  font-weight: 700;
-  letter-spacing: 0.1px;
-  font-size: 1.1rem;
-  padding: 0.8rem 1.8rem;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: none;
-}
-
-.pomodoro-card button:hover {
-  background-color: #e6b72f;
-  transform: scale(1.05);
 }
 
 /* ==============================
@@ -358,4 +329,107 @@ body {
   .dashboard-search i {
     color: var(--text-dark);
   }
+}
+
+/* ==============================
+   POMODORO TIMER BUTTON STYLING
+============================== */
+.pomodoro-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  opacity: 0.9;
+  text-align: center;
+  font-style: italic
+}
+
+.pomodoro-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pomodoro-btn {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+.pomodoro-btn.primary {
+  background-color: var(--accent-color);
+  color: #000;
+}
+
+.pomodoro-btn.primary:hover {
+  background-color: #e6b72f;
+  transform: scale(1.05);
+}
+
+.pomodoro-btn.secondary {
+  color: #fff;
+}
+
+.pomodoro-btn.secondary#pause-btn {
+  background-color: #007bff;
+}
+
+.pomodoro-btn.secondary#pause-btn:hover {
+  background-color: #005fcc;
+}
+
+.pomodoro-btn.secondary#cancel-btn {
+  background-color: #ff4b4b;
+}
+
+.pomodoro-btn.secondary#cancel-btn:hover {
+  background-color: #e63b3b;
+}
+
+.pomodoro-timer-text {
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  transition: color 0.3s;
+}
+
+.pomodoro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2rem;
+}
+
+.pomodoro-card h2 {
+  font-size: 6.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: auto;
+}
+
+.pomodoro-card button {
+  color: #000;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  font-size: 1.1rem;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: none;
+}
+
+.pomodoro-card button:hover {
+  background-color: #e6b72f;
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none;
 }

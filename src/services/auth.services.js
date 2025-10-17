@@ -99,11 +99,7 @@ const refreshAccessToken = async (refreshToken) => {
   });
 };
 
-const logoutUser = async () => {
-  return { message: "Logged out successfully." };
-};
-
-/* const logoutUser = async (refreshToken) => {
+const logoutUser = async (refreshToken) => {
   if (!refreshToken)
     throw { status: 401, message: "No refresh token provided." };
 
@@ -119,7 +115,7 @@ const logoutUser = async () => {
       }
     );
   });
-}; */
+};
 
 module.exports = {
   registerUser,

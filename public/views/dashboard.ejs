@@ -21,10 +21,10 @@
       </div>
 
       <section class="dashboard-greeting card">
-        <h2>Hello, Tarek 👋</h2>
+        <h2 id="greeting-text"><%= user.first_name %> 👋</h2>
         <div id="info">
-          <p id="dashboard-date">Today’s date: <span>07/07/2005</span></p>
-          <p id="dashboard-weather">23 degrees<span> - Sunny</span></p>
+          <p id="dashboard-date"></p>
+          <p id="dashboard-weather"></p>
         </div>
       </section>
 
@@ -39,9 +39,20 @@
         </section>
 
         <section class="card pomodoro-card">
-          <div class="pomodoro-timer">
-            <h2 id="pomodoro-time">25:00</h2>
-            <button id="start-timer">Start Focus</button>
+          <div class="pomodoro-timer apple-style-timer">
+            <h3 class="pomodoro-title">🍅 Pomodoro Session</h3>
+            <h2 id="pomodoro-time" class="pomodoro-time-display">25:00</h2>
+            <div class="pomodoro-controls">
+              <button id="start-btn" class="pomodoro-btn primary">
+                Start Focus
+              </button>
+              <button id="pause-btn" class="pomodoro-btn secondary hidden">
+                Pause
+              </button>
+              <button id="cancel-btn" class="pomodoro-btn secondary hidden">
+                Cancel
+              </button>
+            </div>
           </div>
         </section>
       </div>
@@ -64,7 +75,8 @@
           <li>Jana — 30 sessions</li>
         </ol>
       </section>
-      <br /><br /><br />
+      <br />
     </div>
+    <script src="/js/dashboard.js"></script>
   </body>
 </html>

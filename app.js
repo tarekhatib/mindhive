@@ -4,6 +4,9 @@ const cookieParser = require("cookie-parser");
 const db = require("./src/config/db");
 const path = require("path");
 const authRoutes = require("./src/routes/auth.routes.js");
+const dashboardRoutes = require("./src/routes/dashboard.routes.js");
+
+db.connect();
 
 dotenv.config();
 
@@ -17,7 +20,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "public", "views"));
 
-app.use("/api/auth", authRoutes);
+app.use("/", authRoutes);
+app.use("/", dashboardRoutes);
 
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
