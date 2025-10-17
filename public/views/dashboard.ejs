@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -14,69 +14,77 @@
   </head>
   <body>
     <%- include('partials/sidebar', { page: 'home' }) %>
-    <div class="dashboard-container">
-      <div class="dashboard-search">
-        <input type="text" placeholder="Search for users..." />
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </div>
+
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <div class="search-bar">
+          <input type="text" placeholder="Search for users..." />
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+      </header>
 
       <section class="dashboard-greeting card">
-        <h2 id="greeting-text"><%= user.first_name %> 👋</h2>
-        <div id="info">
+        <h1 id="greeting-text"><%= user.first_name %> 👋</h1>
+        <div class="greeting-info">
           <p id="dashboard-date"></p>
           <p id="dashboard-weather"></p>
         </div>
       </section>
 
-      <div class="dashboard-middle">
-        <section class="card todo-preview">
-          <h3>Today's To-Do List</h3>
-          <ul id="todo-list">
-            <li>Finish lab report</li>
-            <li>Study for midterm</li>
-            <li>Plan weekend tasks</li>
-          </ul>
-        </section>
+      <section class="dashboard-content">
+        <div class="dashboard-row">
+          <section class="card todo-card">
+            <h2>Today's To-Do List</h2>
+            <ul id="todo-list">
+              <li>Finish lab report</li>
+              <li>Study for midterm</li>
+              <li>Plan weekend tasks</li>
+            </ul>
+          </section>
 
-        <section class="card pomodoro-card">
-          <div class="pomodoro-timer apple-style-timer">
-            <h3 class="pomodoro-title">🍅 Pomodoro Session</h3>
-            <h2 id="pomodoro-time" class="pomodoro-time-display">25:00</h2>
-            <div class="pomodoro-controls">
-              <button id="start-btn" class="pomodoro-btn primary">
+          <section class="card pomodoro-card">
+            <h2 class="pomodoro-title">Pomodoro Session</h2>
+            <div class="pomodoro-time-controls">
+              <button id="decrease-btn" class="time-btn">−</button>
+              <span id="pomodoro-time" class="pomodoro-time">25:00</span>
+              <button id="increase-btn" class="time-btn">+</button>
+            </div>
+            <div class="pomodoro-actions">
+              <button id="start-btn" class="pomodoro-btn start">
                 Start Focus
               </button>
-              <button id="pause-btn" class="pomodoro-btn secondary hidden">
+              <button id="pause-btn" class="pomodoro-btn pause hidden">
                 Pause
               </button>
-              <button id="cancel-btn" class="pomodoro-btn secondary hidden">
+              <button id="cancel-btn" class="pomodoro-btn cancel hidden">
                 Cancel
               </button>
             </div>
-          </div>
+          </section>
+        </div>
+
+        <section class="card calendar-card">
+          <h2>Today's Calendar</h2>
+          <ul>
+            <li>9:00 AM — CS Lecture</li>
+            <li>2:00 PM — Team Meeting</li>
+            <li>5:00 PM — Gym Session</li>
+          </ul>
         </section>
-      </div>
 
-      <section class="card calendar-preview">
-        <h3>Today's Calendar</h3>
-        <ul>
-          <li>9:00 AM — CS Lecture</li>
-          <li>2:00 PM — Team Meeting</li>
-          <li>5:00 PM — Gym Session</li>
-        </ul>
-      </section>
-
-      <section class="card leaderboard-preview">
-        <h3>Leaderboard</h3>
-        <p>Top 3 Students this week:</p>
-        <ol>
-          <li>Tarek — 40 sessions</li>
-          <li>Hasan — 36 sessions</li>
-          <li>Jana — 30 sessions</li>
-        </ol>
+        <section class="card leaderboard-card">
+          <h2>Leaderboard</h2>
+          <p>Top 3 Students this week:</p>
+          <ol>
+            <li>Tarek — 40 sessions</li>
+            <li>Hasan — 36 sessions</li>
+            <li>Jana — 30 sessions</li>
+          </ol>
+        </section>
       </section>
       <br />
-    </div>
+    </main>
+
     <script src="/js/dashboard.js"></script>
   </body>
 </html>

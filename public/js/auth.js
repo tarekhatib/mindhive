@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (registerForm) {
-    registerForm.addEventListener("submit", (e) => {
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
       const first_name = document.getElementById("first_name").value.trim();
       const last_name = document.getElementById("last_name").value.trim();
       const username = document.getElementById("username").value.trim();
@@ -20,19 +22,42 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("confirm_password").value;
 
       if (!first_name || !last_name || !username || !email || !password) {
-        e.preventDefault();
         showMessage("All fields are required.", true);
         return;
       }
       if (password.length < 8) {
-        e.preventDefault();
         showMessage("Password must be at least 8 characters long.", true);
         return;
       }
       if (password !== confirm_password) {
-        e.preventDefault();
         showMessage("Passwords do not match.", true);
         return;
+      }
+
+      try {
+        const res = await fetch("/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            first_name,
+            last_name,
+            username,
+            email,
+            password,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          showMessage(data.message || "Registration failed.", true);
+        } else {
+          showMessage("Account created successfully! Redirecting...");
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1500);
+        }
+      } catch (err) {
+        showMessage("Network error, please try again.", true);
       }
     });
   }

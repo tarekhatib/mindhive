@@ -67,8 +67,10 @@ const timeDisplay = document.getElementById("pomodoro-time");
 const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");
 const cancelBtn = document.getElementById("cancel-btn");
+const increaseBtn = document.getElementById("increase-btn");
+const decreaseBtn = document.getElementById("decrease-btn");
 
-let timerDuration = 1 * 60;
+let timerDuration = 25 * 60;
 let remainingTime = timerDuration;
 let timerInterval = null;
 let isPaused = false;
@@ -123,8 +125,24 @@ function resetTimer() {
   pauseBtn.textContent = "Pause";
 }
 
+function increaseTimer() {
+  timerDuration += 60;
+  remainingTime = timerDuration;
+  updateTimerDisplay();
+}
+
+function decreaseTimer() {
+  if (timerDuration > 60) {
+    timerDuration -= 60;
+    remainingTime = timerDuration;
+    updateTimerDisplay();
+  }
+}
+
 startBtn?.addEventListener("click", startTimer);
 pauseBtn?.addEventListener("click", pauseTimer);
 cancelBtn?.addEventListener("click", cancelTimer);
+increaseBtn?.addEventListener("click", increaseTimer);
+decreaseBtn?.addEventListener("click", decreaseTimer);
 
 updateTimerDisplay();
