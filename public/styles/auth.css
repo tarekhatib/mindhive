@@ -119,9 +119,7 @@ a:hover {
   color: #d4a91a;
 }
 
-/* ==============================
-   LIGHT MODE
-============================== */
+ 
 @media (prefers-color-scheme: light) {
   .auth-card,
   .login-card,
@@ -131,9 +129,7 @@ a:hover {
   }
 }
 
-/* ==============================
-   DARK MODE
-============================== */
+ 
 @media (prefers-color-scheme: dark) {
   .auth-card,
   .login-card,
@@ -147,9 +143,7 @@ a:hover {
   }
 }
 
-/* ==============================
-   RESPONSIVE
-============================== */
+ 
 @media (max-width: 480px) {
   .auth-card {
     padding: 1.5rem;

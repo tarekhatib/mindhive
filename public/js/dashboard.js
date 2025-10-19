@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // === Dynamic Greeting ===
   const greetingElement = document.getElementById("greeting-text");
   const hours = new Date().getHours();
 
@@ -10,7 +9,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       ? "Good afternoon"
       : "Good evening";
 
-  // Prepend greeting dynamically
   if (greetingElement) {
     const currentText = greetingElement.textContent; // e.g. "Tarek 👋"
     greetingElement.textContent = `${greeting}, ${currentText}`;
@@ -26,7 +24,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   dateElement.innerHTML = `<span>${formattedDate}</span>`;
 
-  // === Weather for Beirut ===
   const weatherElement = document.getElementById("dashboard-weather");
 
   try {
@@ -38,7 +35,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const temp = data.current_weather.temperature;
     const weatherCode = data.current_weather.weathercode;
 
-    // Simple weather text mapping
     const weatherDescriptions = {
       0: "Clear sky ☀️",
       1: "Mainly clear 🌤️",
@@ -62,7 +58,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// === Pomodoro Timer Logic ===
 const timeDisplay = document.getElementById("pomodoro-time");
 const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");

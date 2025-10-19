@@ -36,7 +36,6 @@ exports.createNote = async (req, res) => {
   }
 };
 
-// Get a single note by ID
 exports.getNoteById = async (req, res) => {
   try {
     const [note] = await db.query(
@@ -52,7 +51,6 @@ exports.getNoteById = async (req, res) => {
   }
 };
 
-// Update a note
 exports.updateNote = async (req, res) => {
   try {
     const { title, content, course_name } = req.body;
@@ -71,7 +69,6 @@ exports.updateNote = async (req, res) => {
   }
 };
 
-// Delete a note
 exports.deleteNote = async (req, res) => {
   try {
     const [result] = await db.query(

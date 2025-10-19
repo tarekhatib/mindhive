@@ -2,21 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const notesList = document.querySelector(".notes-section");
   const addNoteBtn = document.querySelector(".add-note-btn");
 
-  // Fetch and display notes for logged-in user
-  async function loadNotes() {
-    try {
-      const response = await fetch("/api/notes");
-      if (!response.ok) throw new Error("Failed to load notes");
-      const notes = await response.json();
-
-      renderNotes(notes);
-    } catch (err) {
-      console.error(err);
-      notesList.innerHTML = "<p class='no-notes'>Could not load notes.</p>";
-    }
-  }
-
-  // Render all notes
   function renderNotes(notes) {
     notesList.innerHTML = "";
     if (!notes.length) {
@@ -27,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
     notes.forEach((note) => {
       const noteCard = document.createElement("div");
       noteCard.classList.add("note-card");
+      noteCard.setAttribute("data-id", note.id);
+      noteCard.setAttribute("tabindex", "0");
 
       noteCard.innerHTML = `
         <div class="note-info">
@@ -41,17 +28,37 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
 
-      noteCard.addEventListener("dblclick", () => {
+      noteCard.addEventListener("click", () => {
         window.location.href = `/notes/${note.id}`;
+      });
+
+      noteCard.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          window.location.href = `/notes/${note.id}`;
+        }
       });
 
       notesList.appendChild(noteCard);
     });
   }
 
-  // Add new note logic
   addNoteBtn.addEventListener("click", () => {
     window.location.href = "/notes/new";
+  });
+
+  notesList.addEventListener("click", (e) => {
+    const card = e.target.closest(".note-card");
+    if (!card) return;
+    const id = card.getAttribute("data-id");
+    if (id) window.location.href = `/notes/${id}`;
+  });
+
+  notesList.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const card = e.target.closest(".note-card");
+    if (!card) return;
+    const id = card.getAttribute("data-id");
+    if (id) window.location.href = `/notes/${id}`;
   });
 
   loadNotes();

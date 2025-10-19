@@ -52,16 +52,12 @@ const loginUser = async ({ identifier, password }) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // store refresh token in DB (best-effort)
     try {
       await db.query(
         "INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?)",
         [user.id, refreshToken]
       );
-    } catch (e) {
-      // non-fatal: log and continue
-      // console.error('Failed to store refresh token', e);
-    }
+    } catch (e) {}
 
     return {
       accessToken,
@@ -85,10 +81,7 @@ const refreshAccessToken = async (refreshToken) => {
     throw { status: 401, message: "No refresh token provided." };
 
   try {
-    // verify token signature/expiration
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-
-    // ensure token exists in DB
     try {
       const [rows] = await db.query(
         "SELECT * FROM refresh_tokens WHERE token = ?",

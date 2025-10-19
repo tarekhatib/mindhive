@@ -16,7 +16,6 @@
     <%- include('partials/sidebar', { page: 'notes' }) %>
 
     <div class="dashboard-container">
-      <!-- Search + Filter Bar -->
       <div class="notes-header">
         <div class="search-bar">
           <input
@@ -26,18 +25,12 @@
           />
           <button id="searchBtn"><i class="fa fa-search"></i></button>
         </div>
-
-        <div class="filter-sort">
-          <select id="sortOptions">
-            <option value="course_name">By Course</option>
-            <option value="title">By Title (A–Z)</option>
-            <option value="created_at">By Date Created</option>
-            <option value="updated_at">By Last Edited</option>
-          </select>
-        </div>
       </div>
 
-      <!-- Notes Grouped by Course -->
+      <div class="all-notes-header">
+        <h1>All Notes</h1>
+      </div>
+
       <div class="notes-section">
         <% if (groupedNotes && Object.keys(groupedNotes).length > 0) { %> <%
         Object.keys(groupedNotes).forEach(course => { %>
@@ -71,5 +64,16 @@
         <i class="fa fa-plus"></i>
       </button>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".note-card").forEach(function (card) {
+          card.addEventListener("click", function () {
+            var id = card.getAttribute("data-id");
+            if (id) window.location.href = "/notes/" + id;
+          });
+        });
+      });
+    </script>
   </body>
 </html>
