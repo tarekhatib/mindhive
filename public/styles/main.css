@@ -6,8 +6,8 @@
   --text-light: #2d383f;
   --text-dark: #ffffff;
   --card-bg-light: #ffffff;
-  --card-bg-dark: #1e1e1e;
-  --input-bg-light: #f5f5f5;
+  --card-bg-dark: #161616;
+  --input-bg-light: #eeeeee;
   --input-bg-dark: #2a2a2a;
   --shadow-light: rgba(0, 0, 0, 0.3);
   --shadow-dark: rgba(0, 0, 0, 0.7);
@@ -22,7 +22,8 @@ html {
   scroll-behavior: smooth;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -57,11 +58,79 @@ button {
 }
 
 /* ==============================
+   SIDE BAR
+============================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  box-sizing: border-box;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+  z-index: 1000;
+}
+
+/* --- SIDEBAR --- */
+.sidebar-logo {
+  display: flex;
+  justify-content: center;
+}
+.sidebar-logo img {
+  width: 140px;
+}
+
+.sidebar-menu,
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+}
+
+.sidebar-menu ul,
+.sidebar-bottom ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-menu a,
+.sidebar-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0.4rem 1rem;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  border-radius: 14px;
+  font-weight: 600;
+  transition: background-color 0.25s ease, transform 0.1s ease;
+  color: white;
+}
+
+.sidebar-menu a.active,
+.sidebar-bottom a.active,
+.sidebar-menu a:hover,
+.sidebar-bottom a:hover {
+  background-color: rgba(249, 199, 59, 0.25);
+  transform: scale(1.02);
+}
+
+/* ==============================
    LIGHT MODE
 ============================== */
 @media (prefers-color-scheme: light) {
   body {
-    background-color: var(--background-light);
+    background-color: var(--hover-bg-light);
     color: var(--text-light);
   }
 
@@ -80,12 +149,25 @@ button {
   button[type="submit"]:hover {
     background-color: #e6b72f;
   }
+
+  .sidebar {
+    color: var(--text-light);
+    background-color: var(--card-bg-light);
+  }
+
+  .sidebar-menu a,
+  .sidebar-bottom a {
+    color: var(--text-light);
+  }
 }
 
 /* ==============================
    DARK MODE
 ============================== */
 @media (prefers-color-scheme: dark) {
+  .logo {
+    content: url("/assets/logos/MindHiveDark.svg");
+  }
   body {
     background-color: var(--background-dark);
     color: var(--text-dark);
@@ -107,6 +189,11 @@ button {
   button[type="submit"]:hover {
     background-color: #e6b72f;
   }
+
+  .sidebar {
+    color: var(--text-dark);
+    background-color: var(--card-bg-dark);
+  }
 }
 
 /* ==============================
@@ -123,5 +210,22 @@ button {
   button[type="submit"] {
     font-size: 1rem;
     padding: 0.65rem 0.9rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 0;
+  }
+
+  .sidebar-menu a {
+    margin: 0.2rem 0.5rem;
+    padding: 0.5rem 0.8rem;
   }
 }

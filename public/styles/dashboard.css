@@ -15,70 +15,6 @@ body {
   flex-direction: row;
 }
 
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem 0;
-  box-sizing: border-box;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top-right-radius: 24px;
-  border-bottom-right-radius: 24px;
-  z-index: 1000;
-}
-
-/* --- SIDEBAR --- */
-.sidebar-logo {
-  display: flex;
-  justify-content: center;
-}
-.sidebar-logo img {
-  width: 140px;
-}
-
-.sidebar-menu, .sidebar-bottom {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 0;
-}
-
-.sidebar-menu ul, .sidebar-bottom ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.sidebar-menu a, .sidebar-bottom a {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0.4rem 1rem;
-  padding: 0.8rem 1rem;
-  text-decoration: none;
-  border-radius: 14px;
-  font-weight: 600;
-  transition: background-color 0.25s ease, transform 0.1s ease;
-  color: white;
-}
-
-.sidebar-menu a.active{
-  background-color: rgba(249, 199, 59, 0.25);
-}
-
-.sidebar-menu a:hover {
-  background-color: none;
-  border-style: solid;
-  border-color: rgba(249, 199, 59, 0.25);
-  transform: scale(1.02);
-}
-
 /* --- DASHBOARD MAIN AREA --- */
 .dashboard {
   margin-left: 260px;
@@ -155,10 +91,13 @@ body {
 
 /* --- POMODORO --- */
 .todo-card, .pomodoro-card {
+  /* let the grid control the sizing; provide sensible min so items don't collapse */
   aspect-ratio: 1 / 1;
   width: 100%;
-  max-width: 490px;
-  justify-self: center;
+  min-width: 240px;
+  max-width: 100%;
+  box-sizing: border-box;
+  justify-self: stretch;
 }
 .pomodoro-card {
   display: flex;
@@ -225,7 +164,6 @@ body {
 /* --- THEME --- */
 @media (prefers-color-scheme: dark) {
   body { background-color: #111; color: #f5f5f5; }
-  .sidebar { background: rgba(25, 25, 25, 0.9); }
   .card { background: rgba(25, 25, 25, 0.85); }
   .sidebar-logo img {
     content: url("/assets/logos/MindHiveDark.svg");
@@ -233,11 +171,113 @@ body {
 }
 @media (prefers-color-scheme: light) {
   body { background-color: #f9f9f9; color: #111; }
-  .sidebar { background: rgba(255, 255, 255, 0.95); }
   .card { background: rgba(255, 255, 255, 0.9); border-color: rgba(0,0,0,0.05); }
   .search-bar input { background: var(--input-bg-light); color: var(--text-light); }
 }
 
 .hidden {
   display: none !important;
+}
+
+@media (min-width: 1600px) {
+  body {
+    justify-content: center;
+  }
+
+  .dashboard {
+    max-width: 1800px;
+    margin-inline: auto;
+    padding: 3rem;
+    gap: 2.5rem;
+  }
+
+  .dashboard-row {
+    /* use auto-fit so columns adapt to available width; allow smaller min to fit more cards */
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 2.5rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .card {
+    max-width: none;
+    margin: 0;
+  }
+
+  .dashboard-greeting {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .dashboard-greeting h1 {
+    font-size: 3.5rem;
+  }
+
+  .pomodoro-time {
+    font-size: 6rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard {
+    margin-left: 0;
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 0;
+  }
+
+  .dashboard-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pomodoro-time {
+    font-size: 4rem;
+  }
+
+  .sidebar-menu a {
+    margin: 0.2rem 0.5rem;
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .todo-card,
+  .pomodoro-card {
+    aspect-ratio: auto;
+    height: auto;
+    min-width: 0;
+    width: 100%;
+    align-self: stretch;
+    justify-self: stretch;
+  }
+
+  .pomodoro-time {
+    font-size: 5.5rem;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (min-width: 1600px) {
+  body {
+    justify-content: center;
+  }
+
+  .dashboard {
+    width: min(1200px, calc(100% - 520px));
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
 }

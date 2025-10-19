@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= note.title || "Untitled Note" %> - MindHive</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/notes.css" />
+  </head>
+  <body>
+    <%- include('partials/sidebar', { page: 'notes' }) %>
+
+    <div class="note-single-container">
+      <button class="back-btn" onclick="window.location.href='/notes'">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+
+      <input
+        type="text"
+        id="note-title"
+        placeholder="Untitled Note"
+        value="<%= note.title || '' %>"
+      />
+
+      <div class="course-selector">
+        <label for="course-name">Course:</label>
+        <select id="course-name">
+          <% if (note.course_name) { %>
+          <option value="<%= note.course_name %>" selected>
+            <%= note.course_name %>
+          </option>
+          <% } %>
+        </select>
+        <button id="add-course-btn"><i class="fa-solid fa-plus"></i></button>
+      </div>
+
+      <textarea id="note-content" placeholder="Start writing your note here...">
+<%= note.content || '' %></textarea
+      >
+
+      <p id="autosave-status">All changes saved</p>
+    </div>
+
+    <script>
+      const noteId = window.location.pathname.split("/").pop();
+      const titleInput = document.getElementById("note-title");
+      const courseSelect = document.getElementById("course-name");
+      const addCourseBtn = document.getElementById("add-course-btn");
+      const contentTextarea = document.getElementById("note-content");
+      const autosaveStatus = document.getElementById("autosave-status");
+      let saveTimeout;
+
+      // Load saved courses for this user
+      async function loadCourses() {
+        try {
+          const res = await fetch("/api/courses");
+          if (!res.ok) throw new Error("Failed to fetch courses");
+          const courses = await res.json();
+
+          courses.forEach((c) => {
+            const option = document.createElement("option");
+            option.value = c.name;
+            option.textContent = c.name;
+            courseSelect.appendChild(option);
+          });
+        } catch (err) {
+          console.error("Error loading courses:", err);
+        }
+      }
+
+      // Add a new course to the DB and dropdown
+      addCourseBtn.addEventListener("click", async () => {
+        const newCourse = prompt("Enter new course name:");
+        if (newCourse) {
+          try {
+            const res = await fetch("/api/courses", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name: newCourse }),
+            });
+            if (!res.ok) throw new Error("Failed to add course");
+
+            const option = document.createElement("option");
+            option.value = newCourse;
+            option.textContent = newCourse;
+            option.selected = true;
+            courseSelect.appendChild(option);
+            autoSave();
+          } catch (err) {
+            console.error("Error adding course:", err);
+          }
+        }
+      });
+
+      // Load note content
+      async function loadNote() {
+        try {
+          const res = await fetch(`/api/notes/${noteId}`);
+          if (!res.ok) throw new Error("Failed to load note");
+          const note = await res.json();
+          titleInput.value = note.title || "";
+          contentTextarea.value = note.content || "";
+          if (note.course_name) {
+            const existingOption = Array.from(courseSelect.options).find(
+              (opt) => opt.value === note.course_name
+            );
+            if (existingOption) {
+              existingOption.selected = true;
+            } else {
+              const option = document.createElement("option");
+              option.value = note.course_name;
+              option.textContent = note.course_name;
+              option.selected = true;
+              courseSelect.appendChild(option);
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          autosaveStatus.textContent = "Error loading note";
+        }
+      }
+
+      // Auto-save changes
+      async function autoSave() {
+        clearTimeout(saveTimeout);
+        autosaveStatus.textContent = "Saving...";
+        saveTimeout = setTimeout(async () => {
+          try {
+            const res = await fetch(`/api/notes/${noteId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                title: titleInput.value,
+                content: contentTextarea.value,
+                course_name: courseSelect.value,
+              }),
+            });
+            if (!res.ok) throw new Error("Failed to save note");
+            autosaveStatus.textContent = "All changes saved";
+          } catch (err) {
+            console.error(err);
+            autosaveStatus.textContent = "Error saving note";
+          }
+        }, 1500);
+      }
+
+      [titleInput, contentTextarea, courseSelect].forEach((el) =>
+        el.addEventListener("input", autoSave)
+      );
+
+      // Initialize
+      loadCourses().then(loadNote);
+    </script>
+  </body>
+</html>

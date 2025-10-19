@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let greeting =
     hours < 12
-      ? "Good Morning"
+      ? "Good morning"
       : hours < 18
-      ? "Good Afternoon"
-      : "Good Evening";
+      ? "Good afternoon"
+      : "Good evening";
 
   // Prepend greeting dynamically
   if (greetingElement) {

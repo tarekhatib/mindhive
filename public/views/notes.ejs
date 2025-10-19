@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mindhive Notes</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/notes.css" />
+  </head>
+  <body>
+    <%- include('partials/sidebar', { page: 'notes' }) %>
+
+    <div class="dashboard-container">
+      <!-- Search + Filter Bar -->
+      <div class="notes-header">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="noteSearch"
+            placeholder="Search for notes..."
+          />
+          <button id="searchBtn"><i class="fa fa-search"></i></button>
+        </div>
+
+        <div class="filter-sort">
+          <select id="sortOptions">
+            <option value="course_name">By Course</option>
+            <option value="title">By Title (A–Z)</option>
+            <option value="created_at">By Date Created</option>
+            <option value="updated_at">By Last Edited</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notes Grouped by Course -->
+      <div class="notes-section">
+        <% if (groupedNotes && Object.keys(groupedNotes).length > 0) { %> <%
+        Object.keys(groupedNotes).forEach(course => { %>
+        <div class="course-group">
+          <h2 class="course-title"><%= course %></h2>
+          <div class="notes-list">
+            <% groupedNotes[course].forEach(note => { %>
+            <div class="note-card" data-id="<%= note.id %>">
+              <div class="note-info">
+                <h3><%= note.title %></h3>
+                <p class="preview">
+                  <%= note.preview || note.content.slice(0, 120) + '...' %>
+                </p>
+              </div>
+              <div class="note-meta">
+                <span class="date"
+                  ><%= new Date(note.created_at).toLocaleDateString() %></span
+                >
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <% }) %> <% } else { %>
+        <p class="no-notes">No notes found yet.</p>
+        <% } %>
+      </div>
+
+      <!-- Add Note Floating Button -->
+      <button class="add-note-btn" onclick="window.location.href='/notes/new'">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+  </body>
+</html>
