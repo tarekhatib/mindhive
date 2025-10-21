@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const {
   generateAccessToken,
   generateRefreshToken,
+  hashToken,
 } = require("../utils/jwt.js");
 
 const registerUser = async ({
@@ -52,12 +53,21 @@ const loginUser = async ({ identifier, password }) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    // Persist hashed refresh token with expiry aligned to JWT exp
     try {
+      const decoded = jwt.decode(refreshToken);
+      const expiresAt = decoded && decoded.exp
+        ? new Date(decoded.exp * 1000)
+        : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const tokenHash = hashToken(refreshToken);
+
       await db.query(
-        "INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?)",
-        [user.id, refreshToken]
+        "INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked) VALUES (?, ?, ?, 0)",
+        [user.id, tokenHash, expiresAt]
       );
-    } catch (e) {}
+    } catch (e) {
+      // Best-effort: do not block login on token persistence issues
+    }
 
     return {
       accessToken,
@@ -82,13 +92,16 @@ const refreshAccessToken = async (refreshToken) => {
 
   try {
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    // Validate token presence and status in DB using hash and expiry
     try {
+      const tokenHash = hashToken(refreshToken);
       const [rows] = await db.query(
-        "SELECT * FROM refresh_tokens WHERE token = ?",
-        [refreshToken]
+        "SELECT id FROM refresh_tokens WHERE token_hash = ? AND revoked = 0 AND expires_at > NOW()",
+        [tokenHash]
       );
       if (!rows || rows.length === 0)
-        throw { status: 403, message: "Invalid refresh token" };
+        throw { status: 403, message: "Invalid or expired refresh token." };
     } catch (e) {
       if (e && e.status) throw e;
       throw { status: 500, message: "Database error", error: e };
@@ -114,11 +127,12 @@ const logoutUser = async (refreshToken) => {
     throw { status: 401, message: "No refresh token provided." };
 
   try {
+    const tokenHash = hashToken(refreshToken);
     const [result] = await db.query(
-      "DELETE FROM refresh_tokens WHERE token = ?",
-      [refreshToken]
+      "UPDATE refresh_tokens SET revoked = 1 WHERE token_hash = ?",
+      [tokenHash]
     );
-    if (result.affectedRows === 0)
+    if (!result || result.affectedRows === 0)
       throw { status: 404, message: "Token not found." };
     return { message: "Logged out successfully." };
   } catch (err) {
