@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 require("dotenv").config();
 
 const generateAccessToken = (user) => {
@@ -45,3 +46,15 @@ const verifyToken = (token, isRefresh = false) => {
 };
 
 module.exports = { generateAccessToken, generateRefreshToken, verifyToken };
+@@
+// Utility used to store/compare refresh tokens securely in DB
+const hashToken = (token) => {
+  return crypto.createHash("sha256").update(token).digest("hex");
+};
+
+module.exports = {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyToken,
+  hashToken,
+};
