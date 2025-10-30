@@ -1,4 +1,4 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const db = require("../config/db.js");
 const jwt = require("jsonwebtoken");
 const {
@@ -17,7 +17,7 @@ const registerUser = async ({
   if (!first_name || !last_name || !username || !email || !password)
     throw { status: 400, message: "All fields required." };
 
-  const hashedPassword = bcrypt.hashSync(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
     const [result] = await db.query(
@@ -46,19 +46,19 @@ const loginUser = async ({ identifier, password }) => {
       throw { status: 401, message: "Invalid username/email or password" };
 
     const user = results[0];
-    const isValid = bcrypt.compareSync(password, user.password_hash);
+    const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid)
       throw { status: 401, message: "Invalid username/email or password" };
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Persist hashed refresh token with expiry aligned to JWT exp
     try {
       const decoded = jwt.decode(refreshToken);
-      const expiresAt = decoded && decoded.exp
-        ? new Date(decoded.exp * 1000)
-        : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const expiresAt =
+        decoded && decoded.exp
+          ? new Date(decoded.exp * 1000)
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       const tokenHash = hashToken(refreshToken);
 
       await db.query(
@@ -66,7 +66,7 @@ const loginUser = async ({ identifier, password }) => {
         [user.id, tokenHash, expiresAt]
       );
     } catch (e) {
-      // Best-effort: do not block login on token persistence issues
+      console.error("Refresh token persistence failed", e);
     }
 
     return {
@@ -93,7 +93,6 @@ const refreshAccessToken = async (refreshToken) => {
   try {
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
-    // Validate token presence and status in DB using hash and expiry
     try {
       const tokenHash = hashToken(refreshToken);
       const [rows] = await db.query(

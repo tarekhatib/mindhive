@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 require("dotenv").config();
 
-const generateAccessToken = (user) => {
-  return jwt.sign(
+const generateAccessToken = (user) =>
+  jwt.sign(
     {
       id: user.id,
       first_name: user.first_name,
@@ -12,14 +12,11 @@ const generateAccessToken = (user) => {
       email: user.email,
     },
     process.env.JWT_SECRET,
-    {
-      expiresIn: "15m",
-    }
+    { expiresIn: "15m" }
   );
-};
 
-const generateRefreshToken = (user) => {
-  return jwt.sign(
+const generateRefreshToken = (user) =>
+  jwt.sign(
     {
       id: user.id,
       first_name: user.first_name,
@@ -28,11 +25,8 @@ const generateRefreshToken = (user) => {
       email: user.email,
     },
     process.env.JWT_REFRESH_SECRET,
-    {
-      expiresIn: "7d",
-    }
+    { expiresIn: "7d" }
   );
-};
 
 const verifyToken = (token, isRefresh = false) => {
   try {
@@ -45,12 +39,8 @@ const verifyToken = (token, isRefresh = false) => {
   }
 };
 
-module.exports = { generateAccessToken, generateRefreshToken, verifyToken };
-@@
-// Utility used to store/compare refresh tokens securely in DB
-const hashToken = (token) => {
-  return crypto.createHash("sha256").update(token).digest("hex");
-};
+const hashToken = (token) =>
+  crypto.createHash("sha256").update(token).digest("hex");
 
 module.exports = {
   generateAccessToken,

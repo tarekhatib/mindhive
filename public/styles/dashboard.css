@@ -91,7 +91,6 @@ body {
 
  
 .todo-card, .pomodoro-card {
-  /* let the grid control the sizing; provide sensible min so items don't collapse */
   aspect-ratio: 1 / 1;
   width: 100%;
   min-width: 240px;
@@ -192,7 +191,6 @@ body {
   }
 
   .dashboard-row {
-    /* use auto-fit so columns adapt to available width; allow smaller min to fit more cards */
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 2.5rem;
     justify-content: center;

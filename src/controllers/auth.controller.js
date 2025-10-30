@@ -36,6 +36,8 @@ const login = async (req, res) => {
         first_name: user.first_name,
         email: user.email,
       },
+      accessToken,
+      refreshToken,
     });
   } catch (err) {
     return res
