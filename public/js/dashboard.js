@@ -56,6 +56,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       weatherElement.innerHTML = "Unable to load weather 🌧️";
     }
   }
+
+  await fetchCurrentUser();
 });
 
 const timeDisplay = document.getElementById("pomodoro-time");
@@ -69,44 +71,54 @@ let timerDuration = 25 * 60;
 let remainingTime = timerDuration;
 let timerInterval = null;
 let isPaused = false;
+let startedAt = null;
+
+let currentUserId = null;
+
+async function fetchCurrentUser() {
+  try {
+    const res = await fetch("/api/auth/me");
+    if (res.ok) {
+      const data = await res.json();
+      currentUserId = data.user.id;
+      console.log("Authenticated user:", currentUserId);
+    } else {
+      console.warn("Failed to fetch user");
+    }
+  } catch (err) {
+    console.error("Error fetching user:", err);
+  }
+}
+
+function getUserId() {
+  const el = document.getElementById("user_id");
+  if (!el) return null;
+  const n = Number(el.value);
+  return Number.isFinite(n) ? n : null;
+}
 
 function saveState() {
-  const state = {
-    timerDuration,
-    remainingTime,
-    isPaused,
-  };
+  const state = { timerDuration, remainingTime, isPaused, startedAt };
   localStorage.setItem("pomodoroState", JSON.stringify(state));
 }
 
-function loadState() {
-  const saved = localStorage.getItem("pomodoroState");
-  if (saved) {
-    try {
-      const state = JSON.parse(saved);
-      if (
-        typeof state.timerDuration === "number" &&
-        typeof state.remainingTime === "number" &&
-        typeof state.isPaused === "boolean"
-      ) {
-        timerDuration = state.timerDuration;
-        remainingTime = state.remainingTime;
-        isPaused = state.isPaused;
-        if (isPaused) {
-          startBtn?.classList.add("hidden");
-          pauseBtn?.classList.remove("hidden");
-          pauseBtn.textContent = "Resume";
-          cancelBtn?.classList.remove("hidden");
-        } else {
-          startBtn?.classList.remove("hidden");
-          pauseBtn?.classList.add("hidden");
-          pauseBtn.textContent = "Pause";
-          cancelBtn?.classList.add("hidden");
-        }
-      }
-    } catch {
-      // ignore parse errors
-    }
+async function recordCompletion(pointsMinutes) {
+  if (!currentUserId) {
+    console.warn("No authenticated user found; cannot record session.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/pomodoro/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: currentUserId, points: pointsMinutes }),
+    });
+    if (!res.ok) throw new Error("Failed to record session");
+    const data = await res.json();
+    console.log("Pomodoro recorded:", data);
+  } catch (err) {
+    console.error("Error recording pomodoro session:", err);
   }
 }
 
@@ -119,52 +131,69 @@ function updateTimerDisplay() {
   timeDisplay.textContent = `${minutes}:${seconds}`;
 }
 
+function completeTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  remainingTime = 0;
+  updateTimerDisplay();
+  const points = Math.round(timerDuration / 60);
+  recordCompletion(points).finally(() => {
+    alert(`Pomodoro session completed! 🎉`);
+    resetTimer();
+  });
+}
+
+function updateElapsedTime() {
+  if (!startedAt || isPaused || remainingTime == 0) return;
+  const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+  if (elapsed > 0) {
+    remainingTime = Math.max(remainingTime - elapsed, 0);
+    if (remainingTime === 0) {
+      completeTimer();
+      return;
+    }
+    startedAt = Date.now();
+    updateTimerDisplay();
+    saveState();
+  }
+}
+
+function startTicking() {
+  if (timerInterval) return;
+  startedAt = Date.now();
+  timerInterval = setInterval(() => {
+    if (isPaused) return;
+    remainingTime -= 1;
+    if (remainingTime <= 0) {
+      completeTimer();
+      return;
+    }
+    updateTimerDisplay();
+    saveState();
+  }, 1000);
+}
+
 function startTimer() {
-  if (timerInterval || !startBtn || !pauseBtn || !cancelBtn) return;
+  if (!startBtn || !pauseBtn || !cancelBtn) return;
   isPaused = false;
   startBtn.classList.add("hidden");
   pauseBtn.classList.remove("hidden");
   cancelBtn.classList.remove("hidden");
   pauseBtn.textContent = "Pause";
   saveState();
-
-  timerInterval = setInterval(async () => {
-    if (!isPaused) {
-      remainingTime--;
-      updateTimerDisplay();
-      saveState();
-      if (remainingTime <= 0) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        alert("Pomodoro session completed! 🎉");
-        const userIdElement = document.getElementById("user_id");
-        const user_id = userIdElement ? userIdElement.value : null;
-        if (user_id) {
-          try {
-            await fetch("/api/pomodoro/complete", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                user_id,
-                points: timerDuration / 60,
-              }),
-            });
-          } catch (err) {
-            console.error("Error sending pomodoro completion:", err);
-          }
-        }
-        resetTimer();
-      }
-    }
-  }, 1000);
+  startTicking();
 }
 
 function pauseTimer() {
   if (!pauseBtn) return;
   isPaused = !isPaused;
-  pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+  if (isPaused) {
+    pauseBtn.textContent = "Resume";
+  } else {
+    pauseBtn.textContent = "Pause";
+    startedAt = Date.now();
+    startTicking();
+  }
   saveState();
 }
 
@@ -177,6 +206,7 @@ function cancelTimer() {
 
 function resetTimer() {
   remainingTime = timerDuration;
+  startedAt = null;
   updateTimerDisplay();
   startBtn?.classList.remove("hidden");
   pauseBtn?.classList.add("hidden");
@@ -202,11 +232,53 @@ function decreaseTimer() {
   }
 }
 
+function loadState() {
+  const saved = localStorage.getItem("pomodoroState");
+  if (saved) {
+    try {
+      const state = JSON.parse(saved);
+      if (
+        typeof state.timerDuration === "number" &&
+        typeof state.remainingTime === "number" &&
+        typeof state.isPaused === "boolean"
+      ) {
+        timerDuration = state.timerDuration;
+        remainingTime = state.remainingTime;
+        isPaused = state.isPaused;
+        startedAt =
+          typeof state.startedAt === "number" ? state.startedAt : null;
+
+        if (isPaused) {
+          startBtn?.classList.add("hidden");
+          pauseBtn?.classList.remove("hidden");
+          pauseBtn.textContent = "Resume";
+          cancelBtn?.classList.remove("hidden");
+        } else if (remainingTime < timerDuration && remainingTime > 0) {
+          startBtn?.classList.add("hidden");
+          pauseBtn?.classList.remove("hidden");
+          pauseBtn.textContent = "Resume";
+          cancelBtn?.classList.remove("hidden");
+        } else {
+          resetTimer();
+        }
+      }
+    } catch {}
+  }
+}
+
 startBtn?.addEventListener("click", startTimer);
 pauseBtn?.addEventListener("click", pauseTimer);
 cancelBtn?.addEventListener("click", cancelTimer);
 increaseBtn?.addEventListener("click", increaseTimer);
 decreaseBtn?.addEventListener("click", decreaseTimer);
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    saveState();
+  } else {
+    updateElapsedTime();
+  }
+});
 
 loadState();
 updateTimerDisplay();
