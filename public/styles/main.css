@@ -1,6 +1,8 @@
 :root {
   --accent-color: #f9c73b;
   --light-accent-color: #f8e7b9;
+  --button-background: rgba(249, 198, 59, 0.33);
+  --button-background-dark: rgba(249, 199, 59, 0.25);
   --background-light: #ffffff;
   --background-dark: #121212;
   --text-light: #2d383f;
@@ -114,7 +116,7 @@ button {
 .sidebar-bottom a.active,
 .sidebar-menu a:hover,
 .sidebar-bottom a:hover {
-  background-color: rgba(249, 199, 59, 0.25);
+  background-color: var(--button-background-dark);
   transform: scale(1.02);
 }
 

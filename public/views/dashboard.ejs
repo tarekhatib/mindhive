@@ -34,20 +34,30 @@
       <section class="dashboard-content">
         <div class="dashboard-row">
           <section class="card todo-card">
-            <h2>Today's To-Do List</h2>
+            <h2 style="padding-left: 10px">Today's To-Do List</h2>
+
             <ul id="todo-list">
-              <li>Finish lab report</li>
-              <li>Study for midterm</li>
-              <li>Plan weekend tasks</li>
+              <li class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="task-1" />
+                <label for="task-1">Cook</label>
+              </li>
+              <li class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="task-2" />
+                <label for="task-2">Keep Cooking</label>
+              </li>
+              <li class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="task-3" />
+                <label for="task-3">Goon</label>
+              </li>
             </ul>
           </section>
 
           <section class="card pomodoro-card">
             <h2 class="pomodoro-title">Pomodoro Session</h2>
             <div class="pomodoro-time-controls">
-              <button id="decrease-btn" class="time-btn">−</button>
+              <button id="decrease-btn" class="time-btn">&#8722;</button>
               <span id="pomodoro-time" class="pomodoro-time">25:00</span>
-              <button id="increase-btn" class="time-btn">+</button>
+              <button id="increase-btn" class="time-btn" style="">&#43;</button>
             </div>
             <div class="pomodoro-actions">
               <button id="start-btn" class="pomodoro-btn start">
