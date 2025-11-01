@@ -118,13 +118,12 @@ body {
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: var(--accent-color);
+  background: var(--button-background);
   color: #000;
   font-size: 1.4rem;
   font-weight: bold;
   cursor: pointer;
 }
-.time-btn:hover { background-color: #e6b72f; }
 
 .pomodoro-time {
   font-size: 5rem;
@@ -146,12 +145,14 @@ body {
   cursor: pointer;
   transition: 0.25s;
 }
-.start { background: var(--accent-color); color: #000; }
-.pause { background: #007bff; color: #fff; }
-.cancel { background: #ff4b4b; color: #fff; }
-.start:hover { background: #e6b72f; transform: scale(1.03); }
-.pause:hover { background: #0066dd; }
-.cancel:hover { background: #e33b3b; }
+.pomodoro-btn:hover {
+  transform: scale(1.03);
+}
+
+.start { background: var(--button-background); color: #000; }
+.pause { background: rgba(45, 145, 252, 0.33); color: #fff; color: #007bff }
+.cancel { background: rgba(255, 75, 75, 0.33); color: #fff; color: #ff4b4b}
+.start:hover { background: var(--button-background); transform: scale(1.03); }
 
  
 @media (max-width: 1000px) {
@@ -167,6 +168,8 @@ body {
   .sidebar-logo img {
     content: url("/assets/logos/MindHiveDark.svg");
   }
+  .start, #decrease-btn, #increase-btn { color: var(--accent-color); }
+
 }
 @media (prefers-color-scheme: light) {
   body { background-color: #f9f9f9; color: #111; }
@@ -278,4 +281,81 @@ body {
     margin: 0 auto;
     box-sizing: border-box;
   }
+}
+
+.todo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  padding: 1.5rem;
+}
+
+#todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.1rem;
+  background: transparent;
+  border-radius: 12px;
+  padding: 0.4rem 0.6rem;
+  transition: background-color 0.2s ease;
+}
+
+.todo-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.todo-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--button-background);
+  border-radius: 50%;
+  cursor: pointer;
+  background: transparent;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.todo-checkbox:checked {
+  background-color: var(--button-background);
+  border-color: var(--button-background);
+}
+
+.todo-checkbox:checked::after {
+  content: none;
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 6px;
+  height: 12px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.todo-item label {
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.todo-checkbox:checked + label {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.no-tasks {
+  text-align: center;
+  opacity: 0.6;
+  font-style: italic;
 }
