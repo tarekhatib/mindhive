@@ -355,6 +355,7 @@ body {
 }
 
 .no-tasks {
+  padding-top: 8rem;
   text-align: center;
   opacity: 0.6;
   font-style: italic;

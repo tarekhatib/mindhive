@@ -6,6 +6,7 @@ const path = require("path");
 const authRoutes = require("./src/routes/auth.routes.js");
 const dashboardRoutes = require("./src/routes/dashboard.routes.js");
 const pomodoroRoutes = require("./src/routes/pomodoro.routes.js");
+const tasksRoutes = require("./src/routes/tasks.routes.js");
 
 dotenv.config();
 
@@ -22,10 +23,11 @@ app.set("views", path.join(__dirname, "public", "views"));
 app.use("/", authRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", pomodoroRoutes);
+app.use("/", tasksRoutes);
 
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
 app.get("/register", (req, res) => res.render("register"));
 app.get("/dashboard", (req, res) => res.render("dashboard"));
-
+app.get("/tasks", (req, res) => res.render("tasks"));
 module.exports = app;

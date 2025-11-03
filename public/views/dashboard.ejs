@@ -35,21 +35,19 @@
         <div class="dashboard-row">
           <section class="card todo-card">
             <h2 style="padding-left: 10px">Today's To-Do List</h2>
-
+            <% if (tasks && tasks.length > 0) { %>
             <ul id="todo-list">
+              <% tasks.forEach(function(task) { %>
               <li class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="task-1" />
-                <label for="task-1">Cook</label>
+                <input type="checkbox" class="todo-checkbox" id="task-<%=
+                task.id %>" <%= task.status === 'done' ? 'checked' : '' %> />
+                <label for="task-<%= task.id %>"><%= task.title %></label>
               </li>
-              <li class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="task-2" />
-                <label for="task-2">Keep Cooking</label>
-              </li>
-              <li class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="task-3" />
-                <label for="task-3">Goon</label>
-              </li>
+              <% }); %>
             </ul>
+            <% } else { %>
+            <p class="no-tasks">All tasks completed! 🎉</p>
+            <% } %>
           </section>
 
           <section class="card pomodoro-card">
@@ -96,5 +94,6 @@
     </main>
 
     <script src="/js/dashboard.js"></script>
+    <scripttag src="/js/tasks.js"></script>
   </body>
 </html>

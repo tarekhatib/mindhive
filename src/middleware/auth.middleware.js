@@ -4,11 +4,12 @@ const db = require("../config/db");
 const { generateAccessToken, hashToken } = require("../utils/jwt");
 
 function authFail(req, res, status = 401, message = "Unauthorized") {
-  if (req.accepts(["html", "json"]) === "html") return res.redirect("/login");
+  if (req.accepts(["html", "json"]) === "html" && !req.path.startsWith("/api/"))
+    return res.redirect("/login");
   return res.status(status).json({ message });
 }
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   const cookieToken = req.cookies?.token
     ? decodeURIComponent(req.cookies.token)
     : null;
@@ -17,21 +18,23 @@ const authenticateToken = (req, res, next) => {
     : null;
   const token = cookieToken || headerToken;
 
-  const tryRefresh = () => {
+  const tryRefresh = async () => {
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) return authFail(req, res, 401, "Unauthorized");
 
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, payload) => {
-      if (err) return authFail(req, res, 403, "Invalid or expired session");
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, payload) => {
+        if (err) return authFail(req, res, 403, "Invalid or expired session");
 
-      const tokenHash = hashToken(refreshToken);
+        const tokenHash = hashToken(refreshToken);
 
-      db
-        .query(
-          "SELECT id FROM refresh_tokens WHERE token_hash = ? AND revoked = 0 AND expires_at > NOW()",
-          [tokenHash]
-        )
-        .then(([rows]) => {
+        try {
+          const [rows] = await db.query(
+            "SELECT id FROM refresh_tokens WHERE token_hash = ? AND revoked = 0 AND expires_at > NOW()",
+            [tokenHash]
+          );
           if (!rows || rows.length === 0)
             return authFail(req, res, 403, "Invalid or expired session");
 
@@ -57,9 +60,11 @@ const authenticateToken = (req, res, next) => {
             email: payload.email,
           };
           next();
-        })
-        .catch(() => authFail(req, res, 500, "Server error"));
-    });
+        } catch {
+          return authFail(req, res, 500, "Server error");
+        }
+      }
+    );
   };
 
   if (!token) return tryRefresh();

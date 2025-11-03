@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/tasks.css" />
+    <title>MindHive · Tasks</title>
+  </head>
+  <body>
+    <%- include('partials/sidebar', { page: 'tasks' }) %>
+
+    <div class="tasks-container">
+      <div class="tasks-header">
+        <h1>My To-Do List</h1>
+        <div class="tasks-controls">
+          <input
+            id="search-tasks"
+            class="search-bar"
+            type="text"
+            placeholder="Search tasks..."
+            aria-label="Search tasks"
+          />
+          <select
+            id="task-filter"
+            class="task-filter"
+            aria-label="Filter tasks"
+          >
+            <option value="all">All Tasks</option>
+            <option value="today">Today</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tasks-list">
+        <% if (typeof tasks !== 'undefined' && tasks && tasks.length > 0) { %>
+        <% tasks.forEach(task => { %>
+        <div class="task-item <%= task.completed ? 'completed' : '' %>">
+          <div class="task-left">
+            <input type="checkbox" class="task-checkbox" <%= task.completed ?
+            'checked' : '' %> data-id="<%= task.id %>" />
+            <div class="task-info">
+              <h3><%= task.title %></h3>
+              <% if (task.due_date) { %>
+              <p class="due-date">
+                Due: <%= new Date(task.due_date).toLocaleDateString() %>
+              </p>
+              <% } %> <% if (task.description) { %>
+              <p class="task-desc"><%= task.description %></p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% }) %> <% } else { %>
+        <p class="no-tasks">
+          You have no tasks yet. Add one using the + button!
+        </p>
+        <% } %>
+      </div>
+
+      <button id="add-task-btn" class="add-task-btn" aria-label="Add new task">
+        +
+      </button>
+    </div>
+
+    <script src="/js/tasks.js"></script>
+  </body>
+</html>
