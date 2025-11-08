@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/settings.css" />
+    <title>MindHive · Settings</title>
+  </head>
+  <body>
+    <%- include('partials/sidebar', { page: 'settings' }) %>
+    <div class="settings-container">
+      <h1>Settings</h1>
+      <form id="settings-form" class="settings-form">
+        <div class="form-group">
+          <ul>
+            <li></li>
+            <li>
+              <button type="button" class="settings-button">
+                <h3>Change Password</h3>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="settings-button" id="red-btn">
+                <h3>Delete Account</h3>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </form>
+      <footer class="settings-footer">
+        <p>&copy; 2025 MindHive. All rights reserved.</p>
+      </footer>
+    </div>
+    <script src="/js/settings.js"></script>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+:root {
+  --accent-color: #f9c73b;
+  --background-light: #ffffff;
+  --background-dark: #121212;
+  --text-light: #2d383f;
+  --text-dark: #ffffff;
+  --card-bg-light: rgba(255, 255, 255, 0.7);
+  --card-bg-dark: rgba(22, 22, 22, 0.8);
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-dark: rgba(0, 0, 0, 0.7);
+}
+
+.settings-container {
+  margin-left: 260px;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 100vh;
+  background-color: var(--background-light);
+  color: var(--text-light);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.settings-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.settings-form {
+  background: var(--card-bg-light);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px var(--shadow-light);
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.settings-form ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-form li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: inherit;
+}
+
+/* Buttons */
+
+button:hover {
+    cursor: pointer;
+}
+
+.settings-button {
+  background-color: transparent;
+  color: #000;
+  font-weight: 600;
+  border: none;
+  padding: 0;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.settings-button:hover {
+  transform: translateY(-2px);
+}
+
+#red-btn {
+  color: #ff4b4b;
+  color: #fff;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .settings-container {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+  }
+
+  .settings-form {
+    background: var(--card-bg-dark);
+    box-shadow: 0 4px 15px var(--shadow-dark);
+  }
+
+  .slider {
+    background-color: #555;
+  }
+
+  input:checked + .slider {
+    background-color: var(--accent-color);
+  }
+
+  .settings-button {
+    background-color: transparent;
+    color: var(--text-dark);
+  }
+
+  #red-btn {
+    color: #d93a3a;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  .settings-form {
+    width: 100%;
+    padding: 1.5rem;
+  }
+}
