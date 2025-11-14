@@ -5,7 +5,7 @@
   --text-light: #2d383f;
   --text-dark: #ffffff;
   --card-bg-light: rgba(255, 255, 255, 0.7);
-  --card-bg-dark: rgba(22, 22, 22, 0.8);
+  --card-bg-dark: rgba(22, 22, 22);
   --shadow-light: rgba(0, 0, 0, 0.1);
   --shadow-dark: rgba(0, 0, 0, 0.7);
 }
@@ -57,6 +57,66 @@
   color: inherit;
 }
 
+/* ===== PASSWORD MODAL ===== */
+.password-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.5);
+  z-index: 3000;
+}
+
+.password-modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--card-bg-dark);
+  padding: 2.5rem;
+  width: 350px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.modal-content h2 {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.modal-input {
+  width: auto;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--input-bg-dark);
+  border: none;
+  color: var(--text-dark);
+  font-size: large;
+}
+
+.confirm-btn {
+  padding: 14px;
+  background: var(--button-background-dark);
+  border: none;
+  color: var(--text-dark);
+  border-radius: 10px;
+  font-size: larger;
+}
+
+.cancel-btn {
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--text-dark);
+  border: none;
+  background: transparent;
+  color: var(--text-dark);
+  font-size: large;
+}
+
 /* Buttons */
 
 button:hover {
@@ -80,8 +140,7 @@ button:hover {
 }
 
 #red-btn {
-  color: #ff4b4b;
-  color: #fff;
+  color: #d93a3a !important;
 }
 
 /* Dark mode */
@@ -101,7 +160,7 @@ button:hover {
   }
 
   input:checked + .slider {
-    background-color: var(--accent-color);
+    background-color: #555;
   }
 
   .settings-button {

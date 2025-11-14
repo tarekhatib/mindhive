@@ -19,10 +19,18 @@
       <form id="settings-form" class="settings-form">
         <div class="form-group">
           <ul>
-            <li></li>
             <li>
-              <button type="button" class="settings-button">
+              <button
+                type="button"
+                class="settings-button"
+                id="change-password"
+              >
                 <h3>Change Password</h3>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="settings-button" id="log-out">
+                <h3>Log Out</h3>
               </button>
             </li>
             <li>
@@ -36,6 +44,32 @@
       <footer class="settings-footer">
         <p>&copy; 2025 MindHive. All rights reserved.</p>
       </footer>
+
+      <!-- Password Change Modal -->
+      <div id="password-modal" class="password-modal hidden">
+        <div class="modal-content">
+          <h2>Change Password</h2>
+
+          <input
+            type="password"
+            id="current_password"
+            placeholder="Current Password"
+            class="modal-input"
+          />
+
+          <input
+            type="password"
+            id="new_password"
+            placeholder="New Password"
+            class="modal-input"
+          />
+
+          <button id="submit-password" class="confirm-btn">
+            Update Password
+          </button>
+          <button id="cancel-modal" class="cancel-btn">Cancel</button>
+        </div>
+      </div>
     </div>
     <script src="/js/settings.js"></script>
   </body>

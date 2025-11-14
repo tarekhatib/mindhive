@@ -18,6 +18,12 @@ router.post(
   changePassword
 );
 
+router.post("/api/auth/logout", authenticateToken, (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  return res.status(200).json({ message: "Logged out successfully" });
+});
+
 router.delete(
   "/api/settings/delete-account",
   authenticateToken,

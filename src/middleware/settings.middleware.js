@@ -1,11 +1,11 @@
 const validateChangePassword = (req, res, next) => {
-  const { new_password } = req.body;
+  const { currentPassword, newPassword } = req.body;
 
-  if (typeof new_password !== "string") {
-    return res.status(400).json({ message: "New password must be a string" });
+  if (typeof currentPassword !== "string" || typeof newPassword !== "string") {
+    return res.status(400).json({ message: "Passwords must be strings" });
   }
 
-  if (new_password.length < 6) {
+  if (newPassword.length < 6) {
     return res
       .status(400)
       .json({ message: "New password must be at least 6 characters long" });
