@@ -41,4 +41,52 @@ router.post("/api/tasks/add", authenticateToken, async (req, res) => {
   }
 });
 
+// Update a task
+router.patch("/api/tasks/:id/update", authenticateToken, async (req, res) => {
+  try {
+    const { title, description, due_date } = req.body;
+    const { id } = req.params;
+    await db.query(
+      "UPDATE tasks SET title=?, description=?, due_date=? WHERE id=? AND user_id=?",
+      [title, description, due_date, id, req.user.id]
+    );
+    res.json({ success: true, message: "Task updated successfully" });
+  } catch (error) {
+    console.error("❌ Error updating task:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+// Toggle task completion
+router.patch("/api/tasks/:id/complete", authenticateToken, async (req, res) => {
+  try {
+    const { completed } = req.body;
+    const { id } = req.params;
+    await db.query("UPDATE tasks SET completed=? WHERE id=? AND user_id=?", [
+      completed,
+      id,
+      req.user.id,
+    ]);
+    res.json({ success: true, message: "Task completion status updated" });
+  } catch (error) {
+    console.error("❌ Error updating task completion:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+// Delete a task
+router.delete("/api/tasks/:id/delete", authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM tasks WHERE id=? AND user_id=?", [
+      id,
+      req.user.id,
+    ]);
+    res.json({ success: true, message: "Task deleted successfully" });
+  } catch (error) {
+    console.error("❌ Error deleting task:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
 module.exports = router;

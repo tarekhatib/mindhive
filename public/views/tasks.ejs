@@ -49,7 +49,9 @@
             <div class="task-info">
               <h3><%= task.title %></h3>
               <% if (task.due_date) { %>
-              <p class="due-date">
+              <p
+                class="due-date <%= new Date(task.due_date) < new Date(new Date().setHours(0,0,0,0)) ? 'overdue' : '' %>"
+              >
                 Due: <%= new Date(task.due_date).toLocaleDateString() %>
               </p>
               <% } %> <% if (task.description) { %>
