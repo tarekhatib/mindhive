@@ -49,44 +49,62 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(() => alert("Error occurred. Please try again."));
   });
 
+  const passwordModal = document.getElementById("password-modal");
+  const submitPasswordBtn = document.getElementById("submit-password");
+  const cancelModalBtn = document.getElementById("cancel-modal");
+  const currentPwInput = document.getElementById("current_password");
+  const newPwInput = document.getElementById("new_password");
+
   document.getElementById("change-password").addEventListener("click", () => {
-    document.getElementById("password-modal").classList.remove("hidden");
+    passwordModal.classList.remove("hidden");
+    currentPwInput.focus();
   });
 
-  document.getElementById("cancel-modal").addEventListener("click", () => {
-    document.getElementById("password-modal").classList.add("hidden");
+  cancelModalBtn.addEventListener("click", () => {
+    passwordModal.classList.add("hidden");
+    currentPwInput.value = "";
+    newPwInput.value = "";
   });
 
-  document
-    .getElementById("submit-password")
-    .addEventListener("click", async () => {
-      const currentPassword = document
-        .getElementById("current_password")
-        .value.trim();
-      const newPassword = document.getElementById("new_password").value.trim();
+  async function submitPasswordChange() {
+    const currentPassword = currentPwInput.value.trim();
+    const newPassword = newPwInput.value.trim();
 
-      if (!currentPassword || !newPassword) {
-        alert("Please fill both fields");
-        return;
+    if (!currentPassword || !newPassword) {
+      alert("Please fill both fields");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/settings/change-password", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await res.json();
+      alert(data.message);
+
+      if (res.ok) {
+        passwordModal.classList.add("hidden");
+        currentPwInput.value = "";
+        newPwInput.value = "";
       }
+    } catch (err) {
+      alert("Error updating password.");
+    }
+  }
 
-      try {
-        const res = await fetch("/api/settings/change-password", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            current_password: currentPassword,
-            new_password: newPassword,
-          }),
-        });
+  submitPasswordBtn.addEventListener("click", submitPasswordChange);
 
-        const data = await res.json();
-        alert(data.message);
-
-        document.getElementById("password-modal").classList.add("hidden");
-      } catch (err) {
-        alert("Error updating password.");
-      }
-    });
+  passwordModal.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitPasswordChange();
+    }
+  });
 });
