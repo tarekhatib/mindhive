@@ -52,12 +52,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? `${temp}°C — ${description}`
           : "Weather data unavailable";
     } catch (err) {
-      console.error("Weather API error:", err);
       weatherElement.innerHTML = "Unable to load weather 🌧️";
     }
   }
 
   await fetchCurrentUser();
+  await loadDashboardTasks();
+  loadState();
+  updateTimerDisplay();
 });
 
 const timeDisplay = document.getElementById("pomodoro-time");
@@ -67,11 +69,12 @@ const cancelBtn = document.getElementById("cancel-btn");
 const increaseBtn = document.getElementById("increase-btn");
 const decreaseBtn = document.getElementById("decrease-btn");
 
-let timerDuration = 25 * 60;
+const defaultMinutes = 25;
+let timerDuration = defaultMinutes * 60;
 let remainingTime = timerDuration;
-let timerInterval = null;
-let isPaused = false;
-let startedAt = null;
+let isPaused = true;
+let interval = null;
+let endAt = null;
 
 let currentUserId = null;
 
@@ -81,32 +84,12 @@ async function fetchCurrentUser() {
     if (res.ok) {
       const data = await res.json();
       currentUserId = data.user.id;
-      console.log("Authenticated user:", currentUserId);
-    } else {
-      console.warn("Failed to fetch user");
     }
-  } catch (err) {
-    console.error("Error fetching user:", err);
-  }
-}
-
-function getUserId() {
-  const el = document.getElementById("user_id");
-  if (!el) return null;
-  const n = Number(el.value);
-  return Number.isFinite(n) ? n : null;
-}
-
-function saveState() {
-  const state = { timerDuration, remainingTime, isPaused, startedAt };
-  localStorage.setItem("pomodoroState", JSON.stringify(state));
+  } catch {}
 }
 
 async function recordCompletion(pointsMinutes) {
-  if (!currentUserId) {
-    console.warn("No authenticated user found; cannot record session.");
-    return;
-  }
+  if (!currentUserId) return;
 
   try {
     const res = await fetch("/api/pomodoro/complete", {
@@ -114,68 +97,44 @@ async function recordCompletion(pointsMinutes) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: currentUserId, points: pointsMinutes }),
     });
-    if (!res.ok) throw new Error("Failed to record session");
-    const data = await res.json();
-    console.log("Pomodoro recorded:", data);
-  } catch (err) {
-    console.error("Error recording pomodoro session:", err);
-  }
+  } catch {}
 }
 
 function updateTimerDisplay() {
   if (!timeDisplay) return;
-  const minutes = Math.floor(remainingTime / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = (remainingTime % 60).toString().padStart(2, "0");
-  timeDisplay.textContent = `${minutes}:${seconds}`;
-}
-
-function completeTimer() {
-  clearInterval(timerInterval);
-  timerInterval = null;
-  remainingTime = 0;
-  updateTimerDisplay();
-  const points = Math.round(timerDuration / 60);
-  recordCompletion(points).finally(() => {
-    alert(`Pomodoro session completed! 🎉`);
-    resetTimer();
-  });
-}
-
-function updateElapsedTime() {
-  if (!startedAt || isPaused || remainingTime == 0) return;
-  const elapsed = Math.floor((Date.now() - startedAt) / 1000);
-  if (elapsed > 0) {
-    remainingTime = Math.max(remainingTime - elapsed, 0);
-    if (remainingTime === 0) {
-      completeTimer();
-      return;
-    }
-    startedAt = Date.now();
-    updateTimerDisplay();
-    saveState();
-  }
+  const m = String(Math.floor(remainingTime / 60)).padStart(2, "0");
+  const s = String(remainingTime % 60).padStart(2, "0");
+  timeDisplay.textContent = `${m}:${s}`;
 }
 
 function startTicking() {
-  if (timerInterval) return;
-  startedAt = Date.now();
-  timerInterval = setInterval(() => {
+  if (interval) return;
+
+  interval = setInterval(() => {
     if (isPaused) return;
+
     remainingTime -= 1;
+
     if (remainingTime <= 0) {
-      completeTimer();
+      clearInterval(interval);
+      interval = null;
+      remainingTime = 0;
+      updateTimerDisplay();
+      const points = Math.round(timerDuration / 60);
+      recordCompletion(points);
+      alert("Pomodoro session completed! 🎉");
+      resetTimer();
       return;
     }
+
     updateTimerDisplay();
     saveState();
   }, 1000);
 }
 
 function startTimer() {
-  if (!startBtn || !pauseBtn || !cancelBtn) return;
   isPaused = false;
+  endAt = null;
   startBtn.classList.add("hidden");
   pauseBtn.classList.remove("hidden");
   cancelBtn.classList.remove("hidden");
@@ -185,34 +144,28 @@ function startTimer() {
 }
 
 function pauseTimer() {
-  if (!pauseBtn) return;
-  isPaused = !isPaused;
-  if (isPaused) {
-    pauseBtn.textContent = "Resume";
-  } else {
-    pauseBtn.textContent = "Pause";
-    startedAt = Date.now();
-    startTicking();
-  }
+  isPaused = true;
+  pauseBtn.textContent = "Resume";
   saveState();
 }
 
 function cancelTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
   resetTimer();
   saveState();
 }
 
 function resetTimer() {
+  isPaused = true;
+  timerDuration = defaultMinutes * 60;
   remainingTime = timerDuration;
-  startedAt = null;
   updateTimerDisplay();
-  startBtn?.classList.remove("hidden");
-  pauseBtn?.classList.add("hidden");
-  cancelBtn?.classList.add("hidden");
-  if (pauseBtn) pauseBtn.textContent = "Pause";
-  isPaused = false;
+  startBtn.classList.remove("hidden");
+  pauseBtn.classList.add("hidden");
+  cancelBtn.classList.add("hidden");
+  pauseBtn.textContent = "Pause";
+  if (interval) clearInterval(interval);
+  interval = null;
+  endAt = null;
   saveState();
 }
 
@@ -234,51 +187,122 @@ function decreaseTimer() {
 
 function loadState() {
   const saved = localStorage.getItem("pomodoroState");
-  if (saved) {
-    try {
-      const state = JSON.parse(saved);
-      if (
-        typeof state.timerDuration === "number" &&
-        typeof state.remainingTime === "number" &&
-        typeof state.isPaused === "boolean"
-      ) {
-        timerDuration = state.timerDuration;
-        remainingTime = state.remainingTime;
-        isPaused = state.isPaused;
-        startedAt =
-          typeof state.startedAt === "number" ? state.startedAt : null;
+  if (!saved) return;
 
-        if (isPaused) {
-          startBtn?.classList.add("hidden");
-          pauseBtn?.classList.remove("hidden");
-          pauseBtn.textContent = "Resume";
-          cancelBtn?.classList.remove("hidden");
-        } else if (remainingTime < timerDuration && remainingTime > 0) {
-          startBtn?.classList.add("hidden");
-          pauseBtn?.classList.remove("hidden");
-          pauseBtn.textContent = "Resume";
-          cancelBtn?.classList.remove("hidden");
-        } else {
-          resetTimer();
-        }
-      }
-    } catch {}
-  }
+  try {
+    const state = JSON.parse(saved);
+    timerDuration = state.timerDuration ?? timerDuration;
+    remainingTime = state.remainingTime ?? remainingTime;
+    isPaused = state.isPaused ?? true;
+    updateTimerDisplay();
+
+    if (!isPaused && remainingTime > 0) {
+      startBtn.classList.add("hidden");
+      pauseBtn.classList.remove("hidden");
+      cancelBtn.classList.remove("hidden");
+      pauseBtn.textContent = "Resume";
+    }
+  } catch {}
+}
+
+function saveState() {
+  localStorage.setItem(
+    "pomodoroState",
+    JSON.stringify({
+      timerDuration,
+      remainingTime,
+      isPaused,
+    })
+  );
 }
 
 startBtn?.addEventListener("click", startTimer);
-pauseBtn?.addEventListener("click", pauseTimer);
+pauseBtn?.addEventListener("click", () => {
+  if (isPaused) {
+    isPaused = false;
+    pauseBtn.textContent = "Pause";
+    startTicking();
+  } else {
+    pauseTimer();
+  }
+});
 cancelBtn?.addEventListener("click", cancelTimer);
 increaseBtn?.addEventListener("click", increaseTimer);
 decreaseBtn?.addEventListener("click", decreaseTimer);
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
+    isPaused = true;
+    pauseBtn.textContent = "Resume";
     saveState();
-  } else {
-    updateElapsedTime();
   }
 });
 
-loadState();
-updateTimerDisplay();
+async function loadDashboardTasks() {
+  try {
+    const res = await fetch("/api/tasks?filter=today");
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    const todoList = document.getElementById("todo-list");
+    if (!todoList) return;
+
+    todoList.innerHTML = "";
+
+    const filtered = tasks.filter((task) => {
+      if (!task.due_date) return false;
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const due = new Date(task.due_date);
+      due.setHours(0, 0, 0, 0);
+      return due.getTime() <= now.getTime();
+    });
+
+    if (filtered.length === 0) {
+      todoList.innerHTML = "<p class='no-tasks'>No tasks for today.</p>";
+      return;
+    }
+
+    filtered.forEach((task) => {
+      const li = document.createElement("li");
+      li.className = "todo-item";
+      li.innerHTML = `
+        <input type="checkbox" class="todo-checkbox" data-id="${task.id}">
+        <label>${task.title}</label>
+      `;
+      todoList.appendChild(li);
+    });
+  } catch {
+    const todoList = document.getElementById("todo-list");
+    if (todoList) {
+      todoList.innerHTML =
+        "<p class='no-tasks'>Error loading today's tasks.</p>";
+    }
+  }
+}
+
+let completeTimeouts = {};
+
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("todo-checkbox")) {
+    const id = e.target.dataset.id;
+
+    if (completeTimeouts[id]) {
+      clearTimeout(completeTimeouts[id]);
+      delete completeTimeouts[id];
+      e.target.checked = false;
+      return;
+    }
+
+    completeTimeouts[id] = setTimeout(async () => {
+      try {
+        await fetch(`/api/tasks/${id}/delete`, {
+          method: "DELETE",
+        });
+        await loadDashboardTasks();
+      } catch {}
+      delete completeTimeouts[id];
+    }, 2000);
+  }
+});

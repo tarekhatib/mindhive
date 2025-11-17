@@ -15,7 +15,7 @@ router.get("/tasks", authenticateToken, async (req, res) => {
 router.get("/api/tasks", authenticateToken, async (req, res) => {
   try {
     const [tasks] = await db.query(
-      "SELECT id, title, description, due_date, completed FROM tasks WHERE user_id = ? ORDER BY due_date ASC",
+      "SELECT id, title, description, due_date FROM tasks WHERE user_id = ? ORDER BY due_date ASC",
       [req.user.id]
     );
     res.json({ success: true, tasks });
@@ -53,23 +53,6 @@ router.patch("/api/tasks/:id/update", authenticateToken, async (req, res) => {
     res.json({ success: true, message: "Task updated successfully" });
   } catch (error) {
     console.error("❌ Error updating task:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-});
-
-// Toggle task completion
-router.patch("/api/tasks/:id/complete", authenticateToken, async (req, res) => {
-  try {
-    const { completed } = req.body;
-    const { id } = req.params;
-    await db.query("UPDATE tasks SET completed=? WHERE id=? AND user_id=?", [
-      completed,
-      id,
-      req.user.id,
-    ]);
-    res.json({ success: true, message: "Task completion status updated" });
-  } catch (error) {
-    console.error("❌ Error updating task completion:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });

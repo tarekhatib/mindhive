@@ -27,8 +27,6 @@ const getTasks = async (req, res) => {
       query += " AND DATE(due_date) = CURDATE()";
     } else if (filter === "upcoming") {
       query += " AND DATE(due_date) > CURDATE()";
-    } else if (filter === "completed") {
-      query += " AND completed = 1";
     }
 
     query += " ORDER BY due_date ASC";
@@ -60,25 +58,6 @@ const updateTask = async (req, res) => {
   }
 };
 
-const toggleComplete = async (req, res) => {
-  try {
-    const taskId = req.params.id;
-    const { completed } = req.body;
-
-    await db
-      .promise()
-      .query("UPDATE tasks SET completed = ? WHERE id = ?", [
-        completed ? 1 : 0,
-        taskId,
-      ]);
-
-    res.status(200).json({ message: "Task completion updated" });
-  } catch (error) {
-    console.error("❌ Error completing task:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 const deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
@@ -96,6 +75,5 @@ module.exports = {
   addTask,
   getTasks,
   updateTask,
-  toggleComplete,
   deleteTask,
 };
