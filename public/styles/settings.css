@@ -1,13 +1,17 @@
 :root {
   --accent-color: #f9c73b;
   --background-light: #ffffff;
-  --background-dark: #121212;
+  --background-dark: #111;
   --text-light: #2d383f;
   --text-dark: #ffffff;
   --card-bg-light: rgba(255, 255, 255, 0.7);
   --card-bg-dark: rgba(22, 22, 22);
   --shadow-light: rgba(0, 0, 0, 0.1);
   --shadow-dark: rgba(0, 0, 0, 0.7);
+}
+
+body {
+  background: #f9f9f9;
 }
 
 .settings-container {
@@ -17,7 +21,7 @@
   flex-direction: column;
   gap: 2rem;
   min-height: 100vh;
-  background-color: var(--background-light);
+  background-color: #f9f9f9;
   color: var(--text-light);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -145,6 +149,10 @@ button:hover {
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--background-dark);
+  }
+
   .settings-container {
     background-color: var(--background-dark);
     color: var(--text-dark);
