@@ -45,6 +45,16 @@ const addNote = async (req, res) => {
     const userId = req.user.id;
     const { title, content, course_id } = req.body;
 
+    if (course_id) {
+      const [course] = await db.query(
+        "SELECT id FROM courses WHERE id = ? AND user_id = ?",
+        [course_id, userId]
+      );
+      if (course.length === 0) {
+        return res.status(403).json({ message: "Invalid course selection" });
+      }
+    }
+
     const [result] = await db.query(
       "INSERT INTO notes (user_id, title, content, course_id) VALUES (?, ?, ?, ?)",
       [userId, title, content, course_id || null]
@@ -65,6 +75,16 @@ const updateNote = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
     const { title, content, course_id } = req.body;
+
+    if (course_id) {
+      const [course] = await db.query(
+        "SELECT id FROM courses WHERE id = ? AND user_id = ?",
+        [course_id, userId]
+      );
+      if (course.length === 0) {
+        return res.status(403).json({ message: "Invalid course selection" });
+      }
+    }
 
     const [result] = await db.query(
       "UPDATE notes SET title = ?, content = ?, course_id = ? WHERE user_id = ? AND id = ?",

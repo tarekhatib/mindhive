@@ -7,9 +7,12 @@ const {
 const {
   changePassword,
   deleteAccount,
+  renderSettings,
 } = require("../controllers/settings.controller");
 
 const router = express.Router();
+
+router.get("/settings", authenticateToken, renderSettings);
 
 router.post(
   "/api/settings/change-password",

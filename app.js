@@ -32,8 +32,4 @@ app.use("/", notesRoutes);
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
 app.get("/register", (req, res) => res.render("register"));
-app.get("/dashboard", (req, res) => res.render("dashboard"));
-app.get("/tasks", (req, res) => res.render("tasks"));
-app.get("/settings", (req, res) => res.render("settings"));
-app.get("/notes", (req, res) => res.render("notes"));
 module.exports = app;

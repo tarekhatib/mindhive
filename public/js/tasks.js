@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentUserId = null;
   let activeEditItem = null;
+  let completeTimeouts = {};
 
   async function fetchCurrentUser() {
     try {
@@ -14,82 +15,55 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await res.json();
         currentUserId = data.user.id;
       }
-    } catch (err) {}
+    } catch {}
   }
 
   async function fetchTasks(filter = "all") {
+    if (activeEditItem) return;
+
     try {
-      let fetchFilter = filter;
-      if (!["all", "today", "upcoming"].includes(fetchFilter)) {
-        fetchFilter = "all";
-      }
-      const res = await fetch(`/api/tasks?filter=all`);
+      const res = await fetch(`/api/tasks?filter=${filter}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
-      let tasks = Array.isArray(data.tasks) ? data.tasks : [];
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (fetchFilter === "today") {
-        tasks = tasks.filter((task) => {
-          if (!task.due_date) return false;
-          const due = new Date(task.due_date);
-          due.setHours(0, 0, 0, 0);
-          if (due.getTime() === today.getTime()) return true;
-          if (due < today && !task.completed) return true;
-          return false;
-        });
-      } else if (fetchFilter === "upcoming") {
-        tasks = tasks.filter((task) => {
-          if (!task.due_date) return false;
-          const due = new Date(task.due_date);
-          due.setHours(0, 0, 0, 0);
-          return due > today;
-        });
-      }
-      renderTasks(tasks);
-    } catch (err) {
+      renderTasks(data.tasks || []);
+    } catch {
       tasksList.innerHTML = `<p class="no-tasks">Error loading tasks.</p>`;
     }
   }
 
   function renderTasks(tasks) {
+    if (activeEditItem) return;
+
+    tasksList.innerHTML = "";
+
     if (!tasks || tasks.length === 0) {
       tasksList.innerHTML = `<p class="no-tasks">No tasks found.</p>`;
       return;
     }
 
-    tasksList.innerHTML = "";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     tasks.forEach((task) => {
-      let isOverdue = false;
-      let isToday = false;
-      if (task.due_date) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const due = new Date(task.due_date);
-        due.setHours(0, 0, 0, 0);
-        if (due < today && !task.completed) isOverdue = true;
-        if (due.getTime() === today.getTime()) isToday = true;
-      }
+      const due = task.due_date ? new Date(task.due_date) : null;
+      if (due) due.setHours(0, 0, 0, 0);
+
+      const isToday = due && due.getTime() === today.getTime();
+      const isPast = due && due < today;
 
       const item = document.createElement("div");
-      item.className = `task-item ${task.completed ? "completed" : ""}`;
+      item.className = "task-item";
       item.dataset.id = task.id;
 
       item.innerHTML = `
         <div class="task-left">
-          <input type="checkbox" class="task-checkbox" data-id="${task.id}" ${
-        task.completed ? "checked" : ""
-      }>
+          <input type="checkbox" class="task-checkbox" data-id="${task.id}">
           <div class="task-info">
             <h3>${task.title}</h3>
             ${
               task.due_date
-                ? `<p class="due-date ${isOverdue ? "overdue" : ""}">
-                     Due: ${
-                       isToday
-                         ? "Today"
-                         : new Date(task.due_date).toLocaleDateString()
-                     }
+                ? `<p class="due-date ${isPast ? "overdue" : ""}">
+                     ${isToday ? "Due: Today" : "Due: " + due.toLocaleDateString()}
                    </p>`
                 : ""
             }
@@ -102,52 +76,50 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
 
-      const checkbox = item.querySelector(".task-checkbox");
-      checkbox.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        if (checkbox.dataset.state === "waiting") {
-          checkbox.dataset.state = "";
-          clearTimeout(checkbox._timer);
-          checkbox.checked = false;
-          return;
-        }
-        checkbox.dataset.state = "waiting";
-        checkbox._timer = setTimeout(async () => {
-          if (checkbox.dataset.state !== "waiting") return;
-          await deleteTask(task.id, item);
-          checkbox.dataset.state = "";
-          await fetchTasks();
-        }, 2000);
-      });
-
-      item.addEventListener("click", (e) => {
-        if (e.target.classList.contains("task-checkbox")) return;
-        if (e.target.closest(".task-edit-delete")) return;
-        enterEditMode(item, task);
-      });
-
+      attachItemEvents(item, task);
       tasksList.appendChild(item);
     });
   }
 
-  function enterEditMode(item, task) {
-    if (activeEditItem && activeEditItem !== item) return;
+  function attachItemEvents(item, task) {
+    const checkbox = item.querySelector(".task-checkbox");
 
-    setTimeout(() => {
-      activeEditItem = item;
-    }, 0);
+    checkbox.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = task.id;
+
+      if (completeTimeouts[id]) {
+        clearTimeout(completeTimeouts[id]);
+        delete completeTimeouts[id];
+        checkbox.checked = false;
+        return;
+      }
+
+      completeTimeouts[id] = setTimeout(async () => {
+        await deleteTask(id);
+        await fetchTasks(filterSelect.value);
+        delete completeTimeouts[id];
+      }, 2000);
+    });
+
+    item.addEventListener("click", () => {
+      enterEditMode(item, task);
+    });
+  }
+
+  function enterEditMode(item, task) {
+    if (activeEditItem) return;
+    activeEditItem = item;
 
     const id = task.id;
     item.classList.add("editing");
 
     item.innerHTML = `
       <div class="task-left edit-wrapper">
-        <input type="checkbox" class="task-checkbox" ${
-          task.completed ? "checked" : ""
-        } data-id="${id}">
+        <input type="checkbox" disabled>
         <div class="task-info edit-mode">
-          <input type="text" class="task-edit-title" value="${task.title}">
-          <input type="date" class="task-edit-date" value="${
+          <input class="task-edit-title" type="text" value="${task.title}">
+          <input class="task-edit-date" type="date" value="${
             task.due_date ? task.due_date.split("T")[0] : ""
           }">
           <textarea class="task-edit-desc" rows="2">${
@@ -158,187 +130,98 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    const titleInput = item.querySelector(".task-edit-title");
-    const dateInput = item.querySelector(".task-edit-date");
-    const descInput = item.querySelector(".task-edit-desc");
-    const deleteBtn = item.querySelector(".task-edit-delete");
-    const editContainer = item.querySelector(".edit-wrapper");
+    const title = item.querySelector(".task-edit-title");
+    const date = item.querySelector(".task-edit-date");
+    const desc = item.querySelector(".task-edit-desc");
+    const del = item.querySelector(".task-edit-delete");
 
-    editContainer.addEventListener("click", (e) => e.stopPropagation());
+    title.focus();
 
-    function submitEdits() {
-      saveTaskEdits(id, titleInput.value, dateInput.value, descInput.value);
+    function submit() {
+      saveTaskEdits(id, title.value, date.value, desc.value);
     }
 
-    [titleInput, dateInput, descInput].forEach((el) => {
+    [title, date, desc].forEach((el) => {
       el.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           activeEditItem = null;
-          fetchTasks();
+          fetchTasks(filterSelect.value);
         }
+
         if (e.key === "Enter") {
           e.preventDefault();
-          submitEdits();
+          submit();
+        }
+
+        if (
+          (e.key === "Backspace" || e.key === "Delete") &&
+          el === title &&
+          title.value.trim() === ""
+        ) {
+          deleteTask(id);
         }
       });
     });
 
-    deleteBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      deleteTask(id, item);
-    });
+    del.addEventListener("click", () => deleteTask(id));
+
+    item.querySelector(".edit-wrapper").addEventListener("click", (e) =>
+      e.stopPropagation()
+    );
+
+    document.addEventListener(
+      "click",
+      function outsideClick(e) {
+        if (!activeEditItem) {
+          document.removeEventListener("click", outsideClick);
+          return;
+        }
+        if (activeEditItem.contains(e.target)) return;
+
+        activeEditItem = null;
+        fetchTasks(filterSelect.value);
+        document.removeEventListener("click", outsideClick);
+      },
+      { capture: true }
+    );
   }
 
-  async function saveTaskEdits(id, title, due_date, description) {
+  async function saveTaskEdits(id, title, date, desc) {
     try {
-      const res = await fetch(`/api/tasks/${id}/update`, {
+      await fetch(`/api/tasks/${id}/update`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
-          due_date: due_date || null,
-          description: description.trim() || null,
+          description: desc.trim(),
+          due_date: date || null,
         }),
       });
-
-      if (!res.ok) throw new Error();
-      activeEditItem = null;
-      await fetchTasks();
-    } catch (err) {}
-  }
-
-  async function deleteTask(id, item) {
-    try {
-      const res = await fetch(`/api/tasks/${id}/delete`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error();
-      item.classList.remove("pending-complete", "undo");
-      activeEditItem = null;
-      await fetchTasks();
-    } catch (err) {}
-  }
-
-  async function saveNewTask(
-    taskElement,
-    titleInput,
-    dateInput,
-    descriptionInput
-  ) {
-    const title = titleInput.value.trim();
-    if (!title) {
-      tasksList.removeChild(taskElement);
-      return;
-    }
-
-    const due_date = dateInput.value || null;
-    const description = descriptionInput.value.trim() || null;
-
-    if (!currentUserId) return;
-
-    try {
-      const res = await fetch("/api/tasks/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: currentUserId,
-          title,
-          due_date,
-          description,
-        }),
-      });
-
-      if (!res.ok) throw new Error();
-      await fetchTasks();
-    } catch (err) {}
-  }
-
-  addBtn?.addEventListener("click", () => {
-    const item = document.createElement("div");
-    item.className = "task-item new-task";
-    item.innerHTML = `
-      <div class="task-left edit-wrapper">
-        <input type="checkbox" class="task-checkbox" disabled>
-        <div class="task-info edit-mode">
-          <input type="text" class="task-title-input" placeholder="New task title" autofocus>
-          <input type="date" class="task-date-input">
-          <textarea class="task-desc-input" placeholder="Description" rows="2"></textarea>
-        </div>
-      </div>
-    `;
-
-    tasksList.prepend(item);
-
-    const titleInput = item.querySelector(".task-title-input");
-    const dateInput = item.querySelector(".task-date-input");
-    const descriptionInput = item.querySelector(".task-desc-input");
-
-    [titleInput, dateInput, descriptionInput].forEach((el) => {
-      el.addEventListener("keydown", (e) => {
-        if (e.key === "Tab") {
-          e.stopPropagation();
-          return;
-        }
-      });
-    });
-
-    let saved = false;
-
-    async function trySave() {
-      if (saved) return;
-      saved = true;
-      await saveNewTask(item, titleInput, dateInput, descriptionInput);
-    }
-
-    function submitNew() {
-      trySave();
-    }
-
-    [titleInput, dateInput, descriptionInput].forEach((el) => {
-      el.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          item.remove();
-        }
-        if (e.key === "Enter") {
-          e.preventDefault();
-          submitNew();
-        }
-      });
-    });
-
-    titleInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        titleInput.blur();
-      }
-    });
-  });
-
-  filterSelect?.addEventListener("change", async () => {
-    let val = filterSelect.value;
-    if (!["all", "today", "upcoming"].includes(val)) {
-      val = "all";
-    }
-    await fetchTasks(val);
-  });
-
-  searchInput?.addEventListener("input", async () => {
-    const query = searchInput.value.toLowerCase();
-    const res = await fetch("/api/tasks");
-    const data = await res.json();
-    const tasks = Array.isArray(data.tasks) ? data.tasks : [];
-    const filtered = tasks.filter((t) => t.title.toLowerCase().includes(query));
-    renderTasks(filtered);
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!activeEditItem) return;
-
-    const wrapper = activeEditItem.querySelector(".edit-wrapper");
-    if (wrapper && wrapper.contains(e.target)) return;
-
+    } catch {}
     activeEditItem = null;
-    fetchTasks();
+    fetchTasks(filterSelect.value);
+  }
+
+  async function deleteTask(id) {
+    try {
+      await fetch(`/api/tasks/${id}/delete`, { method: "DELETE" });
+    } catch {}
+    activeEditItem = null;
+    fetchTasks(filterSelect.value);
+  }
+
+  filterSelect.addEventListener("change", () =>
+    fetchTasks(filterSelect.value)
+  );
+
+  searchInput.addEventListener("input", async () => {
+    const query = searchInput.value.toLowerCase();
+    const res = await fetch("/api/tasks?filter=all");
+    const data = await res.json();
+    const filtered = data.tasks.filter((t) =>
+      t.title.toLowerCase().includes(query)
+    );
+    renderTasks(filtered);
   });
 
   (async () => {

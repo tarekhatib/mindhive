@@ -1,6 +1,10 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 
+const renderSettings = (req, res) => {
+  res.render("settings", { user: req.user });
+};
+
 const changePassword = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -50,4 +54,5 @@ const deleteAccount = async (req, res) => {
 module.exports = {
   changePassword,
   deleteAccount,
+  renderSettings,
 };

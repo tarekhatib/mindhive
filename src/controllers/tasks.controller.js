@@ -35,16 +35,18 @@ const getTasks = async (req, res) => {
 
 const addTask = async (req, res) => {
   try {
-    const { user_id, title, description, due_date } = req.body;
+    const userId = req.user.id;
+    const { title, description, due_date } = req.body;
 
     const [result] = await db.query(
       "INSERT INTO tasks (user_id, title, description, due_date) VALUES (?, ?, ?, ?)",
-      [user_id, title, description, due_date]
+      [userId, title, description, due_date]
     );
 
-    res
-      .status(201)
-      .json({ message: "Task added successfully", taskId: result.insertId });
+    res.status(201).json({
+      message: "Task added successfully",
+      taskId: result.insertId,
+    });
   } catch (error) {
     console.error("❌ Error adding task:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -93,7 +95,7 @@ const deleteTask = async (req, res) => {
 };
 
 module.exports = {
-  renderTasksPage,
+  renderTasks,
   getTasks,
   addTask,
   updateTask,
