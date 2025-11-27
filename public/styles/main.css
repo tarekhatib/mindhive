@@ -31,7 +31,7 @@ body {
   display: block;
 }
 
- 
+
 body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -56,6 +56,12 @@ button {
   cursor: pointer;
 }
 
+/* Remove focus outline everywhere except auth pages */
+body:not(.auth-page) *:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -74,11 +80,12 @@ button {
   z-index: 1000;
 }
 
- 
+
 .sidebar-logo {
   display: flex;
   justify-content: center;
 }
+
 .sidebar-logo img {
   width: 140px;
 }
@@ -120,7 +127,7 @@ button {
   transform: scale(1.02);
 }
 
- 
+
 @media (prefers-color-scheme: light) {
   body {
     background-color: var(--hover-bg-light);
@@ -154,11 +161,12 @@ button {
   }
 }
 
- 
+
 @media (prefers-color-scheme: dark) {
   .logo {
     content: url("/assets/logos/MindHiveDark.svg");
   }
+
   body {
     background-color: var(--background-dark);
     color: var(--text-dark);
@@ -187,8 +195,9 @@ button {
   }
 }
 
- 
+
 @media (max-width: 480px) {
+
   input[type="email"],
   input[type="password"],
   input[type="text"] {

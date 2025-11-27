@@ -1,7 +1,26 @@
 const db = require("../config/db");
 
 const renderNotes = async (req, res) => {
-  res.render("notes", { user: req.user });
+  try {
+    const userId = req.user.id;
+
+    const [notes] = await db.query(
+      "SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC",
+      [userId]
+    );
+
+    res.render("notes", {
+      user: req.user,
+      notes: notes || []
+    });
+  } catch (err) {
+    console.error("❌ Error loading notes page:", err);
+    res.render("notes", {
+      user: req.user,
+      notes: [],
+      errorMessage: "Failed to load notes."
+    });
+  }
 };
 
 const renderNoteEditor = async (req, res) => {

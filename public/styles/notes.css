@@ -62,25 +62,32 @@
  /* --------------------------------------------------
    Add note button
 -------------------------------------------------- */
- .add-note-btn {
+ #add-note-btn {
+     position: fixed;
+     bottom: 40px;
+     right: 40px;
      background-color: rgba(249, 198, 59, 0.33);
+     ;
      backdrop-filter: saturate(180%) blur(12px);
      -webkit-backdrop-filter: saturate(180%) blur(12px);
+     color: var(--background-dark);
      border: none;
      border-radius: 50%;
-     width: 48px;
-     height: 48px;
-     color: var(--background-dark);
-     font-size: 1rem;
-     display: flex;
-     justify-content: center;
-     align-items: center;
+     width: 55px;
+     height: 55px;
+     font-size: 2rem;
+     font-weight: bold;
      cursor: pointer;
-     transition: transform 0.3s ease, background-color 0.3s ease;
+     transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
  }
 
- .add-note-btn:hover {
+ #add-note-btn:focus,
+ #add-note-btn:hover {
      transform: scale(1.1) translateY(-1px);
+     outline: none;
  }
 
  /* --------------------------------------------------
@@ -178,12 +185,13 @@
          color: var(--text-dark);
      }
 
-     .add-note-btn {
+     #add-note-btn {
          background-color: rgba(255, 255, 255, 0.12);
          color: var(--text-dark);
+         box-shadow: none;
      }
 
-     .add-note-btn:hover {
+     #add-note-btn:hover {
          background-color: rgba(255, 255, 255, 0.2);
      }
 
@@ -265,6 +273,23 @@
      padding: 0.4rem 0.6rem;
      background: #fff;
      border: 1px solid #ddd;
+ }
+
+ .editor-title,
+ .editor-body {
+     outline: none !important;
+     box-shadow: none !important;
+     transition: none !important;
+     border: none !important;
+     -webkit-appearance: none !important;
+ }
+
+ .editor-title:focus,
+ .editor-body:focus {
+     outline: none !important;
+     box-shadow: none !important;
+     -webkit-box-shadow: none !important;
+     border: none !important;
  }
 
  /* DARK MODE */
