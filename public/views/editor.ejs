@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Note</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="stylesheet" href="/styles/notes.css" />
+</head>
+<body>
+  <%- include("partials/sidebar", { page: "notes" }) %>
+
+  <div class="editor-container">
+    <% if (errorMessage) { %>
+      <p class="error"><%= errorMessage %></p>
+    <% } else { %>
+
+      <input id="note-id" type="hidden" value="<%= note.id %>">
+
+      <input
+        id="note-title"
+        class="editor-title"
+        type="text"
+        value="<%= note.title %>"
+        placeholder="Title"
+      />
+
+      <textarea
+        id="note-body"
+        class="editor-body"
+        placeholder="Start typing..."
+      ><%= note.content %></textarea>
+
+    <% } %>
+  </div>
+
+  <script src="/js/notes.js"></script>
+</body>
+</html>

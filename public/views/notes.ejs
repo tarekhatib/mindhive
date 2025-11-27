@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="stylesheet" href="/styles/notes.css" />
+  <title>MindHive · Notes</title>
+</head>
+
+<body>
+  <%- include('partials/sidebar', { page: 'notes' }) %>
+  <div class="notes-container">
+    <div class="notes-header">
+      <h1>My Notes</h1>
+
+      <div class="notes-controls">
+        <input
+          id="search-notes"
+          class="search-bar"
+          type="text"
+          placeholder="Search notes..."
+          aria-label="Search notes"
+        />
+        <button id="add-note-btn" class="add-note-btn" aria-label="Add new note">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="notes-list">
+      <% if (typeof notes !== 'undefined' && notes && notes.length > 0) { %>
+        <% notes.forEach(note => { %>
+
+          <div class="note-item" data-id="<%= note.id %>">
+
+            <div class="note-info">
+              <h3 class="note-title"><%= note.title || "Untitled" %></h3>
+
+              <p class="note-preview">
+                <%= note.body 
+                      ? note.body.substring(0, 80) + (note.body.length > 80 ? "..." : "") 
+                      : "No content" 
+                %>
+              </p>
+            </div>
+
+            <div class="note-date">
+              <%= new Date(note.created_at).toLocaleDateString() %>
+            </div>
+
+          </div>
+
+        <% }) %>
+
+      <% } else { %>
+
+        <p class="no-notes">
+          You have no notes yet. Create one with the button above!
+        </p>
+
+      <% } %>
+    </div>
+  </div>
+
+  <script src="/js/notes.js"></script>
+</body>
+</html>

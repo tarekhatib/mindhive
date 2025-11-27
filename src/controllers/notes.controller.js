@@ -1,8 +1,36 @@
 const db = require("../config/db");
 
-const renderNotes = async(req, res) => {
-    res.render("notes", { user: req.user });
-}
+const renderNotes = async (req, res) => {
+  res.render("notes", { user: req.user });
+};
+
+const renderNoteEditor = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const noteId = req.params.id;
+
+    const [rows] = await db.query(
+      "SELECT * FROM notes WHERE id = ? AND user_id = ?",
+      [noteId, userId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).render("editor", {
+        note: null,
+        errorMessage: "Note not found",
+      });
+    }
+
+    res.render("editor", { note: rows[0], errorMessage: null });
+
+  } catch (err) {
+    console.error("❌ Error loading editor:", err);
+    res.status(500).render("editor", {
+      note: null,
+      errorMessage: "Failed to load the note.",
+    });
+  }
+};
 
 const getNotes = async (req, res) => {
   try {
@@ -62,8 +90,9 @@ const addNote = async (req, res) => {
 
     res.status(201).json({
       message: "Note added successfully",
-      noteId: result.insertId
+      noteId: result.insertId,
     });
+
   } catch (error) {
     console.error("❌ Error adding note:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -159,11 +188,12 @@ const addCourse = async (req, res) => {
 
 module.exports = {
   renderNotes,
+  renderNoteEditor,
   getNotes,
   getNoteById,
   addNote,
   updateNote,
   deleteNote,
   getAllCourses,
-  addCourse
+  addCourse,
 };
