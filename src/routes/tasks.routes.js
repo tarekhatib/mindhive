@@ -14,14 +14,26 @@ router.get("/tasks", authenticateToken, async (req, res) => {
 
 router.get("/api/tasks", authenticateToken, async (req, res) => {
   try {
-    const [tasks] = await db.query(
-      "SELECT id, title, description, due_date FROM tasks WHERE user_id = ? ORDER BY due_date ASC",
-      [req.user.id]
-    );
-    res.json({ success: true, tasks });
-  } catch (err) {
-    console.error("❌ Error fetching tasks:", err);
-    res.status(500).json({ success: false, message: "Error loading tasks" });
+    const userId = req.user.id;
+    const filter = (req.query.filter || "").toLowerCase();
+
+    let query =
+      "SELECT id, title, description, due_date FROM tasks WHERE user_id = ?";
+    let params = [userId];
+
+    if (filter === "today") {
+      query += " AND DATE(due_date) <= CURDATE()";
+    } else if (filter === "upcoming") {
+      query += " AND DATE(due_date) > CURDATE()";
+    }
+
+    query += " ORDER BY due_date ASC";
+
+    const [tasks] = await db.query(query, params);
+    res.json({ tasks });
+  } catch (error) {
+    console.error("❌ Error fetching tasks:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -41,7 +53,6 @@ router.post("/api/tasks/add", authenticateToken, async (req, res) => {
   }
 });
 
-// Update a task
 router.patch("/api/tasks/:id/update", authenticateToken, async (req, res) => {
   try {
     const { title, description, due_date } = req.body;
@@ -57,7 +68,6 @@ router.patch("/api/tasks/:id/update", authenticateToken, async (req, res) => {
   }
 });
 
-// Delete a task
 router.delete("/api/tasks/:id/delete", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;

@@ -19,14 +19,14 @@ const addTask = async (req, res) => {
 const getTasks = async (req, res) => {
   try {
     const userId = req.user.id;
-    const filter = req.query.filter || "all";
+    const filter = (req.query.filter || "all").toLowerCase();
 
     let query = "SELECT * FROM tasks WHERE user_id = ?";
 
     if (filter === "today") {
-      query += " AND DATE(due_date) = CURDATE()";
+      query += " AND (due_date IS NOT NULL AND DATE(due_date) <= CURDATE())";
     } else if (filter === "upcoming") {
-      query += " AND DATE(due_date) > CURDATE()";
+      query += " AND (due_date IS NOT NULL AND DATE(due_date) > CURDATE())";
     }
 
     query += " ORDER BY due_date ASC";

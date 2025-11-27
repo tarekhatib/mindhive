@@ -1,88 +1,149 @@
-const db = require('../config/db');
+const db = require("../config/db");
 
-const renderNotesPage = async (req, res) => {
-  try {
-    const [notes] = await db.query(
-      "SELECT id, title, content AS body, created_at FROM notes WHERE user_id = ? ORDER BY created_at DESC",
-      [req.user.id]
-    );
-    res.render('notes', { notes });
-  } catch (err) {
-    console.error('❌ Error loading notes page:', err && err.stack ? err.stack : err);
-    res.render('notes', { notes: [], errorMessage: 'Could not load notes (database unavailable)' });
-  }
-};
+const renderNotes = async(req, res) => {
+    res.render("notes", { user: req.user });
+}
 
 const getNotes = async (req, res) => {
   try {
-    const [notes] = await db.query(
-      "SELECT id, title, content AS body, created_at FROM notes WHERE user_id = ? ORDER BY created_at DESC",
-      [req.user.id]
+    const userId = req.user.id;
+
+    const [rows] = await db.query(
+      "SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC",
+      [userId]
     );
-    res.json({ success: true, notes });
-  } catch (err) {
-    console.error('❌ Error fetching notes:', err && err.stack ? err.stack : err);
-    res.status(500).json({ success: false, message: 'Error loading notes' });
+
+    res.status(200).json({ notes: rows });
+  } catch (error) {
+    console.error("❌ Error fetching notes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getNoteById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const [rows] = await db.query(
+      "SELECT * FROM notes WHERE user_id = ? AND id = ?",
+      [userId, id]
+    );
+
+    if (rows.length === 0)
+      return res.status(404).json({ message: "Note not found" });
+
+    res.status(200).json({ note: rows[0] });
+  } catch (error) {
+    console.error("❌ Error fetching note:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const addNote = async (req, res) => {
   try {
-    const { user_id, title, body } = req.body;
-    const [result] = await db.query(
-      'INSERT INTO notes (user_id, title, content) VALUES (?, ?, ?)',
-      [user_id, title, body]
-    );
-    res.status(201).json({ message: 'Note added successfully', noteId: result.insertId });
-  } catch (err) {
-    console.error('❌ Error adding note:', err && err.stack ? err.stack : err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-};
+    const userId = req.user.id;
+    const { title, content, course_id } = req.body;
 
-const renderSingleNote = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const [notes] = await db.query(
-      'SELECT id, title, content AS body, created_at FROM notes WHERE id = ? AND user_id = ?',
-      [id, req.user.id]
+    const [result] = await db.query(
+      "INSERT INTO notes (user_id, title, content, course_id) VALUES (?, ?, ?, ?)",
+      [userId, title, content, course_id || null]
     );
-    if (!notes || notes.length === 0) return res.status(404).render('single_note', { note: null, errorMessage: 'Note not found' });
-    res.render('single_note', { note: notes[0] });
-  } catch (err) {
-    console.error('❌ Error loading single note page:', err && err.stack ? err.stack : err);
-    res.status(500).render('single_note', { note: null, errorMessage: 'Error loading note' });
+
+    res.status(201).json({
+      message: "Note added successfully",
+      noteId: result.insertId
+    });
+  } catch (error) {
+    console.error("❌ Error adding note:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const updateNote = async (req, res) => {
   try {
-    const { title, body } = req.body;
+    const userId = req.user.id;
     const { id } = req.params;
-    await db.query('UPDATE notes SET title=?, content=? WHERE id=? AND user_id=?', [title, body, id, req.user.id]);
-    res.json({ success: true, message: 'Note updated successfully' });
-  } catch (err) {
-    console.error('❌ Error updating note:', err && err.stack ? err.stack : err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    const { title, content, course_id } = req.body;
+
+    const [result] = await db.query(
+      "UPDATE notes SET title = ?, content = ?, course_id = ? WHERE user_id = ? AND id = ?",
+      [title, content, course_id || null, userId, id]
+    );
+
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Note not found" });
+
+    res.status(200).json({ message: "Note updated successfully" });
+  } catch (error) {
+    console.error("❌ Error updating note:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const deleteNote = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { id } = req.params;
-    await db.query('DELETE FROM notes WHERE id=? AND user_id=?', [id, req.user.id]);
-    res.json({ success: true, message: 'Note deleted successfully' });
-  } catch (err) {
-    console.error('❌ Error deleting note:', err && err.stack ? err.stack : err);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+
+    const [result] = await db.query(
+      "DELETE FROM notes WHERE user_id = ? AND id = ?",
+      [userId, id]
+    );
+
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Note not found" });
+
+    res.status(200).json({ message: "Note deleted successfully" });
+  } catch (error) {
+    console.error("❌ Error deleting note:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getAllCourses = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const [rows] = await db.query(
+      "SELECT id, name FROM courses WHERE user_id = ? ORDER BY name ASC",
+      [userId]
+    );
+
+    res.status(200).json({ courses: rows });
+  } catch (error) {
+    console.error("❌ Error fetching courses:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const addCourse = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name } = req.body;
+
+    const [result] = await db.query(
+      "INSERT INTO courses (user_id, name) VALUES (?, ?)",
+      [userId, name]
+    );
+
+    res.status(201).json({
+      message: "Course added successfully",
+      courseId: result.insertId,
+    });
+  } catch (error) {
+    console.error("❌ Error adding course:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 module.exports = {
-  renderNotesPage,
+  renderNotes,
   getNotes,
+  getNoteById,
   addNote,
-  renderSingleNote,
   updateNote,
   deleteNote,
+  getAllCourses,
+  addCourse
 };
