@@ -4,21 +4,16 @@ const {
   login,
   refresh,
   logout,
-} = require("../controllers/auth.controller.js");
-const { authenticateToken } = require("../middleware/auth.middleware.js");
+  getCurrentUser,
+} = require("../controllers/auth.controller");
+const { authenticateToken } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.post("/refresh", refresh);
-router.post("/logout", logout);
-
-router.get("/api/auth/me", authenticateToken, (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  res.json({ user: req.user });
-});
+router.post("/api/auth/register", register);
+router.post("/api/auth/login", login);
+router.post("/api/auth/refresh", refresh);
+router.post("/api/auth/logout", authenticateToken, logout);
+router.get("/api/auth/me", authenticateToken, getCurrentUser);
 
 module.exports = router;

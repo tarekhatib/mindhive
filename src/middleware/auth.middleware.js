@@ -1,82 +1,63 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const db = require("../config/db");
 const { generateAccessToken, hashToken } = require("../utils/jwt");
 
-function authFail(req, res, status = 401, message = "Unauthorized") {
-  if (req.accepts(["html", "json"]) === "html" && !req.path.startsWith("/api/"))
-    return res.redirect("/login");
-  return res.status(status).json({ message });
-}
-
 const authenticateToken = async (req, res, next) => {
-  const cookieToken = req.cookies?.token
-    ? decodeURIComponent(req.cookies.token)
-    : null;
-  const headerToken = req.headers["authorization"]
-    ? req.headers["authorization"].split(" ")[1]
-    : null;
-  const token = cookieToken || headerToken;
+  try {
+    const cookieToken = req.cookies?.token
+      ? decodeURIComponent(req.cookies.token)
+      : null;
 
-  const tryRefresh = async () => {
-    const refreshToken = req.cookies?.refreshToken;
-    if (!refreshToken) return authFail(req, res, 401, "Unauthorized");
+    const headerToken = req.headers["authorization"]
+      ? req.headers["authorization"].split(" ")[1]
+      : null;
 
-    jwt.verify(
-      refreshToken,
-      process.env.JWT_REFRESH_SECRET,
-      async (err, payload) => {
-        if (err) return authFail(req, res, 403, "Invalid or expired session");
+    const accessToken = cookieToken || headerToken;
 
-        const tokenHash = hashToken(refreshToken);
-
-        try {
-          const [rows] = await db.query(
-            "SELECT id FROM refresh_tokens WHERE token_hash = ? AND revoked = 0 AND expires_at > NOW()",
-            [tokenHash]
-          );
-          if (!rows || rows.length === 0)
-            return authFail(req, res, 403, "Invalid or expired session");
-
-          const newAccessToken = generateAccessToken({
-            id: payload.id,
-            first_name: payload.first_name,
-            last_name: payload.last_name,
-            username: payload.username,
-            email: payload.email,
-          });
-
-          res.cookie("token", encodeURIComponent(newAccessToken), {
-            httpOnly: true,
-            secure: false,
-            maxAge: 15 * 60 * 1000,
-          });
-
-          req.user = {
-            id: payload.id,
-            first_name: payload.first_name,
-            last_name: payload.last_name,
-            username: payload.username,
-            email: payload.email,
-          };
-          next();
-        } catch {
-          return authFail(req, res, 500, "Server error");
+    if (accessToken) {
+      try {
+        const user = jwt.verify(accessToken, process.env.JWT_SECRET);
+        req.user = user;
+        return next();
+      } catch (err) {
+        if (err.name !== "TokenExpiredError") {
+          return res.status(403).json({ message: "Invalid token" });
         }
       }
-    );
-  };
-
-  if (!token) return tryRefresh();
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) {
-      if (err.name === "TokenExpiredError") return tryRefresh();
-      return authFail(req, res, 403, "Invalid token");
     }
-    req.user = user;
+
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const payload = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET
+    );
+
+    const tokenHash = hashToken(refreshToken);
+    const [rows] = await db.query(
+      "SELECT id FROM refresh_tokens WHERE token_hash = ? AND revoked = 0 AND expires_at > NOW()",
+      [tokenHash]
+    );
+
+    if (rows.length === 0)
+      return res.status(403).json({ message: "Invalid or expired session" });
+
+    const newAccessToken = generateAccessToken(payload);
+
+    res.cookie("token", encodeURIComponent(newAccessToken), {
+      httpOnly: true,
+      secure: false,
+      maxAge: 15 * 60 * 1000,
+    });
+
+    req.user = payload;
     next();
-  });
+  } catch (err) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 };
 
 module.exports = { authenticateToken };

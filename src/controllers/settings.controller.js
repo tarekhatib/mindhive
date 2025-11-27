@@ -37,7 +37,9 @@ const changePassword = async (req, res) => {
 const deleteAccount = async (req, res) => {
   try {
     const userId = req.user.id;
+
     await db.query("DELETE FROM users WHERE id = ?", [userId]);
+
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error("❌ Error deleting account:", error);
@@ -46,6 +48,6 @@ const deleteAccount = async (req, res) => {
 };
 
 module.exports = {
-  deleteAccount,
   changePassword,
+  deleteAccount,
 };
