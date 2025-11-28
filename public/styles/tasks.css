@@ -10,20 +10,21 @@ body {
 .tasks-container {
   margin-left: 260px;
   padding: 2.5rem 3rem;
-  background-color: #f9f9f9; /* soft app background #f5f5f7*/
+  background-color: #f9f9f9;
+  /* soft app background #f5f5f7*/
   min-height: 100vh;
-  color: #111827; /* slate-900 style text */
+  color: #111827;
+  /* slate-900 style text */
   transition: all 0.3s ease;
 }
 
 .tasks-header {
+  width: 95%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  margin-left: 0;
   padding-left: 1rem;
-  max-width: calc(100% - 270px);
 }
 
 .tasks-header h1 {
@@ -33,41 +34,87 @@ body {
 }
 
 .tasks-controls {
+  width: 50%;
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
 .search-bar {
-  background: white;
+  width: 80%;
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
   border: none;
-  border-radius: 25px;
-  padding: 0.6rem 1rem;
-  color: #111827;
-  width: 280px;
+  background: var(--card-bg-light);
+  color: var(--text-light);
   outline: none;
+  font-size: 1.05rem;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+.search-bar:hover,
 .search-bar:focus {
+  background-color: white;
+}
+
+/* -------------------------------
+   Task Filter Dropdown (Light Mode)
+------------------------------- */
+
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background: var(--card-bg-light);
+  color: var(--text-light);
+  border: none;
+  border-radius: 14px;
+
+  padding: 1rem 2.5rem 1rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+
+.select-wrapper::after {
+  content: "\f078";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+
+  color: var(--text-light);
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+
+.select-wrapper:hover::after {
+  opacity: 1;
+}
+
+.select-wrapper select:hover {
+  background: white;
+}
+
+.select-wrapper select:focus {
   box-shadow: 0 0 8px var(--accent-color);
   transform: scale(1.02);
+  outline: none;
 }
 
-#task-filter {
-  background: white;
-  color: #111827;
-  border: none;
-  border-radius: 25px;
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#task-filter:hover {
-  background: #e5e7eb;
-}
+/*----*/
 
 .tasks-list {
   display: flex;
@@ -102,6 +149,11 @@ body {
   gap: 1rem;
   min-width: 0;
   flex: 1;
+}
+
+/* Hide the dummy checkbox in edit mode */
+.task-item.editing input[type="checkbox"] {
+  display: none !important;
 }
 
 .task-checkbox {
@@ -181,7 +233,7 @@ body {
   position: fixed;
   bottom: 40px;
   right: 40px;
-  background-color: rgba(249, 198, 59, 0.33);;
+  background-color: rgba(249, 198, 59, 0.33);
   backdrop-filter: saturate(180%) blur(12px);
   -webkit-backdrop-filter: saturate(180%) blur(12px);
   color: var(--background-dark);
@@ -196,6 +248,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
 }
 
 .add-task-btn:hover,
@@ -222,7 +275,21 @@ body {
 }
 
 .task-item.editing {
-  background: #f3f4f6;
+  background: var(--card-bg-light);
+}
+
+.task-edit-title,
+.task-edit-date,
+.task-edit-desc,
+.task-title-input,
+.task-date-input,
+.task-desc-input {
+  background: var(--input-bg-light);
+  color: var(--text-light);
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.95rem;
 }
 
 .task-info.edit-mode {
@@ -232,17 +299,6 @@ body {
   gap: 1rem;
   width: 100%;
   flex-wrap: nowrap;
-}
-
-.task-edit-title,
-.task-edit-date,
-.task-edit-desc {
-  background: #f3f4f6;
-  border: none;
-  border-radius: 10px;
-  padding: 0.5rem 0.7rem;
-  color: #111827;
-  font-size: 0.95rem;
 }
 
 .task-edit-title {
@@ -320,6 +376,7 @@ body {
   body {
     background-color: #111;
   }
+
   .tasks-container {
     background-color: var(--background-dark);
     color: var(--text-dark);
@@ -330,21 +387,28 @@ body {
   }
 
   .search-bar {
-    background: var(--input-bg-dark);
+    background: var(--card-bg-dark);
     color: var(--text-dark);
   }
 
-  #task-filter {
-    background: var(--input-bg-dark);
+  .select-wrapper select {
+    background: var(--card-bg-dark);
     color: var(--text-dark);
   }
 
-  .tasks-list {
-    /* layout stays the same */
+  .select-wrapper select option {
+    opacity: 0.6;
+  }
+
+  .search-bar:hover,
+  .search-bar:focus,
+  .select-wrapper select:hover,
+  .select-wrapper select:focus {
+    background: var(--card-bg-dark);
   }
 
   .task-item {
-    background: var(--input-bg-dark);
+    background: var(--card-bg-dark);
     box-shadow: none;
   }
 
@@ -390,7 +454,7 @@ body {
   }
 
   .task-item.editing {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--card-bg-dark);
   }
 
   .task-edit-title,
@@ -399,8 +463,12 @@ body {
   .task-title-input,
   .task-date-input,
   .task-desc-input {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--input-bg-dark);
     color: var(--text-dark);
+    border: none;
+    border-radius: 10px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.95rem;
   }
 
   .task-edit-delete {

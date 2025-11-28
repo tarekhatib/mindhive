@@ -19,20 +19,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function fetchTasks(filter = "all") {
-    if (activeEditItem) return;
 
-    try {
-      const res = await fetch(`/api/tasks?filter=${filter}`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      renderTasks(data.tasks || []);
-    } catch {
-      tasksList.innerHTML = `<p class="no-tasks">Error loading tasks.</p>`;
-    }
+  try {
+    const res = await fetch(`/api/tasks?filter=${filter}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    renderTasks(data.tasks || []);
+  } catch {
+    tasksList.innerHTML = `<p class="no-tasks">Error loading tasks.</p>`;
   }
+}
 
   function renderTasks(tasks) {
-    if (activeEditItem) return;
 
     tasksList.innerHTML = "";
 
@@ -80,6 +78,43 @@ document.addEventListener("DOMContentLoaded", () => {
       tasksList.appendChild(item);
     });
   }
+
+  async function createNewTask() {
+    if (activeEditItem) {
+  activeEditItem = null;
+}
+  try {
+    const res = await fetch("/api/tasks/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "New Task",
+        description: "",
+        due_date: null
+      }),
+    });
+
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+
+    await fetchTasks();
+
+    const newItem = document.querySelector(`.task-item[data-id="${data.taskId}"]`);
+    if (newItem) {
+      enterEditMode(newItem, {
+        id: data.taskId,
+        title: "New Task",
+        description: "",
+        due_date: null
+      });
+    }
+  } catch (err) {
+    console.error("❌ Error creating task:", err);
+    alert("Failed to create task.");
+  }
+}
+
+addBtn.addEventListener("click", createNewTask);
 
   function attachItemEvents(item, task) {
     const checkbox = item.querySelector(".task-checkbox");
@@ -211,12 +246,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   filterSelect.addEventListener("change", () =>
-    fetchTasks(filterSelect.value)
-  );
+  fetchTasks(filterSelect.value)
+);
 
   searchInput.addEventListener("input", async () => {
     const query = searchInput.value.toLowerCase();
-    const res = await fetch("/api/tasks?filter=all");
+    const res = await fetch(`/api/tasks?filter=${filter}`)
     const data = await res.json();
     const filtered = data.tasks.filter((t) =>
       t.title.toLowerCase().includes(query)

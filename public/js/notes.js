@@ -6,15 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const notesList = document.getElementById("notes-list");
     const searchInput = document.getElementById("search-notes");
     const addBtn = document.getElementById("add-note-btn");
+    const filterSelect = document.getElementById("notes-filter");
 
     async function fetchNotes() {
-      try {
-        const res = await fetch("/api/notes");
-        const data = await res.json();
-        renderNotes(data.notes || []);
-      } catch {
-        notesList.innerHTML = `<p class="no-notes">Error loading notes.</p>`;
-      }
+      const res = await fetch("/api/notes");
+      const data = await res.json();
+      renderNotes(data.notes || []);
     }
 
     function renderNotes(notes) {
@@ -24,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       notesList.innerHTML = "";
-
       notes.forEach((note) => {
         const item = document.createElement("div");
         item.className = "note-item";
@@ -42,9 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h3>${note.title || "(Untitled)"}</h3>
             <p class="note-preview">${preview}</p>
           </div>
-          <div class="note-meta">
-            <span>${created.toLocaleDateString()}</span>
-          </div>
+          <div class="note-date">${created.toLocaleDateString()}</div>
         `;
 
         item.addEventListener("click", () => {
@@ -56,104 +50,269 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     addBtn.addEventListener("click", async () => {
-      try {
-        const res = await fetch("/api/notes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: "Untitled",
-            content: "",
-            course_id: null,
-          }),
-        });
+      const res = await fetch("/api/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Untitled",
+          content: "",
+          course_id: null,
+        }),
+      });
 
-        const data = await res.json();
-        window.location.href = `/notes/edit/${data.noteId}`;
-      } catch {
-        alert("Error creating note.");
-      }
+      const data = await res.json();
+      window.location.href = `/notes/edit/${data.noteId}`;
     });
 
     searchInput.addEventListener("input", async () => {
       const query = searchInput.value.toLowerCase();
       const res = await fetch("/api/notes");
       const data = await res.json();
+
       const filtered = data.notes.filter(
         (n) =>
           n.title.toLowerCase().includes(query) ||
           (n.content || "").toLowerCase().includes(query)
       );
+
       renderNotes(filtered);
     });
+
+    if (filterSelect) {
+      filterSelect.addEventListener("change", async () => {
+        const selected = filterSelect.value;
+        const query = searchInput.value.toLowerCase();
+
+        const res = await fetch("/api/notes");
+        const data = await res.json();
+
+        let filtered = data.notes;
+        if (selected !== "all") {
+          filtered = filtered.filter((n) => String(n.course_id) === selected);
+        }
+
+        if (query) {
+          filtered = filtered.filter(
+            (n) =>
+              n.title.toLowerCase().includes(query) ||
+              (n.content || "").toLowerCase().includes(query)
+          );
+        }
+
+        renderNotes(filtered);
+      });
+    }
 
     fetchNotes();
   }
 
-  //notes editor model
   if (isEditor) {
-    const noteId = document.getElementById("note-id").value;
-    const titleInput = document.getElementById("note-title");
-    const bodyInput = document.getElementById("note-body");
-    const courseSelect = document.getElementById("note-course");
-    const deleteBtn = document.getElementById("delete-note-btn");
+  const noteId = document.getElementById("note-id").value;
+  const titleInput = document.getElementById("note-title");
+  const bodyInput = document.getElementById("note-body");
+  const deleteBtn = document.getElementById("delete-note-btn");
+  const saveBtn = document.getElementById("save-note-btn");
+  const backBtn = document.getElementById("back-btn");
 
-    let saveTimer;
+  const courseInput = document.getElementById("course-input");
+  const suggestionsBox = document.getElementById("course-suggestions");
 
-    function autoSave() {
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(save, 500);
+  let courses = [];
+  let saveTimer;
+  let selectedIndex = -1; // keyboard selection index
+
+  async function loadCourses() {
+    const res = await fetch("/api/courses");
+    const data = await res.json();
+    courses = data.courses || [];
+  }
+
+  function renderSuggestions(list, rawText) {
+    suggestionsBox.innerHTML = "";
+    selectedIndex = -1;
+
+    const trimmed = rawText.trim();
+
+    // Show nothing if empty AND no focus trigger
+    if (!trimmed && !courseInput.matches(":focus")) {
+      suggestionsBox.classList.remove("active");
+      return;
     }
 
-    async function loadCourses(selectedId) {
-      try {
-        const res = await fetch("/api/courses");
-        const data = await res.json();
+    // Build DOM suggestions
+    list.forEach((course, index) => {
+      const item = document.createElement("div");
+      item.className = "suggestion-item";
+      item.dataset.index = index;
 
-        courseSelect.innerHTML = `<option value="">No Course</option>`;
+      item.innerHTML = `
+        <span class="course-name">${course.name}</span>
+        <button class="delete-course-btn">&times;</button>
+      `;
 
-        data.courses.forEach((c) => {
-          const opt = document.createElement("option");
-          opt.value = c.id;
-          opt.textContent = c.name;
+      // Click to select course
+      item.querySelector(".course-name").addEventListener("click", () => {
+        courseInput.value = course.name;
+        suggestionsBox.classList.remove("active");
+        selectedIndex = -1;
+      });
 
-          if (selectedId && selectedId === c.id) opt.selected = true;
+      // Click X to delete the course
+      item.querySelector(".delete-course-btn").addEventListener("click", async (e) => {
+        e.stopPropagation();
 
-          courseSelect.appendChild(opt);
+        if (!confirm(`Delete course "${course.name}"?`)) return;
+
+        await fetch(`/api/courses/${course.id}`, {
+          method: "DELETE"
         });
-      } catch {}
-    }
 
-    async function save() {
-      try {
-        await fetch(`/api/notes/${noteId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: titleInput.value.trim(),
-            content: bodyInput.value.trim(),
-            course_id: courseSelect.value || null,
-          }),
-        });
-      } catch (err) {
-        console.error("Autosave failed:", err);
-      }
-    }
+        await loadCourses();
+        renderSuggestions(courses, courseInput.value.trim());
+      });
 
-    deleteBtn.addEventListener("click", async () => {
-      if (!confirm("Delete this note permanently?")) return;
-
-      try {
-        await fetch(`/api/notes/${noteId}`, { method: "DELETE" });
-        window.location.href = "/notes";
-      } catch {
-        alert("Error deleting note.");
-      }
+      suggestionsBox.appendChild(item);
     });
 
-    titleInput.addEventListener("input", autoSave);
-    bodyInput.addEventListener("input", autoSave);
-    courseSelect.addEventListener("change", save);
+    // + Add New Course
+    const exists = courses.some(c => c.name.toLowerCase() === trimmed.toLowerCase());
+    if (trimmed && !exists) {
+      const addNew = document.createElement("div");
+      addNew.className = "suggestion-item add-new";
+      addNew.dataset.index = list.length;
+      addNew.textContent = `+ Add New Course: "${trimmed}"`;
 
-    loadCourses(courseSelect.dataset.selected);
+      addNew.addEventListener("click", async () => {
+        const res = await fetch("/api/courses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: trimmed }),
+        });
+
+        const data = await res.json();
+        await loadCourses();
+
+        courseInput.value = trimmed;
+        suggestionsBox.classList.remove("active");
+
+        await save();
+      });
+
+      suggestionsBox.appendChild(addNew);
+    }
+
+    suggestionsBox.classList.add("active");
   }
+
+  function highlightSuggestion() {
+    const items = Array.from(suggestionsBox.children);
+    items.forEach((it, i) => {
+      it.classList.toggle("highlighted", i === selectedIndex);
+    });
+  }
+
+  function selectHighlighted() {
+    const items = suggestionsBox.children;
+    if (selectedIndex < 0 || selectedIndex >= items.length) return;
+
+    const item = items[selectedIndex];
+
+    if (item.classList.contains("add-new")) {
+      item.click();
+    } else {
+      const courseName = item.querySelector(".course-name")?.textContent;
+      if (courseName) {
+        courseInput.value = courseName;
+        suggestionsBox.classList.remove("active");
+      }
+    }
+  }
+
+  courseInput.addEventListener("focus", () => {
+    renderSuggestions(courses, courseInput.value.trim());
+  });
+
+  courseInput.addEventListener("input", () => {
+    const txt = courseInput.value.trim().toLowerCase();
+    const matches = courses.filter((c) => c.name.toLowerCase().includes(txt));
+    renderSuggestions(matches, courseInput.value);
+  });
+
+  // KEYBOARD NAVIGATION
+  courseInput.addEventListener("keydown", (e) => {
+    const items = suggestionsBox.children;
+    if (!items.length) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      selectedIndex = (selectedIndex + 1) % items.length;
+      highlightSuggestion();
+    }
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+      highlightSuggestion();
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      selectHighlighted();
+    }
+
+    if (e.key === "Escape") {
+      suggestionsBox.classList.remove("active");
+      selectedIndex = -1;
+    }
+  });
+
+  // --- SAVE NOTE ---
+  async function resolveCourseId() {
+    const name = courseInput.value.trim();
+    if (!name) return null;
+
+    const existing = courses.find((c) => c.name === name);
+    return existing ? existing.id : null;
+  }
+
+  function autoSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 500);
+  }
+
+  async function save() {
+    const course_id = await resolveCourseId();
+
+    await fetch(`/api/notes/${noteId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: titleInput.value.trim(),
+        content: bodyInput.value.trim(),
+        course_id,
+      }),
+    });
+  }
+
+  saveBtn.addEventListener("click", async () => {
+    await save();
+    saveBtn.classList.add("saved");
+    setTimeout(() => saveBtn.classList.remove("saved"), 600);
+  });
+
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm("Do you want to delete this note?")) return;
+    await fetch(`/api/notes/${noteId}`, { method: "DELETE" });
+    window.location.href = "/notes";
+  });
+
+  backBtn.addEventListener("click", () => {
+    window.location.href = "/notes";
+  });
+
+  titleInput.addEventListener("input", autoSave);
+  bodyInput.addEventListener("input", autoSave);
+
+  loadCourses();
+}
 });

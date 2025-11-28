@@ -22,17 +22,28 @@
       <h1>My Notes</h1>
 
       <div class="notes-controls">
-        <input
-          id="search-notes"
-          class="search-bar"
-          type="text"
-          placeholder="Search notes..."
-          aria-label="Search notes"
-        />
-      </div>
+  <input
+    id="search-notes"
+    class="search-bar"
+    type="text"
+    placeholder="Search notes..."
+    aria-label="Search notes"
+  />
+
+  <div class="select-wrapper">
+    <select id="notes-filter">
+      <option value="all">All Courses</option>
+      <% if (typeof courses !== "undefined") { %>
+        <% courses.forEach(c => { %>
+          <option value="<%= c.id %>"><%= c.name %></option>
+        <% }) %>
+      <% } %>
+    </select>
+  </div>
+</div>
     </div>
 
-    <div class="notes-list">
+    <div class="notes-list" id="notes-list">
 
       <% if (typeof notes !== 'undefined' && notes && notes.length > 0) { %>
 
@@ -44,16 +55,22 @@
               <h3 class="note-title"><%= note.title || "Untitled" %></h3>
 
               <p class="note-preview">
-                <%= note.body 
-                      ? note.body.substring(0, 80) + (note.body.length > 80 ? "..." : "") 
-                      : "No content" 
-                %>
-              </p>
+  <%= note.content
+        ? note.content.substring(0, 80) + (note.content.length > 80 ? "..." : "")
+        : "No content"
+  %>
+</p>
             </div>
 
-            <div class="note-date">
-              <%= new Date(note.created_at).toLocaleDateString() %>
-            </div>
+            <%
+  const d = new Date(note.created_at);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`; 
+%>
+
+<div class="note-date"><%= formattedDate %></div>
 
           </div>
 

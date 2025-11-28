@@ -3,26 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <title>Edit Note</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="/styles/main.css" />
   <link rel="stylesheet" href="/styles/notes.css" />
 </head>
+
 <body>
   <%- include("partials/sidebar", { page: "notes" }) %>
 
   <div class="editor-container">
+
+    <button id="back-btn" class="back-btn" aria-label="Back to notes">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
     <% if (errorMessage) { %>
       <p class="error"><%= errorMessage %></p>
     <% } else { %>
 
       <input id="note-id" type="hidden" value="<%= note.id %>">
+      <div class="editor-topbar">
 
-      <input
-        id="note-title"
-        class="editor-title"
-        type="text"
-        value="<%= note.title %>"
-        placeholder="Title"
-      />
+        <input
+          id="note-title"
+          class="editor-title"
+          type="text"
+          value="<%= note.title %>"
+          placeholder="Title"
+        />
+
+        <div class="editor-actions">
+
+  <div class="course-input-wrapper">
+    <input
+      id="course-input"
+      type="text"
+      placeholder="Course…"
+      autocomplete="off"
+      value="<%= note.course_name || '' %>"
+    />
+    <div id="course-suggestions" class="suggestions"></div>
+  </div>
+
+  <button id="delete-note-btn" class="delete-note-btn">
+    <i class="fa-solid fa-trash"></i>
+  </button>
+
+</div>
+
+      </div>
 
       <textarea
         id="note-body"
@@ -31,7 +61,12 @@
       ><%= note.content %></textarea>
 
     <% } %>
+
   </div>
+
+  <button id="save-note-btn" class="save-note-btn" aria-label="Save note">
+    <i class="fa-solid fa-check"></i>
+  </button>
 
   <script src="/js/notes.js"></script>
 </body>

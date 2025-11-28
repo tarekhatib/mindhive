@@ -8,10 +8,15 @@ const renderNotes = async (req, res) => {
       "SELECT * FROM notes WHERE user_id = ? ORDER BY updated_at DESC",
       [userId]
     );
+    const [courses] = await db.query(
+      "SELECT id, name FROM courses WHERE user_id = ? ORDER BY name ASC",
+      [userId]
+    );
 
     res.render("notes", {
       user: req.user,
-      notes: notes || []
+      notes: notes || [],
+      courses: courses || [],
     });
   } catch (err) {
     console.error("❌ Error loading notes page:", err);
@@ -28,10 +33,12 @@ const renderNoteEditor = async (req, res) => {
     const userId = req.user.id;
     const noteId = req.params.id;
 
-    const [rows] = await db.query(
-      "SELECT * FROM notes WHERE id = ? AND user_id = ?",
-      [noteId, userId]
-    );
+    const [rows] = await db.query(`
+  SELECT n.*, c.name AS course_name
+  FROM notes n
+  LEFT JOIN courses c ON n.course_id = c.id
+  WHERE n.id = ? AND n.user_id = ?
+`, [noteId, userId]);
 
     if (rows.length === 0) {
       return res.status(404).render("editor", {
@@ -122,13 +129,18 @@ const updateNote = async (req, res) => {
   try {
     const userId = req.user.id;
     const { id } = req.params;
-    const { title, content, course_id } = req.body;
+    let { title, content, course_id } = req.body;
 
-    if (course_id) {
+    if (course_id === "" || course_id === "null") {
+      course_id = null;
+    }
+
+    if (course_id !== null && course_id !== "" && course_id !== undefined) {
       const [course] = await db.query(
         "SELECT id FROM courses WHERE id = ? AND user_id = ?",
         [course_id, userId]
       );
+
       if (course.length === 0) {
         return res.status(403).json({ message: "Invalid course selection" });
       }
@@ -136,13 +148,14 @@ const updateNote = async (req, res) => {
 
     const [result] = await db.query(
       "UPDATE notes SET title = ?, content = ?, course_id = ? WHERE user_id = ? AND id = ?",
-      [title, content, course_id || null, userId, id]
+      [title, content, course_id, userId, id]
     );
 
     if (result.affectedRows === 0)
       return res.status(404).json({ message: "Note not found" });
 
     res.status(200).json({ message: "Note updated successfully" });
+
   } catch (error) {
     console.error("❌ Error updating note:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -205,6 +218,22 @@ const addCourse = async (req, res) => {
   }
 };
 
+const deleteCourse = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const courseId = req.params.id;
+
+    await db.query(
+      "DELETE FROM courses WHERE id = ? AND user_id = ?",
+      [courseId, userId]
+    );
+
+    res.status(200).json({ message: "Course deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Internal error" });
+  }
+};
+
 module.exports = {
   renderNotes,
   renderNoteEditor,
@@ -215,4 +244,5 @@ module.exports = {
   deleteNote,
   getAllCourses,
   addCourse,
+  deleteCourse,
 };
