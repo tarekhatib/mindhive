@@ -135,7 +135,7 @@ body {
   border-radius: 50%;
   border: none;
   background: var(--button-background);
-  color: #000;
+  color: rgb(169, 124, 1);
   font-size: 1.4rem;
   font-weight: bold;
   cursor: pointer;
@@ -169,7 +169,7 @@ body {
 
 .start {
   background: var(--button-background);
-  color: #000;
+  color: rgb(169, 124, 1);
 }
 
 .pause {

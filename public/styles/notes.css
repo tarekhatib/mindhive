@@ -126,11 +126,10 @@
      bottom: 40px;
      right: 40px;
      background-color: rgba(249, 198, 59, 0.33);
-     ;
+     border: none;
      backdrop-filter: saturate(180%) blur(12px);
      -webkit-backdrop-filter: saturate(180%) blur(12px);
-     color: var(--background-dark);
-     border: none;
+     color: rgb(169, 124, 1);
      border-radius: 50%;
      width: 55px;
      height: 55px;
