@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="stylesheet" href="/styles/trash.css" />
+  <title>MindHive · Recently Deleted</title>
+</head>
+
+<body>
+  <%- include('partials/sidebar', { page: 'trash' }) %>
+
+  <div class="notes-container">
+
+    <div class="notes-header">
+      <h1>Recently Deleted</h1>
+      <div></div> <!-- keeps alignment consistent with notes header -->
+    </div>
+
+    <div class="notes-list" id="trash-list">
+      <% if (trash && trash.length > 0) { %>
+
+        <% trash.forEach(item => { %>
+
+          <div class="note-item" data-id="<%= item.id %>">
+
+            <!-- LEFT SIDE -->
+            <div class="note-info">
+              <h3 class="note-title"><%= item.title || "Untitled" %></h3>
+
+              <p class="note-preview">
+                <%= item.content
+                    ? item.content.substring(0, 120) + (item.content.length > 120 ? "..." : "")
+                    : "No content"
+                %>
+              </p>
+
+              <% 
+                const deletedAt = new Date(item.deleted_at);
+                const now = new Date();
+                const diff = 30 - Math.floor((now - deletedAt) / (1000 * 60 * 60 * 24));
+                const daysLeft = diff > 0 ? diff : 0;
+              %>
+
+              <p class="trash-expire">⏳ <%= daysLeft %> <%= daysLeft === 1 ? "day" : "days" %> remaining</p>
+            </div>
+
+            <!-- RIGHT SIDE BUTTONS -->
+            <div class="note-actions">
+              <button class="restore-btn" data-id="<%= item.id %>" title="Restore">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+
+              <button class="delete-forever-btn" data-id="<%= item.id %>" title="Delete Permanently">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+
+          </div>
+
+        <% }) %>
+
+      <% } else { %>
+
+        <p class="no-notes">
+          Nothing here. Deleted notes will appear for 30 days before being removed permanently.
+        </p>
+
+      <% } %>
+
+    </div>
+  </div>
+
+  <script src="/js/trash.js"></script>
+</body>
+</html>

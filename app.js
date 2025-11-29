@@ -9,6 +9,7 @@ const pomodoroRoutes = require("./src/routes/pomodoro.routes.js");
 const tasksRoutes = require("./src/routes/tasks.routes.js");
 const settingsRoutes = require("./src/routes/settings.routes.js");
 const notesRoutes = require("./src/routes/notes.routes.js");
+const trashRoutes = require("./src/routes/trash.routes.js");
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use("/", pomodoroRoutes);
 app.use("/", tasksRoutes);
 app.use("/", settingsRoutes);
 app.use("/", notesRoutes);
+app.use("/", trashRoutes);
 
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));

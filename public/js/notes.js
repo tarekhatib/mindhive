@@ -301,10 +301,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   deleteBtn.addEventListener("click", async () => {
-    if (!confirm("Do you want to delete this note?")) return;
-    await fetch(`/api/notes/${noteId}`, { method: "DELETE" });
-    window.location.href = "/notes";
+  if (!confirm("Delete this note?")) return;
+
+  const res = await fetch(`/api/notes/${noteId}`, {
+    method: "DELETE"
   });
+
+  if (!res.ok) {
+    alert("Failed to move to trash.");
+    return;
+  }
+  window.location.href = "/notes";
+  alert("Note moved to Trash");
+});
 
   backBtn.addEventListener("click", () => {
     window.location.href = "/notes";

@@ -167,17 +167,32 @@ const deleteNote = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
 
-    const [result] = await db.query(
+    const [rows] = await db.query(
+      "SELECT * FROM notes WHERE user_id = ? AND id = ?",
+      [userId, id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    const note = rows[0];
+
+    await db.query(
+      `INSERT INTO trash (user_id, note_id, title, content, course_id, deleted_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [userId, note.id, note.title, note.content, note.course_id]
+    );
+
+    await db.query(
       "DELETE FROM notes WHERE user_id = ? AND id = ?",
       [userId, id]
     );
 
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "Note not found" });
+    res.status(200).json({ message: "Note moved to trash" });
 
-    res.status(200).json({ message: "Note deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting note:", error);
+    console.error("❌ Error deleting (moving to trash):", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
