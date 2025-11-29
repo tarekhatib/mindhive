@@ -10,26 +10,28 @@ const renderTasks = async (req, res) => {
 };
 
 const getTasks = async (req, res) => {
+  const userId = req.user.id;
+  const filter = req.query.filter || "all";
+
+  let query = "SELECT * FROM tasks WHERE user_id = ?";
+  let params = [userId];
+
+  if (filter === "today") {
+    query += " AND due_date IS NOT NULL AND DATE(due_date) = CURDATE()";
+  } else if (filter === "upcoming") {
+    query += " AND due_date IS NOT NULL AND DATE(due_date) > CURDATE()";
+  } else if (filter === "past due") {
+    query += " AND due_date IS NOT NULL AND DATE(due_date) < CURDATE()";
+  }
+
+  query += " ORDER BY due_date IS NULL, due_date ASC";
+
   try {
-    const userId = req.user.id;
-    const filter = (req.query.filter || "all").toLowerCase();
-
-    let query = "SELECT * FROM tasks WHERE user_id = ?";
-    let params = [userId];
-
-    if (filter === "today") {
-      query += " AND DATE(due_date) <= CURDATE()";
-    } else if (filter === "upcoming") {
-      query += " AND DATE(due_date) > CURDATE()";
-    }
-
-    query += " ORDER BY due_date ASC";
-
-    const [rows] = await db.query(query, params);
-    res.status(200).json({ tasks: rows });
-  } catch (error) {
-    console.error("❌ Error fetching tasks:", error);
-    res.status(500).json({ message: "Internal server error" });
+    const [rows] = await db.execute(query, params);
+    res.json({ tasks: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch tasks" });
   }
 };
 

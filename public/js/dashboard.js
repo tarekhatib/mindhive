@@ -250,10 +250,10 @@ decreaseBtn?.addEventListener("click", decreaseTimer);
 loadState();
 updateTimerDisplay();
 
+//load today tasks
 async function loadDashboardTasks() {
   try {
     const res = await fetch("/api/tasks?filter=today");
-    if (!res.ok) throw new Error("Failed");
 
     const data = await res.json();
     const tasks = Array.isArray(data.tasks) ? data.tasks : [];
@@ -268,39 +268,18 @@ async function loadDashboardTasks() {
       return;
     }
 
-    // Normalize today date (local timezone)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     tasks.forEach((task) => {
       const li = document.createElement("li");
       li.className = "todo-item";
 
-      let label = "";
-
-      if (task.due_date) {
-        const due = new Date(task.due_date);
-
-        // Normalize MySQL datetime returned in UTC
-        due.setMinutes(due.getMinutes() + due.getTimezoneOffset());
-        due.setHours(0, 0, 0, 0);
-
-        if (due.getTime() === today.getTime()) {
-          label = "Today";
-        } else if (due < today) {
-          label = "Past Due";
-        }
-      }
-
       li.innerHTML = `
         <input type="checkbox" class="todo-checkbox" data-id="${task.id}">
-        <label>${task.title} 
-          ${label ? `<span class="due-label">${label}</span>` : ""}
-        </label>
+        <label>${task.title} <span class="due-label"></span></label>
       `;
 
       todoList.appendChild(li);
     });
+
   } catch (err) {
     const todoList = document.getElementById("todo-list");
     if (todoList) {
@@ -309,6 +288,18 @@ async function loadDashboardTasks() {
     }
   }
 }
+
+//fetch current user
+
+ async function fetchCurrentUser() {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        currentUserId = data.user.id;
+      }
+    } catch {}
+  }
 
 let completeTimeouts = {};
 

@@ -18,7 +18,7 @@
     <main class="dashboard">
       <header class="dashboard-header">
         <div class="search-bar">
-          <input type="text" placeholder="Search for users..." />
+          <input type="text" placeholder="Search" />
           <i class="fa-solid fa-magnifying-glass"></i>
         </div>
       </header>
@@ -97,7 +97,8 @@
       <br />
     </main>
 
+    <input type="hidden" id="user_id" value="<%= user.id %>">
+
     <script src="/js/dashboard.js"></script>
-    <scripttag src="/js/tasks.js"></script>
   </body>
 </html>

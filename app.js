@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "public", "views"));
 
-app.use("/", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", pomodoroRoutes);
 app.use("/", tasksRoutes);

@@ -43,40 +43,46 @@ document.addEventListener("DOMContentLoaded", () => {
     today.setHours(0, 0, 0, 0);
 
     tasks.forEach((task) => {
-      const due = task.due_date ? new Date(task.due_date) : null;
-      if (due) due.setHours(0, 0, 0, 0);
+  let due = null;
+  let isToday = false;
+  let isPast = false;
 
-      const isToday = due && due.getTime() === today.getTime();
-      const isPast = due && due < today;
+  if (task.due_date) {
+    due = new Date(task.due_date);
+    due.setHours(0, 0, 0, 0);
 
-      const item = document.createElement("div");
-      item.className = "task-item";
-      item.dataset.id = task.id;
+    isToday = due.getTime() === today.getTime();
+    isPast = due.getTime() < today.getTime();
+  }
 
-      item.innerHTML = `
-        <div class="task-left">
-          <input type="checkbox" class="task-checkbox" data-id="${task.id}">
-          <div class="task-info">
-            <h3>${task.title}</h3>
-            ${
-              task.due_date
-                ? `<p class="due-date ${isPast ? "overdue" : ""}">
-                     ${isToday ? "Due: Today" : "Due: " + due.toLocaleDateString()}
-                   </p>`
-                : ""
-            }
-            ${
-              task.description
-                ? `<p class="task-desc">${task.description}</p>`
-                : ""
-            }
-          </div>
-        </div>
-      `;
+  const item = document.createElement("div");
+  item.className = "task-item";
+  item.dataset.id = task.id;
 
-      attachItemEvents(item, task);
-      tasksList.appendChild(item);
-    });
+  item.innerHTML = `
+    <div class="task-left">
+      <input type="checkbox" class="task-checkbox" data-id="${task.id}">
+      <div class="task-info">
+        <h3>${task.title}</h3>
+        ${
+          task.due_date
+            ? `<p class="due-date ${isPast ? "overdue" : ""}">
+                 ${
+                   isToday
+                     ? "Due: Today"
+                     : "Due: " + due.toLocaleDateString()
+                 }
+               </p>`
+            : ""
+        }
+        ${task.description ? `<p class="task-desc">${task.description}</p>` : ""}
+      </div>
+    </div>
+  `;
+
+  attachItemEvents(item, task);
+  tasksList.appendChild(item);
+});
   }
 
   async function createNewTask() {
@@ -250,14 +256,17 @@ addBtn.addEventListener("click", createNewTask);
 );
 
   searchInput.addEventListener("input", async () => {
-    const query = searchInput.value.toLowerCase();
-    const res = await fetch(`/api/tasks?filter=${filter}`)
-    const data = await res.json();
-    const filtered = data.tasks.filter((t) =>
-      t.title.toLowerCase().includes(query)
-    );
-    renderTasks(filtered);
-  });
+  const query = searchInput.value.toLowerCase();
+
+  const res = await fetch(`/api/tasks?filter=${filterSelect.value}`);
+  const data = await res.json();
+
+  const filtered = data.tasks.filter((t) =>
+    t.title.toLowerCase().includes(query)
+  );
+
+  renderTasks(filtered);
+});
 
   (async () => {
     await fetchCurrentUser();
