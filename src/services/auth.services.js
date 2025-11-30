@@ -88,6 +88,7 @@ const loginUser = async ({ identifier, password }) => {
       user: safeUser,
     };
   } catch (err) {
+    console.log(err);
     if (err.status) throw err;
     throw { status: 500, message: "Database error", error: err };
   }
