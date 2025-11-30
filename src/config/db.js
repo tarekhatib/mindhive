@@ -10,4 +10,11 @@ const db = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
+db.getConnection().then((conn) => {
+  conn.query("SET time_zone = '+02:00'");
+  conn.release();
+}).catch(err => {
+  console.error("Timezone setup failed:", err);
+});
+
 module.exports = db;

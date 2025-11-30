@@ -17,11 +17,11 @@ const getTasks = async (req, res) => {
   let params = [userId];
 
   if (filter === "today") {
-    query += " AND due_date IS NOT NULL AND DATE(due_date) = CURDATE()";
+    query += " AND due_date IS NOT NULL AND DATE(CONVERT_TZ(due_date, '+00:00', '+02:00')) = CURDATE()";
   } else if (filter === "upcoming") {
-    query += " AND due_date IS NOT NULL AND DATE(due_date) > CURDATE()";
+    query += " AND due_date IS NOT NULL AND DATE(CONVERT_TZ(due_date, '+00:00', '+02:00')) > CURDATE()";
   } else if (filter === "past due") {
-    query += " AND due_date IS NOT NULL AND DATE(due_date) < CURDATE()";
+    query += " AND due_date IS NOT NULL AND DATE(CONVERT_TZ(due_date, '+00:00', '+02:00')) < CURDATE()";
   }
 
   query += " ORDER BY due_date IS NULL, due_date ASC";
