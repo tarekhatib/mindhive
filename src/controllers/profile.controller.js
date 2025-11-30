@@ -19,9 +19,8 @@ const updateProfile = async (req, res) => {
     return res.json({
       success: true,
       message: "Profile updated",
-      user: updated
+      user: updated,
     });
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
@@ -36,9 +35,8 @@ const removeProfileImage = async (req, res) => {
     return res.json({
       success: true,
       message: "Profile photo removed",
-      user: updated
+      user: updated,
     });
-
   } catch (err) {
     return res
       .status(err.status || 500)
@@ -48,5 +46,5 @@ const removeProfileImage = async (req, res) => {
 
 module.exports = {
   updateProfile,
-  removeProfileImage
+  removeProfileImage,
 };

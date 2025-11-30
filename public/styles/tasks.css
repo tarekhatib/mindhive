@@ -475,3 +475,21 @@ body {
     color: #ff4b4b;
   }
 }
+
+.task-item.highlight {
+  background: rgba(255, 221, 87, 0.15);
+  transition: background 0.1s ease;
+  border-top-right-radius: 0%;
+  border-bottom-right-radius: 0%;
+}
+
+.task-item.hover-flash {
+  background: rgba(255, 255, 255, 0.06);
+  /* dark mode feel */
+}
+
+@media (prefers-color-scheme: light) {
+  .task-item.hover-flash {
+    background: rgba(0, 0, 0, 0.03);
+  }
+}

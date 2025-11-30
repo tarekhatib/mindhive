@@ -58,7 +58,7 @@ const restoreNote = async (req, res) => {
         note.course_id,
         userId,
         note.created_at,
-        new Date()
+        new Date(),
       ]
     );
 

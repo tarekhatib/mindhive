@@ -23,7 +23,7 @@ const renderNotes = async (req, res) => {
     res.render("notes", {
       user: req.user,
       notes: [],
-      errorMessage: "Failed to load notes."
+      errorMessage: "Failed to load notes.",
     });
   }
 };
@@ -33,12 +33,15 @@ const renderNoteEditor = async (req, res) => {
     const userId = req.user.id;
     const noteId = req.params.id;
 
-    const [rows] = await db.query(`
+    const [rows] = await db.query(
+      `
   SELECT n.*, c.name AS course_name
   FROM notes n
   LEFT JOIN courses c ON n.course_id = c.id
   WHERE n.id = ? AND n.user_id = ?
-`, [noteId, userId]);
+`,
+      [noteId, userId]
+    );
 
     if (rows.length === 0) {
       return res.status(404).render("editor", {
@@ -48,7 +51,6 @@ const renderNoteEditor = async (req, res) => {
     }
 
     res.render("editor", { note: rows[0], errorMessage: null });
-
   } catch (err) {
     console.error("❌ Error loading editor:", err);
     res.status(500).render("editor", {
@@ -118,7 +120,6 @@ const addNote = async (req, res) => {
       message: "Note added successfully",
       noteId: result.insertId,
     });
-
   } catch (error) {
     console.error("❌ Error adding note:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -155,7 +156,6 @@ const updateNote = async (req, res) => {
       return res.status(404).json({ message: "Note not found" });
 
     res.status(200).json({ message: "Note updated successfully" });
-
   } catch (error) {
     console.error("❌ Error updating note:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -184,13 +184,12 @@ const deleteNote = async (req, res) => {
       [userId, note.id, note.title, note.content, note.course_id]
     );
 
-    await db.query(
-      "DELETE FROM notes WHERE user_id = ? AND id = ?",
-      [userId, id]
-    );
+    await db.query("DELETE FROM notes WHERE user_id = ? AND id = ?", [
+      userId,
+      id,
+    ]);
 
     res.status(200).json({ message: "Note moved to trash" });
-
   } catch (error) {
     console.error("❌ Error deleting (moving to trash):", error);
     res.status(500).json({ message: "Internal server error" });
@@ -238,10 +237,10 @@ const deleteCourse = async (req, res) => {
     const userId = req.user.id;
     const courseId = req.params.id;
 
-    await db.query(
-      "DELETE FROM courses WHERE id = ? AND user_id = ?",
-      [courseId, userId]
-    );
+    await db.query("DELETE FROM courses WHERE id = ? AND user_id = ?", [
+      courseId,
+      userId,
+    ]);
 
     res.status(200).json({ message: "Course deleted" });
   } catch (err) {

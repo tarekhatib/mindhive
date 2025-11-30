@@ -39,7 +39,8 @@
       <div class="tasks-list">
         <% if (typeof tasks !== 'undefined' && tasks && tasks.length > 0) { %>
         <% tasks.forEach(task => { %>
-        <div class="task-item <%= task.completed ? 'completed' : '' %>">
+        <div class="task-item <%= task.completed ? 'completed' : '' %>" 
+     data-id="<%= task.id %>">
           <div class="task-left">
             <input type="checkbox" class="task-checkbox" <%= task.completed ?
             'checked' : '' %> data-id="<%= task.id %>" />

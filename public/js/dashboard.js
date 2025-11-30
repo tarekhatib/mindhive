@@ -1,4 +1,103 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const searchInput = document.querySelector(".search-bar input");
+  const resultsBox = document.getElementById("search-results");
+
+  function hideSearchResults() {
+    resultsBox.classList.add("hidden");
+    resultsBox.innerHTML = "";
+  }
+
+  searchInput.addEventListener("input", async () => {
+    const q = searchInput.value.trim();
+
+    if (q.length === 0) {
+      hideSearchResults();
+      return;
+    }
+
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+    const data = await res.json();
+
+    renderSearchResults(data);
+  });
+
+  function renderSearchResults(data) {
+    const { tasks, notes, users } = data;
+    let html = "";
+
+    if (tasks.length > 0) {
+      html += `<div class="sr-section-title">Tasks</div>`;
+      tasks.forEach((t) => {
+        html += `
+        <div class="sr-item"
+             data-type="task"
+             data-id="${t.id}">
+          📝 ${t.title}
+        </div>
+      `;
+      });
+    }
+
+    if (notes.length > 0) {
+      html += `<div class="sr-section-title">Notes</div>`;
+      notes.forEach((n) => {
+        html += `
+        <div class="sr-item"
+             data-type="note"
+             data-id="${n.id}">
+          📄 ${n.title}
+        </div>
+      `;
+      });
+    }
+
+    if (users.length > 0) {
+      html += `<div class="sr-section-title">Users</div>`;
+      users.forEach((u) => {
+        html += `
+        <div class="sr-item"
+             data-type="user"
+             data-id="${u.id}">
+          👤 ${u.first_name} ${u.last_name} (@${u.username}) — ${u.total_points} pts
+        </div>
+      `;
+      });
+    }
+
+    if (html === "") {
+      html = `<div class="sr-empty">No results found</div>`;
+    }
+
+    resultsBox.innerHTML = html;
+    resultsBox.classList.remove("hidden");
+  }
+
+  resultsBox.addEventListener("click", (e) => {
+    const item = e.target.closest(".sr-item");
+    if (!item) return;
+
+    const type = item.dataset.type;
+    const id = item.dataset.id;
+
+    if (type === "task") {
+      location.href = `/tasks?highlight=${id}`;
+    }
+
+    if (type === "note") {
+      location.href = `/notes/edit/${id}`;
+    }
+
+    if (type === "user") {
+      location.href = `/leaderboard?focus=${id}`;
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!resultsBox.contains(e.target) && e.target !== searchInput) {
+      hideSearchResults();
+    }
+  });
+
   const greetingElement = document.getElementById("greeting-text");
   const hours = new Date().getHours();
   const greeting =
@@ -250,7 +349,6 @@ decreaseBtn?.addEventListener("click", decreaseTimer);
 loadState();
 updateTimerDisplay();
 
-//load today tasks
 async function loadDashboardTasks() {
   try {
     const res = await fetch("/api/tasks?filter=today");
@@ -279,7 +377,6 @@ async function loadDashboardTasks() {
 
       todoList.appendChild(li);
     });
-
   } catch (err) {
     const todoList = document.getElementById("todo-list");
     if (todoList) {
@@ -289,17 +386,15 @@ async function loadDashboardTasks() {
   }
 }
 
-//fetch current user
-
- async function fetchCurrentUser() {
-    try {
-      const res = await fetch("/api/auth/me");
-      if (res.ok) {
-        const data = await res.json();
-        currentUserId = data.user.id;
-      }
-    } catch {}
-  }
+async function fetchCurrentUser() {
+  try {
+    const res = await fetch("/api/auth/me");
+    if (res.ok) {
+      const data = await res.json();
+      currentUserId = data.user.id;
+    }
+  } catch {}
+}
 
 let completeTimeouts = {};
 

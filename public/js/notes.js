@@ -107,221 +107,218 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (isEditor) {
-  const noteId = document.getElementById("note-id").value;
-  const titleInput = document.getElementById("note-title");
-  const bodyInput = document.getElementById("note-body");
-  const deleteBtn = document.getElementById("delete-note-btn");
-  const saveBtn = document.getElementById("save-note-btn");
-  const backBtn = document.getElementById("back-btn");
+    const noteId = document.getElementById("note-id").value;
+    const titleInput = document.getElementById("note-title");
+    const bodyInput = document.getElementById("note-body");
+    const deleteBtn = document.getElementById("delete-note-btn");
+    const saveBtn = document.getElementById("save-note-btn");
+    const backBtn = document.getElementById("back-btn");
 
-  const courseInput = document.getElementById("course-input");
-  const suggestionsBox = document.getElementById("course-suggestions");
+    const courseInput = document.getElementById("course-input");
+    const suggestionsBox = document.getElementById("course-suggestions");
 
-  let courses = [];
-  let saveTimer;
-  let selectedIndex = -1; // keyboard selection index
+    let courses = [];
+    let saveTimer;
+    let selectedIndex = -1;
 
-  async function loadCourses() {
-    const res = await fetch("/api/courses");
-    const data = await res.json();
-    courses = data.courses || [];
-  }
-
-  function renderSuggestions(list, rawText) {
-    suggestionsBox.innerHTML = "";
-    selectedIndex = -1;
-
-    const trimmed = rawText.trim();
-
-    // Show nothing if empty AND no focus trigger
-    if (!trimmed && !courseInput.matches(":focus")) {
-      suggestionsBox.classList.remove("active");
-      return;
+    async function loadCourses() {
+      const res = await fetch("/api/courses");
+      const data = await res.json();
+      courses = data.courses || [];
     }
 
-    // Build DOM suggestions
-    list.forEach((course, index) => {
-      const item = document.createElement("div");
-      item.className = "suggestion-item";
-      item.dataset.index = index;
+    function renderSuggestions(list, rawText) {
+      suggestionsBox.innerHTML = "";
+      selectedIndex = -1;
 
-      item.innerHTML = `
+      const trimmed = rawText.trim();
+
+      if (!trimmed && !courseInput.matches(":focus")) {
+        suggestionsBox.classList.remove("active");
+        return;
+      }
+
+      list.forEach((course, index) => {
+        const item = document.createElement("div");
+        item.className = "suggestion-item";
+        item.dataset.index = index;
+
+        item.innerHTML = `
         <span class="course-name">${course.name}</span>
         <button class="delete-course-btn">&times;</button>
       `;
 
-      // Click to select course
-      item.querySelector(".course-name").addEventListener("click", () => {
-        courseInput.value = course.name;
-        suggestionsBox.classList.remove("active");
-        selectedIndex = -1;
-      });
-
-      // Click X to delete the course
-      item.querySelector(".delete-course-btn").addEventListener("click", async (e) => {
-        e.stopPropagation();
-
-        if (!confirm(`Delete course "${course.name}"?`)) return;
-
-        await fetch(`/api/courses/${course.id}`, {
-          method: "DELETE"
+        item.querySelector(".course-name").addEventListener("click", () => {
+          courseInput.value = course.name;
+          suggestionsBox.classList.remove("active");
+          selectedIndex = -1;
         });
 
-        await loadCourses();
-        renderSuggestions(courses, courseInput.value.trim());
+        item
+          .querySelector(".delete-course-btn")
+          .addEventListener("click", async (e) => {
+            e.stopPropagation();
+
+            if (!confirm(`Delete course "${course.name}"?`)) return;
+
+            await fetch(`/api/courses/${course.id}`, {
+              method: "DELETE",
+            });
+
+            await loadCourses();
+            renderSuggestions(courses, courseInput.value.trim());
+          });
+
+        suggestionsBox.appendChild(item);
       });
 
-      suggestionsBox.appendChild(item);
-    });
+      const exists = courses.some(
+        (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+      );
+      if (trimmed && !exists) {
+        const addNew = document.createElement("div");
+        addNew.className = "suggestion-item add-new";
+        addNew.dataset.index = list.length;
+        addNew.textContent = `+ Add New Course: "${trimmed}"`;
 
-    // + Add New Course
-    const exists = courses.some(c => c.name.toLowerCase() === trimmed.toLowerCase());
-    if (trimmed && !exists) {
-      const addNew = document.createElement("div");
-      addNew.className = "suggestion-item add-new";
-      addNew.dataset.index = list.length;
-      addNew.textContent = `+ Add New Course: "${trimmed}"`;
+        addNew.addEventListener("click", async () => {
+          const res = await fetch("/api/courses", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: trimmed }),
+          });
 
-      addNew.addEventListener("click", async () => {
-        const res = await fetch("/api/courses", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: trimmed }),
+          const data = await res.json();
+          await loadCourses();
+
+          courseInput.value = trimmed;
+          suggestionsBox.classList.remove("active");
+
+          await save();
         });
 
-        const data = await res.json();
-        await loadCourses();
+        suggestionsBox.appendChild(addNew);
+      }
 
-        courseInput.value = trimmed;
-        suggestionsBox.classList.remove("active");
-
-        await save();
-      });
-
-      suggestionsBox.appendChild(addNew);
+      suggestionsBox.classList.add("active");
     }
 
-    suggestionsBox.classList.add("active");
-  }
+    function highlightSuggestion() {
+      const items = Array.from(suggestionsBox.children);
+      items.forEach((it, i) => {
+        it.classList.toggle("highlighted", i === selectedIndex);
+      });
+    }
 
-  function highlightSuggestion() {
-    const items = Array.from(suggestionsBox.children);
-    items.forEach((it, i) => {
-      it.classList.toggle("highlighted", i === selectedIndex);
-    });
-  }
+    function selectHighlighted() {
+      const items = suggestionsBox.children;
+      if (selectedIndex < 0 || selectedIndex >= items.length) return;
 
-  function selectHighlighted() {
-    const items = suggestionsBox.children;
-    if (selectedIndex < 0 || selectedIndex >= items.length) return;
+      const item = items[selectedIndex];
 
-    const item = items[selectedIndex];
-
-    if (item.classList.contains("add-new")) {
-      item.click();
-    } else {
-      const courseName = item.querySelector(".course-name")?.textContent;
-      if (courseName) {
-        courseInput.value = courseName;
-        suggestionsBox.classList.remove("active");
+      if (item.classList.contains("add-new")) {
+        item.click();
+      } else {
+        const courseName = item.querySelector(".course-name")?.textContent;
+        if (courseName) {
+          courseInput.value = courseName;
+          suggestionsBox.classList.remove("active");
+        }
       }
     }
-  }
 
-  courseInput.addEventListener("focus", () => {
-    renderSuggestions(courses, courseInput.value.trim());
-  });
-
-  courseInput.addEventListener("input", () => {
-    const txt = courseInput.value.trim().toLowerCase();
-    const matches = courses.filter((c) => c.name.toLowerCase().includes(txt));
-    renderSuggestions(matches, courseInput.value);
-  });
-
-  // KEYBOARD NAVIGATION
-  courseInput.addEventListener("keydown", (e) => {
-    const items = suggestionsBox.children;
-    if (!items.length) return;
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      selectedIndex = (selectedIndex + 1) % items.length;
-      highlightSuggestion();
-    }
-
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-      highlightSuggestion();
-    }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      selectHighlighted();
-    }
-
-    if (e.key === "Escape") {
-      suggestionsBox.classList.remove("active");
-      selectedIndex = -1;
-    }
-  });
-
-  // --- SAVE NOTE ---
-  async function resolveCourseId() {
-    const name = courseInput.value.trim();
-    if (!name) return null;
-
-    const existing = courses.find((c) => c.name === name);
-    return existing ? existing.id : null;
-  }
-
-  function autoSave() {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(save, 500);
-  }
-
-  async function save() {
-    const course_id = await resolveCourseId();
-
-    await fetch(`/api/notes/${noteId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: titleInput.value.trim(),
-        content: bodyInput.value.trim(),
-        course_id,
-      }),
+    courseInput.addEventListener("focus", () => {
+      renderSuggestions(courses, courseInput.value.trim());
     });
+
+    courseInput.addEventListener("input", () => {
+      const txt = courseInput.value.trim().toLowerCase();
+      const matches = courses.filter((c) => c.name.toLowerCase().includes(txt));
+      renderSuggestions(matches, courseInput.value);
+    });
+
+    courseInput.addEventListener("keydown", (e) => {
+      const items = suggestionsBox.children;
+      if (!items.length) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % items.length;
+        highlightSuggestion();
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        highlightSuggestion();
+      }
+
+      if (e.key === "Enter") {
+        e.preventDefault();
+        selectHighlighted();
+      }
+
+      if (e.key === "Escape") {
+        suggestionsBox.classList.remove("active");
+        selectedIndex = -1;
+      }
+    });
+
+    async function resolveCourseId() {
+      const name = courseInput.value.trim();
+      if (!name) return null;
+
+      const existing = courses.find((c) => c.name === name);
+      return existing ? existing.id : null;
+    }
+
+    function autoSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(save, 500);
+    }
+
+    async function save() {
+      const course_id = await resolveCourseId();
+
+      await fetch(`/api/notes/${noteId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: titleInput.value.trim(),
+          content: bodyInput.value.trim(),
+          course_id,
+        }),
+      });
+    }
+
+    saveBtn.addEventListener("click", async () => {
+      await save();
+      saveBtn.classList.add("saved");
+      setTimeout(() => saveBtn.classList.remove("saved"), 600);
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!confirm("Delete this note?")) return;
+
+      const res = await fetch(`/api/notes/${noteId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        alert("Failed to move to trash.");
+        return;
+      }
+      window.location.href = "/notes";
+      alert("Note moved to Trash");
+    });
+
+    backBtn.addEventListener("click", () => {
+      window.location.href = "/notes";
+    });
+
+    titleInput.addEventListener("input", autoSave);
+    bodyInput.addEventListener("input", autoSave);
+
+    loadCourses();
   }
-
-  saveBtn.addEventListener("click", async () => {
-    await save();
-    saveBtn.classList.add("saved");
-    setTimeout(() => saveBtn.classList.remove("saved"), 600);
-  });
-
-  deleteBtn.addEventListener("click", async () => {
-  if (!confirm("Delete this note?")) return;
-
-  const res = await fetch(`/api/notes/${noteId}`, {
-    method: "DELETE"
-  });
-
-  if (!res.ok) {
-    alert("Failed to move to trash.");
-    return;
-  }
-  window.location.href = "/notes";
-  alert("Note moved to Trash");
-});
-
-  backBtn.addEventListener("click", () => {
-    window.location.href = "/notes";
-  });
-
-  titleInput.addEventListener("input", autoSave);
-  bodyInput.addEventListener("input", autoSave);
-
-  loadCourses();
-}
 });

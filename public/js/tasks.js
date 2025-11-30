@@ -8,6 +8,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let activeEditItem = null;
   let completeTimeouts = {};
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const highlightId = urlParams.get("highlight");
+
+  if (highlightId) {
+    const taskEl = document.querySelector(`.task-item[data-id="${highlightId}"]`);
+    console.log("FOUND?", taskEl);
+
+    if (taskEl) {
+      taskEl.classList.add("highlight");
+
+      taskEl.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      setTimeout(() => {
+        taskEl.classList.remove("highlight");
+      }, 4000);
+    }
+  }
+
   async function fetchCurrentUser() {
     try {
       const res = await fetch("/api/auth/me");
@@ -31,59 +52,44 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
   function renderTasks(tasks) {
+  tasksList.innerHTML = "";
 
-    tasksList.innerHTML = "";
-
-    if (!tasks || tasks.length === 0) {
-      tasksList.innerHTML = `<p class="no-tasks">No tasks found.</p>`;
-      return;
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    tasks.forEach((task) => {
-  let due = null;
-  let isToday = false;
-  let isPast = false;
-
-  if (task.due_date) {
-    due = new Date(task.due_date);
-    due.setHours(0, 0, 0, 0);
-
-    isToday = due.getTime() === today.getTime();
-    isPast = due.getTime() < today.getTime();
+  if (!tasks || tasks.length === 0) {
+    tasksList.innerHTML = `<p class="no-tasks">No tasks found.</p>`;
+    return;
   }
 
-  const item = document.createElement("div");
-  item.className = "task-item";
-  item.dataset.id = task.id;
+  tasks.forEach(task => {
+    const item = document.createElement("div");
+    item.className = "task-item";
+    item.dataset.id = task.id;
 
-  item.innerHTML = `
-    <div class="task-left">
-      <input type="checkbox" class="task-checkbox" data-id="${task.id}">
-      <div class="task-info">
-        <h3>${task.title}</h3>
-        ${
-          task.due_date
-            ? `<p class="due-date ${isPast ? "overdue" : ""}">
-                 ${
-                   isToday
-                     ? "Due: Today"
-                     : "Due: " + due.toLocaleDateString()
-                 }
-               </p>`
-            : ""
-        }
-        ${task.description ? `<p class="task-desc">${task.description}</p>` : ""}
+    item.innerHTML = `
+      <div class="task-left">
+        <input type="checkbox" class="task-checkbox" data-id="${task.id}">
+        <div class="task-info">
+          <h3>${task.title}</h3>
+          ${task.due_date ? `<p class="due-date">${task.due_date}</p>` : ""}
+          ${task.description ? `<p class="task-desc">${task.description}</p>` : ""}
+        </div>
       </div>
-    </div>
-  `;
+    `;
 
-  attachItemEvents(item, task);
-  tasksList.appendChild(item);
-});
+    attachItemEvents(item, task);
+    tasksList.appendChild(item);
+  });
+
+  if (highlightId) {
+    const taskEl = document.querySelector(`.task-item[data-id="${highlightId}"]`);
+    console.log("AFTER RENDER? ", taskEl);
+
+    if (taskEl) {
+      taskEl.classList.add("highlight");
+      taskEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => taskEl.classList.remove("highlight"), 500);
+    }
   }
+}
 
   async function createNewTask() {
     if (activeEditItem) {

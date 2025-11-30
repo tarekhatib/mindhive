@@ -58,10 +58,10 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       div.querySelector(".restore-btn").addEventListener("click", async () => {
-  if (confirm("Restore this note?")) {
-    await restoreNote(note.id);
-  }
-});
+        if (confirm("Restore this note?")) {
+          await restoreNote(note.id);
+        }
+      });
 
       div
         .querySelector(".delete-forever-btn")

@@ -17,7 +17,7 @@ const renderSettings = async (req, res) => {
 
   const [rankRow] = await db.query(
     `
-  SELECT rank_position FROM (
+   SELECT rank_position FROM (
       SELECT 
           u.id,
           COALESCE(SUM(p.points), 0) AS total_points,

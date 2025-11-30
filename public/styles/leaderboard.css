@@ -290,3 +290,11 @@ body {
         background: rgba(255, 255, 255, 0.13);
     }
 }
+
+.lb-row.highlight,
+.lb-row.hover-flash {
+    background: rgba(255, 221, 87, 0.15);
+    transition: background 0.1s ease;
+    border-top-left-radius: 0%;
+    border-top-right-radius: 0%;
+}
