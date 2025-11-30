@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/styles/main.css" />
     <link rel="stylesheet" href="/styles/settings.css" />
     <title>MindHive · Settings</title>
@@ -16,28 +19,28 @@
     <div class="settings-container">
       <h1>Settings</h1>
 
-      <% 
-        const hasUser = typeof user !== 'undefined' && user;
-        const firstName = hasUser && user.first_name ? user.first_name : 'Student';
-        const lastName = hasUser && user.last_name ? (' ' + user.last_name) : '';
-        const handle =
-          hasUser && user.username
-            ? user.username
-            : hasUser && user.email
-            ? user.email.split('@')[0]
-            : 'username';
-      %>
+      <% const hasUser = typeof user !== 'undefined' && user; const firstName =
+      hasUser && user.first_name ? user.first_name : 'Student'; const lastName =
+      hasUser && user.last_name ? (' ' + user.last_name) : ''; const handle =
+      hasUser && user.username ? user.username : hasUser && user.email ?
+      user.email.split('@')[0] : 'username'; %>
 
       <!-- PROFILE CARD -->
       <section class="profile-card">
         <div class="profile-left">
-
           <% if (user && user.profile_image) { %>
-            <img src="<%= user.profile_image %>" class="profile-avatar-img" alt="Profile Picture" />
+          <img
+            src="<%= user.profile_image %>"
+            class="profile-avatar-img"
+            alt="Profile Picture"
+          />
           <% } else { %>
-            <div class="profile-avatar">
-              <span><%= firstName.charAt(0).toUpperCase() %><%= lastName.trim() ? lastName.trim().charAt(0).toUpperCase() : '' %></span>
-            </div>
+          <div class="profile-avatar">
+            <span
+              ><%= firstName.charAt(0).toUpperCase() %><%= lastName.trim() ?
+              lastName.trim().charAt(0).toUpperCase() : '' %></span
+            >
+          </div>
           <% } %>
 
           <div class="profile-main">
@@ -59,7 +62,7 @@
 
           <div class="profile-stat">
             <span class="stat-label">Student Score</span>
-            <span class="stat-value" id="profile-score">0 pts</span>
+            <div class="stat-value"><%= totalPoints %> pts</div>
           </div>
 
           <button type="button" class="edit-profile-btn" id="edit-profile-btn">
@@ -71,14 +74,27 @@
       <!-- SETTINGS LIST -->
       <form id="settings-form" class="settings-form">
         <ul>
-          <li><button type="button" class="settings-button" id="change-password"><h3>Change Password</h3></button></li>
-          <li><button type="button" class="settings-button" id="log-out"><h3>Log Out</h3></button></li>
-          <li><button type="button" class="settings-button" id="red-btn"><h3>Delete Account</h3></button></li>
+          <li>
+            <button type="button" class="settings-button" id="change-password">
+              <h3>Change Password</h3>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="settings-button" id="log-out">
+              <h3>Log Out</h3>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="settings-button" id="red-btn">
+              <h3>Delete Account</h3>
+            </button>
+          </li>
         </ul>
       </form>
 
       <footer class="settings-footer">
-        <p>&copy; 2025 MindHive. All rights reserved. 
+        <p>
+          &copy; 2025 MindHive. All rights reserved.
           <a href="https://mindhive.dev"><i>View Documentation</i></a>
         </p>
       </footer>
@@ -89,12 +105,24 @@
           <h2>Change Password</h2>
 
           <div class="modal-input-group">
-            <input type="password" id="current_password" placeholder="Current Password" class="modal-input" />
-            <input type="password" id="new_password" placeholder="New Password" class="modal-input" />
+            <input
+              type="password"
+              id="current_password"
+              placeholder="Current Password"
+              class="modal-input"
+            />
+            <input
+              type="password"
+              id="new_password"
+              placeholder="New Password"
+              class="modal-input"
+            />
           </div>
 
           <div class="modal-button-row">
-            <button id="submit-password" class="confirm-btn">Update Password</button>
+            <button id="submit-password" class="confirm-btn">
+              Update Password
+            </button>
             <button id="cancel-modal" class="cancel-btn">Cancel</button>
           </div>
         </div>
@@ -109,11 +137,16 @@
         <!-- Avatar -->
         <div class="edit-avatar-wrapper">
           <% if (user && user.profile_image) { %>
-            <img id="edit-avatar-preview" src="<%= user.profile_image %>" class="edit-avatar-img" />
+          <img
+            id="edit-avatar-preview"
+            src="<%= user.profile_image %>"
+            class="edit-avatar-img"
+          />
           <% } else { %>
-            <div id="edit-avatar-preview" class="edit-avatar-placeholder">
-              <%= firstName.charAt(0).toUpperCase() %><%= lastName.trim() ? lastName.trim().charAt(0).toUpperCase() : '' %>
-            </div>
+          <div id="edit-avatar-preview" class="edit-avatar-placeholder">
+            <%= firstName.charAt(0).toUpperCase() %><%= lastName.trim() ?
+            lastName.trim().charAt(0).toUpperCase() : '' %>
+          </div>
           <% } %>
 
           <!-- PHOTO ACTIONS ROW -->
@@ -123,23 +156,51 @@
             </label>
 
             <% if (user && user.profile_image) { %>
-              <button id="remove-profile-image" class="remove-img-btn">Remove Photo</button>
+            <button id="remove-profile-image" class="remove-img-btn">
+              Remove Photo
+            </button>
             <% } %>
           </div>
 
-          <input type="file" id="profileImageInput" name="profile_image" accept="image/*" hidden />
+          <input
+            type="file"
+            id="profileImageInput"
+            name="profile_image"
+            accept="image/*"
+            hidden
+          />
         </div>
 
         <!-- INPUTS -->
         <div class="edit-fields">
-          <input type="text" id="edit-firstname" class="edit-input" placeholder="First Name" value="<%= firstName %>" />
-          <input type="text" id="edit-lastname" class="edit-input" placeholder="Last Name" value="<%= lastName.trim() %>" />
-          <input type="text" id="edit-username" class="edit-input" placeholder="Username" value="<%= handle %>" />
+          <input
+            type="text"
+            id="edit-firstname"
+            class="edit-input"
+            placeholder="First Name"
+            value="<%= firstName %>"
+          />
+          <input
+            type="text"
+            id="edit-lastname"
+            class="edit-input"
+            placeholder="Last Name"
+            value="<%= lastName.trim() %>"
+          />
+          <input
+            type="text"
+            id="edit-username"
+            class="edit-input"
+            placeholder="Username"
+            value="<%= handle %>"
+          />
         </div>
 
         <!-- BUTTON ROW -->
         <div class="edit-button-row">
-          <button id="save-profile-info" class="confirm-btn">Save Changes</button>
+          <button id="save-profile-info" class="confirm-btn">
+            Save Changes
+          </button>
           <button id="cancel-edit-profile" class="cancel-btn">Cancel</button>
         </div>
       </div>

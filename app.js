@@ -11,6 +11,7 @@ const settingsRoutes = require("./src/routes/settings.routes.js");
 const notesRoutes = require("./src/routes/notes.routes.js");
 const trashRoutes = require("./src/routes/trash.routes.js");
 const profileRoutes = require("./src/routes/profile.routes.js");
+const leaderboardRoutes = require("./src/routes/leaderboard.routes.js");
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use("/", settingsRoutes);
 app.use("/", profileRoutes);
 app.use("/", notesRoutes);
 app.use("/", trashRoutes);
+app.use("/", leaderboardRoutes);
 
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));

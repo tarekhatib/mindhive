@@ -7,7 +7,17 @@ const renderSettings = async (req, res) => {
     [req.user.id]
   );
 
-  res.render("settings", { user: rows[0] });
+  const [scoreRow] = await db.query(
+    `SELECT COALESCE(SUM(points), 0) AS total_points
+   FROM pomodoro_sessions
+   WHERE user_id = ?`,
+    [req.user.id]
+  );
+
+  res.render("settings", {
+    user: rows[0],
+    totalPoints: scoreRow[0].total_points,
+  });
 };
 
 const changePassword = async (req, res) => {

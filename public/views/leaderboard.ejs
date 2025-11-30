@@ -14,57 +14,93 @@
   <%- include('partials/sidebar', { page: 'leaderboard' }) %>
 
   <div class="leaderboard-container">
+    
+    <h1>🏆 Leaderboard</h1>
 
-    <h1>Leaderboard</h1>
-    <div class="podium-wrapper">
-      <!-- 1st place -->
-      <div class="podium-card first">
-        <div class="podium-rank">🥇</div>
-        <img class="podium-avatar" src="<%= top3[0]?.avatar || '/assets/default-avatar.png' %>" />
-        <p class="podium-username">@<%= top3[0]?.username || '-' %></p>
-        <p class="podium-points"><%= top3[0]?.points || 0 %> pts</p>
+    <!-- ================= FULL TABLE CARD ================= -->
+    <div class="lb-card">
+
+      <!-- Header -->
+      <div class="lb-row lb-header">
+        <div class="lb-col rank-col">#</div>
+        <div class="lb-col user-col">User</div>
+        <div class="lb-col points-col">Points</div>
       </div>
 
-      <!-- 2nd place -->
-      <div class="podium-card second">
-        <div class="podium-rank">🥈</div>
-        <img class="podium-avatar" src="<%= top3[1]?.avatar || '/assets/default-avatar.png' %>" />
-        <p class="podium-username">@<%= top3[1]?.username || '-' %></p>
-        <p class="podium-points"><%= top3[1]?.points || 0 %> pts</p>
-      </div>
+      <!-- ROWS -->
+      <% if (users && users.length > 0) { %>
 
-      <!-- 3rd place -->
-      <div class="podium-card third">
-        <div class="podium-rank">🥉</div>
-        <img class="podium-avatar" src="<%= top3[2]?.avatar || '/assets/default-avatar.png' %>" />
-        <p class="podium-username">@<%= top3[2]?.username || '-' %></p>
-        <p class="podium-points"><%= top3[2]?.points || 0 %> pts</p>
-      </div>
+        <% users.forEach((user, i) => { %>
 
-    </div>
+          <div class="lb-row lb-item">
 
-    <div class="leaderboard-list">
-      <% if (others && others.length > 0) { %>
-
-        <% others.forEach((user, i) => { %>
-
-          <div class="leaderboard-item">
-            <div class="rank-number"><%= i + 4 %></div>
-
-            <img class="lb-avatar" src="<%= user.avatar || '/assets/default-avatar.png' %>" />
-
-            <div class="lb-info">
-              <p class="lb-username">@<%= user.username %></p>
+            <!-- Rank -->
+            <div class="lb-col rank-col">
+              <%= user.position %>
             </div>
 
-            <div class="lb-points"><%= user.points %> pts</div>
+            <!-- Avatar + Name + Username -->
+            <div class="lb-col user-col user-flex">
+
+              <% if (user.profile_image) { %>
+                <img class="lb-avatar" src="<%= user.profile_image %>" />
+              <% } else { %>
+                <div class="lb-avatar-initials">
+                  <%= user.first_name.charAt(0).toUpperCase() + user.last_name.charAt(0).toUpperCase() %>
+                </div>
+              <% } %>
+
+              <div class="lb-info">
+                <p class="lb-name">
+                  <%= user.first_name %> <%= user.last_name %>
+                </p>
+                <p class="lb-username">
+                  @<%= user.username %>
+                </p>
+              </div>
+
+            </div>
+
+            <!-- Points -->
+            <div class="lb-col points-col">
+              <%= user.total_points %> pts
+            </div>
+
           </div>
 
         <% }) %>
 
       <% } else { %>
-        <p class="no-users">No ranked users yet.</p>
+        <div class="lb-empty">No ranked users yet.</div>
       <% } %>
+
+    </div>
+
+    <!-- ================= PAGINATION ================= -->
+    <div class="lb-pagination">
+
+      <button
+        id="paginationPrev"
+        class="lb-page-btn"
+        <%= page <= 1 ? "disabled" : "" %>
+        data-page="<%= page - 1 %>"
+      >
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+
+      <span class="lb-page-number">
+        Page <%= page %> / <%= totalPages %>
+      </span>
+
+      <button
+        id="paginationNext"
+        class="lb-page-btn"
+        <%= page >= totalPages ? "disabled" : "" %>
+        data-page="<%= page + 1 %>"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
     </div>
 
   </div>

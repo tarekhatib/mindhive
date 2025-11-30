@@ -1,5 +1,8 @@
 @import url('./main.css');
 
+/* =========================================================
+   PAGE LAYOUT
+========================================================= */
 body {
     background: #f9f9f9;
 }
@@ -11,129 +14,190 @@ body {
     color: var(--text-light);
 }
 
-/* ---------------------------------------
-   Header
----------------------------------------- */
 .leaderboard-container h1 {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 2rem;
+    margin-bottom: 1.8rem;
 }
 
-/* ---------------------------------------
-   TOP 3 PODIUM WRAPPER
----------------------------------------- */
-.podium-wrapper {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
+/* =========================================================
+   TABLE CARD (Matches MindHive card style)
+========================================================= */
+.lb-table {
+    width: 100%;
+    max-width: 1000px;
 
-.podium-card {
+    /* MindHive card style */
     background: var(--card-bg-light);
-    backdrop-filter: blur(12px);
-    border-radius: 22px;
-    width: 200px;
-    padding: 1.8rem 1rem;
+    border-radius: 20px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 28px var(--shadow-light);
+
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.lb-header {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0 10px 25px var(--shadow-light);
-    transition: 0.25s ease;
-}
+    padding: 0.65rem 1.25rem;
 
-.podium-card:hover {
-    transform: translateY(-4px);
-}
-
-.podium-card.first {
-    transform: translateY(-20px);
-}
-
-.podium-rank {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.podium-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    margin-bottom: 0.7rem;
-    object-fit: cover;
-}
-
-.podium-username {
-    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+
+    background: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.podium-points {
-    font-size: 0.95rem;
-    color: #6b7280;
-}
-
-/* ---------------------------------------
-   LEADERBOARD LIST
----------------------------------------- */
-.leaderboard-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 650px;
-}
-
-.leaderboard-item {
-    background: var(--card-bg-light);
-    padding: 1.2rem 1.5rem;
-    border-radius: 18px;
+.lb-col {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    box-shadow: 0 8px 20px var(--shadow-light);
 }
 
-.rank-number {
-    font-weight: 700;
-    width: 30px;
-    text-align: center;
-    color: #111827;
+.rank-col {
+    width: 45px;
 }
 
-.lb-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.lb-info {
+.user-col {
     flex: 1;
 }
 
-.lb-username {
-    font-size: 1.05rem;
-    font-weight: 600;
+.points-col {
+    width: 110px;
+    text-align: right;
 }
 
-.lb-points {
-    font-size: 1rem;
+/* =========================================================
+   ROWS (Smaller, cleaner)
+========================================================= */
+.lb-row {
+    display: flex;
+    align-items: center;
+    padding: 0.55rem 1.25rem;   /* smaller height */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background 0.12s ease;
+}
+
+.lb-row:last-child {
+    border-bottom: none;
+}
+
+.lb-row:hover {
+    background: rgba(0, 0, 0, 0.025);
+}
+
+/* =========================================================
+   USER CELL
+========================================================= */
+.user-flex {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem; /* smaller gap */
+}
+
+.lb-avatar,
+.lb-avatar-initials {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    object-fit: cover;
+    background: rgba(0, 0, 0, 0.08);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #333;
+}
+
+.lb-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.lb-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.lb-username {
+    font-size: 0.8rem;
+    opacity: 0.55;
+}
+
+/* Rank and points */
+.rank-col {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.points-col {
+    font-size: 0.9rem;
     font-weight: 600;
     color: #6b7280;
 }
 
-/* Empty */
-.no-users {
-    opacity: 0.6;
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+.lb-empty {
+    padding: 1.6rem;
     text-align: center;
-    margin-top: 1rem;
+    opacity: 0.6;
 }
 
-/* ---------------------------------------
+/* =========================================================
+   PAGINATION
+========================================================= */
+.lb-pagination {
+    margin-top: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.lb-page-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+
+    background: rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.2s ease;
+}
+
+.lb-page-btn:hover:not([disabled]) {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.lb-page-btn[disabled] {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.lb-page-number {
+    font-size: 0.88rem;
+    opacity: 0.7;
+}
+
+/* =========================================================
    DARK MODE
----------------------------------------- */
+========================================================= */
 @media (prefers-color-scheme: dark) {
     body {
         background: var(--background-dark);
@@ -143,26 +207,52 @@ body {
         color: var(--text-dark);
     }
 
-    .podium-card,
-    .leaderboard-item {
+    .lb-table {
         background: var(--card-bg-dark);
-        box-shadow: none;
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .podium-username,
-    .lb-username {
+    .lb-header {
+        background: rgba(255, 255, 255, 0.04);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .lb-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .lb-row:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .lb-avatar-initials {
+        background: rgba(255, 255, 255, 0.14);
         color: var(--text-dark);
     }
 
-    .lb-points {
-        color: rgba(255, 255, 255, 0.6);
+    .lb-name {
+        color: var(--text-dark);
     }
 
-    .podium-points {
+    .lb-username {
         color: rgba(255, 255, 255, 0.55);
     }
 
-    .rank-number {
+    .rank-col {
         color: var(--text-dark);
+    }
+
+    .points-col {
+        color: rgba(255, 255, 255, 0.65);
+    }
+
+    .lb-page-btn {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-dark);
+    }
+
+    .lb-page-btn:hover:not([disabled]) {
+        background: rgba(255, 255, 255, 0.13);
     }
 }
