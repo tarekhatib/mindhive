@@ -264,14 +264,16 @@ body {
   margin-top: 2rem;
 }
 
-/* Overdue tasks styling — Apple Reminders style */
-.overdue {
-  color: #ef4444 !important;
+.due-past {
+  color: #d93a3a;
+  /* red for overdue */
   font-weight: 600;
 }
 
-.task-item.overdue .due-date {
-  color: #ef4444 !important;
+.due-today {
+  color: #f9c74f;
+  /* nice yellow highlight; you can change */
+  font-weight: 600;
 }
 
 .task-item.editing {

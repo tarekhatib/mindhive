@@ -8,6 +8,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let activeEditItem = null;
   let completeTimeouts = {};
 
+  function formatDate(dateString) {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+
+  if (target.getTime() === today.getTime()) {
+    return `<span class="due-today">Today</span>`;
+  }
+  if (target.getTime() < today.getTime()) {
+    const dd = String(target.getDate()).padStart(2, "0");
+    const mm = String(target.getMonth() + 1).padStart(2, "0");
+    const yyyy = target.getFullYear();
+
+    return `<span class="due-past">${dd}/${mm}/${yyyy}</span>`;
+  }
+  const dd = String(target.getDate()).padStart(2, "0");
+  const mm = String(target.getMonth() + 1).padStart(2, "0");
+  const yyyy = target.getFullYear();
+
+  return `${dd}/${mm}/${yyyy}`;
+}
+
   const urlParams = new URLSearchParams(window.location.search);
   const highlightId = urlParams.get("highlight");
 
@@ -69,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <input type="checkbox" class="task-checkbox" data-id="${task.id}">
         <div class="task-info">
           <h3>${task.title}</h3>
-          ${task.due_date ? `<p class="due-date">${task.due_date}</p>` : ""}
+          ${task.due_date ? `<p class="due-date">${formatDate(task.due_date)}</p>` : ""}
           ${task.description ? `<p class="task-desc">${task.description}</p>` : ""}
         </div>
       </div>

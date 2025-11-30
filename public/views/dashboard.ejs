@@ -100,16 +100,13 @@
 
             <!-- 3 ROWS -->
             <% leaderboardSmall.forEach(user => { %>
-              <div class="lb-row lb-item">
+              <div class="lb-row lb-item <%= user.id === locals.user.id ? 'lb-current-user' : '' %>">
 
-                <!-- Rank -->
                 <div class="lb-col rank-col">
                   <%= user.position %>
                 </div>
 
-                <!-- Avatar + Name -->
                 <div class="lb-col user-col user-flex">
-
                   <% if (user.profile_image) { %>
                     <img class="lb-avatar" src="<%= user.profile_image %>" />
                   <% } else { %>
@@ -122,10 +119,8 @@
                     <p class="lb-name"><%= user.first_name %> <%= user.last_name %></p>
                     <p class="lb-username">@<%= user.username %></p>
                   </div>
-
                 </div>
 
-                <!-- Points -->
                 <div class="lb-col points-col">
                   <%= user.total_points %> pts
                 </div>

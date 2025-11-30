@@ -551,7 +551,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0.55rem 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   transition: background 0.12s ease;
 }
 
@@ -564,6 +564,23 @@ body {
 .lb-row:hover {
   background: rgba(0, 0, 0, 0.025);
 }
+
+.lb-current-user {
+  background: rgba(249, 198, 59, 0.33);
+  border-left: 3px solid var(--accent-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  .lb-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .lb-current-user {
+    background: rgba(249, 198, 59, 0.05);
+    border-left: 3px solid #f9c73b !important;
+  }
+}
+
 
 /* =========================================================
    USER CELL

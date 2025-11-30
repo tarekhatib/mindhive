@@ -15,7 +15,7 @@ const getLeaderboardPage = async (page = 1) => {
         u.profile_image,
         COALESCE(SUM(p.points), 0) AS total_points,
         COUNT(p.id) AS total_sessions,
-        ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(p.points), 0) DESC) AS position
+        DENSE_RANK() OVER (ORDER BY COALESCE(SUM(p.points), 0) DESC) AS position
       FROM users u
       LEFT JOIN pomodoro_sessions p
         ON p.user_id = u.id
