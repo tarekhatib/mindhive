@@ -66,12 +66,9 @@ const authenticateToken = async (req, res, next) => {
 
     const newAccessToken = generateAccessToken(payload);
 
-    res.cookie("token", encodeURIComponent(newAccessToken), {
-      httpOnly: true,
-      secure: false,
-      maxAge: 15 * 60 * 1000,
-    });
-
+    const { accessCookieOptions } = require("../config/cookies");
+    res.cookie("token", encodeURIComponent(newAccessToken), accessCookieOptions);
+    
     const [userRows] = await db.query(
       "SELECT id, first_name, last_name, username, email, profile_image FROM users WHERE id = ?",
       [payload.id]
