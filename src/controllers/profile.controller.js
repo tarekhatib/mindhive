@@ -4,10 +4,10 @@ const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_SECRET_KEY
 );
 
-const BUCKET = "Profile Picture Bucket";
+const BUCKET = "profile-pictures";
 
 const updateProfile = async (req, res) => {
   try {
@@ -28,7 +28,10 @@ const updateProfile = async (req, res) => {
           upsert: true,
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Upload error:", error);
+        throw error;
+      }
 
       const { data: publicUrlData } = supabase.storage
         .from(BUCKET)
