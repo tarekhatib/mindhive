@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchTasks(filter = "all") {
 
   try {
-    const res = await fetch(`/api/tasks?filter=${filter}`);
+    const res = await fetch(`/api/tasks?filter=${filter}&offset=${new Date().getTimezoneOffset()}`);
     if (!res.ok) throw new Error();
     const data = await res.json();
     renderTasks(data.tasks || []);

@@ -9,26 +9,39 @@ const renderTasks = async (req, res) => {
   }
 };
 
+const toUserDate = (utcDate, offset) => {
+  const local = new Date(utcDate.getTime() - offset * 60000);
+  return local.toISOString().split("T")[0];
+};
+
 const getTasks = async (req, res) => {
   const userId = req.user.id;
   const filter = req.query.filter || "all";
-
-  let query = "SELECT * FROM tasks WHERE user_id = ?";
-  let params = [userId];
-
-  if (filter === "today") {
-    query += " AND due_date IS NOT NULL AND DATE(CONVERT_TZ(due_date, '+00:00', '+02:00')) = CURDATE()";
-  } else if (filter === "upcoming") {
-    query += " AND due_date IS NOT NULL AND DATE(CONVERT_TZ(due_date, '+00:00', '+02:00')) > CURDATE()";
-  } else if (filter === "past due") {
-    query += " AND due_date IS NOT NULL AND DATE(CONVERT_TZ(due_date, '+00:00', '+02:00')) < CURDATE()";
-  }
-
-  query += " ORDER BY due_date IS NULL, due_date ASC";
-
+  const offset = parseInt(req.query.offset || "0");
   try {
-    const [rows] = await db.execute(query, params);
-    res.json({ tasks: rows });
+    const [rows] = await db.execute(
+      "SELECT * FROM tasks WHERE user_id = ? ORDER BY due_date IS NULL, due_date ASC",
+      [userId]
+    );
+
+    const today = new Date(Date.now() - offset * 60000)
+      .toISOString()
+      .split("T")[0];
+
+    const tasks = rows.filter(task => {
+      if (!task.due_date) return filter === "all";
+
+      const due = toUserDate(new Date(task.due_date), offset);
+
+      if (filter === "today") return due === today;
+      if (filter === "upcoming") return due > today;
+      if (filter === "past due") return due < today;
+
+      return true;
+    });
+
+    res.json({ tasks });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch tasks" });

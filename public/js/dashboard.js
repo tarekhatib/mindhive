@@ -351,7 +351,7 @@ updateTimerDisplay();
 
 async function loadDashboardTasks() {
   try {
-    const res = await fetch("/api/tasks?filter=today");
+    const res = await fetch(`/api/tasks?filter=today&offset=${new Date().getTimezoneOffset()}`)
 
     const data = await res.json();
     const tasks = Array.isArray(data.tasks) ? data.tasks : [];
