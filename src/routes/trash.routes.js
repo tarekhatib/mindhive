@@ -9,6 +9,36 @@ const {
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Trash
+ */
+
+/**
+ * @swagger
+ * /api/trash:
+ *   get:
+ *     summary: Get trashed tasks/notes
+ *     tags: [Trash]
+ */
+
+/**
+ * @swagger
+ * /api/trash/{id}/restore:
+ *   post:
+ *     summary: Restore an item
+ *     tags: [Trash]
+ */
+
+/**
+ * @swagger
+ * /api/trash/{id}/delete:
+ *   delete:
+ *     summary: Permanently delete item
+ *     tags: [Trash]
+ */
+
 router.get("/trash", authenticateToken, renderTrash);
 router.get("/api/trash", authenticateToken, getTrash);
 router.patch("/api/trash/:id/restore", authenticateToken, restoreNote);

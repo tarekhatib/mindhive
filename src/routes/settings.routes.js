@@ -12,6 +12,20 @@ const {
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Settings
+ */
+
+/**
+ * @swagger
+ * /settings/update-password:
+ *   patch:
+ *     summary: Update user password
+ *     tags: [Settings]
+ */
+
 router.get("/settings", authenticateToken, renderSettings);
 
 router.post(

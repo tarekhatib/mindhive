@@ -27,6 +27,7 @@ const registerUser = async ({
 
     return { message: "User registered successfully." };
   } catch (err) {
+    console.log(err);
     if (err?.code === "ER_DUP_ENTRY") {
       throw { status: 409, message: "Username or email already exists." };
     }
@@ -69,10 +70,9 @@ const loginUser = async ({ identifier, password }) => {
 
     try {
       const decoded = jwt.decode(refreshToken);
-      const expiresAt =
-        decoded?.exp
-          ? new Date(decoded.exp * 1000)
-          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const expiresAt = decoded?.exp
+        ? new Date(decoded.exp * 1000)
+        : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
       await db.query(
         "INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked) VALUES (?, ?, ?, 0)",
@@ -85,7 +85,7 @@ const loginUser = async ({ identifier, password }) => {
     return {
       accessToken,
       refreshToken,
-      user: safeUser, // includes profile_image
+      user: safeUser,
     };
   } catch (err) {
     if (err.status) throw err;

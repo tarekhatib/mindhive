@@ -3,6 +3,15 @@ const db = require("../config/db");
 const { generateAccessToken, hashToken } = require("../utils/jwt");
 
 const authenticateToken = async (req, res, next) => {
+  const handleAuthFailure = (status, message) => {
+    if (
+      req.originalUrl.startsWith("/api") ||
+      (req.headers.accept && req.headers.accept.includes("application/json"))
+    ) {
+      return res.status(status).json({ message });
+    }
+    return res.redirect("/login");
+  };
   try {
     const cookieToken = req.cookies?.token
       ? decodeURIComponent(req.cookies.token)
@@ -24,21 +33,21 @@ const authenticateToken = async (req, res, next) => {
         );
 
         if (rows.length === 0)
-          return res.status(401).json({ message: "Unauthorized" });
+          return handleAuthFailure(401, "Unauthorized");
 
         req.user = rows[0];
         return next();
 
       } catch (err) {
         if (err.name !== "TokenExpiredError") {
-          return res.status(403).json({ message: "Invalid token" });
+          return handleAuthFailure(403, "Invalid token");
         }
       }
     }
 
     const refreshToken = req.cookies?.refreshToken;
     if (!refreshToken) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return handleAuthFailure(401, "Unauthorized");
     }
 
     const payload = jwt.verify(
@@ -53,7 +62,7 @@ const authenticateToken = async (req, res, next) => {
     );
 
     if (rows.length === 0)
-      return res.status(403).json({ message: "Invalid or expired session" });
+      return handleAuthFailure(403, "Invalid or expired session");
 
     const newAccessToken = generateAccessToken(payload);
 
@@ -72,7 +81,7 @@ const authenticateToken = async (req, res, next) => {
 
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return handleAuthFailure(401, "Unauthorized");
   }
 };
 

@@ -1,7 +1,10 @@
 const app = require("./app");
 const dotenv = require("dotenv");
+const swaggerDocs = require("./swagger");
 
 dotenv.config();
+
+swaggerDocs(app);
 
 const PORT = process.env.PORT || 3000;
 

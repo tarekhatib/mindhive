@@ -11,6 +11,9 @@ const notesRoutes = require("./src/routes/notes.routes.js");
 const trashRoutes = require("./src/routes/trash.routes.js");
 const profileRoutes = require("./src/routes/profile.routes.js");
 const leaderboardRoutes = require("./src/routes/leaderboard.routes.js");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
+const { authenticateToken } = require("./src/middleware/auth.middleware");
 
 dotenv.config();
 
@@ -32,6 +35,13 @@ app.use("/", profileRoutes);
 app.use("/", notesRoutes);
 app.use("/", trashRoutes);
 app.use("/", leaderboardRoutes);
+
+app.use(
+  "/api-docs",
+  authenticateToken,
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
 
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
