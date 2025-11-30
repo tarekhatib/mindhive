@@ -10,6 +10,9 @@
   --shadow-dark: rgba(0, 0, 0, 0.7);
 }
 
+/* =========================================================
+   PAGE CONTAINER
+========================================================= */
 body {
   background: #f9f9f9;
 }
@@ -24,8 +27,8 @@ body {
   max-height: 100vh;
   background-color: #f9f9f9;
   color: var(--text-light);
-  transition: background-color 0.3s ease, color 0.3s ease;
   overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .settings-container h1 {
@@ -34,10 +37,9 @@ body {
   margin-bottom: 0.5rem;
 }
 
-/* =========================================
+/* =========================================================
    PROFILE CARD
-========================================= */
-
+========================================================= */
 .profile-card {
   background: var(--card-bg-light);
   backdrop-filter: blur(15px);
@@ -52,7 +54,6 @@ body {
   gap: 2rem;
 }
 
-/* left: avatar + name/handle */
 .profile-left {
   display: flex;
   align-items: center;
@@ -70,6 +71,13 @@ body {
   font-weight: 700;
   font-size: 1.4rem;
   color: #111827;
+}
+
+.profile-avatar-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .profile-main {
@@ -91,7 +99,6 @@ body {
   color: #6b7280;
 }
 
-/* right: stats + button */
 .profile-right {
   display: flex;
   align-items: center;
@@ -130,23 +137,17 @@ body {
   align-items: center;
   gap: 0.4rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
-}
-
-.edit-profile-btn i {
-  font-size: 0.9rem;
+  transition: 0.2s ease;
 }
 
 .edit-profile-btn:hover {
   background: rgba(0, 0, 0, 0.04);
   transform: translateY(-1px);
-  border-color: #9ca3af;
 }
 
-/* =========================================
-   SETTINGS PANEL (existing)
-========================================= */
-
+/* =========================================================
+   SETTINGS LIST
+========================================================= */
 .settings-form {
   background: var(--card-bg-light);
   box-shadow: 0 8px 30px var(--shadow-light);
@@ -166,88 +167,6 @@ body {
   gap: 1.5rem;
 }
 
-.settings-form li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: inherit;
-}
-
-/* Footer */
-.settings-footer {
-  margin: 0;
-  padding: 1.5rem 0 0.5rem;
-  font-size: 0.9rem;
-  color: #9ca3af;
-}
-
-/* ===== PASSWORD MODAL ===== */
-.password-modal {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 3000;
-}
-
-.password-modal.hidden {
-  display: none;
-}
-
-.modal-content {
-  background: var(--card-bg-dark);
-  padding: 2.5rem;
-  width: 350px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content h2 {
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
-
-.modal-input {
-  width: auto;
-  padding: 14px;
-  border-radius: 10px;
-  background: var(--input-bg-dark);
-  border: none;
-  color: var(--text-dark);
-  font-size: large;
-}
-
-.confirm-btn {
-  padding: 14px;
-  background: var(--button-background-dark);
-  border: none;
-  color: var(--text-dark);
-  border-radius: 10px;
-  font-size: larger;
-}
-
-.cancel-btn {
-  padding: 14px;
-  border-radius: 10px;
-  border: none;
-  background: transparent;
-  color: var(--text-dark);
-  font-size: large;
-}
-
-/* Buttons */
-
-button:hover {
-  cursor: pointer;
-}
-
 .settings-button {
   background-color: transparent;
   color: #000;
@@ -257,7 +176,7 @@ button:hover {
   font-size: 16px;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .settings-button:hover {
@@ -268,26 +187,263 @@ button:hover {
   color: #d93a3a !important;
 }
 
-/* =========================================
+/* =========================================================
+   FOOTER
+========================================================= */
+.settings-footer {
+  margin: 0;
+  padding: 1.5rem 0 0.5rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   SHARED MODAL BACKDROP
+========================================================= */
+.password-modal,
+.edit-profile-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+}
+
+.password-modal.hidden,
+.edit-profile-modal.hidden {
+  display: none;
+}
+
+/* =========================================================
+   SHARED MODAL CARD STYLE
+========================================================= */
+.modal-content,
+.edit-profile-content {
+  background: var(--card-bg-light);
+  border-radius: 28px;
+  padding: 2.2rem;
+  width: 360px;
+  max-width: 92%;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-profile-content {
+  width: 430px;
+}
+
+.modal-content {
+  align-items: center;
+}
+
+.modal-content h2,
+.edit-profile-content h2 {
+  text-align: center;
+  font-size: 1.55rem;
+  margin: 0;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+.modal-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.modal-button-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* =========================================================
+   INPUT FIELDS
+========================================================= */
+.modal-input,
+.edit-input {
+  align-self: center;
+  width: 95%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.55);
+  color: #111;
+  font-size: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: 0.2s;
+}
+
+.modal-input:focus,
+.edit-input:focus {
+  outline: 2px solid var(--accent-color);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Error Handling */
+.input-error {
+  border: 2px solid #d93a3a !important;
+}
+
+.input-error-text {
+  color: #d93a3a;
+  font-size: 0.85rem;
+  margin-top: -6px;
+  margin-bottom: 4px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+.confirm-btn,
+#save-profile-info {
+  padding: 14px;
+  background: var(--button-background);
+  color: rgb(169, 124, 1);
+  border-color: var(--button-background);
+  border: solid;
+  border-width: 1px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancel-btn,
+#cancel-edit-profile {
+  padding: 5px;
+  background: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: 0.2s;
+}
+
+.confirm-btn:hover,
+#save-profile-info:hover {
+  background: rgba(249, 198, 59, 0.66);
+}
+
+.cancel-btn:hover,
+#cancel-edit-profile:hover {
+  font-weight: 600;
+}
+
+/* =========================================================
+   EDIT PROFILE MODAL — AVATAR
+========================================================= */
+.edit-avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.edit-avatar-img,
+.edit-avatar-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+  color: #333;
+  font-size: 1.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+}
+
+.upload-btn {
+  cursor: pointer;
+  padding: 0.45rem 1rem;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: 0.2s;
+}
+
+.upload-btn:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.photo-action-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.remove-img-btn {
+  color: #d93a3a;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.remove-img-btn:hover {
+  font-weight: 800;
+}
+
+.edit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-profile-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-button-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+
+/* =========================================================
    DARK MODE
-========================================= */
+========================================================= */
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: var(--background-dark);
+    background: var(--background-dark);
   }
 
   .settings-container {
-    background-color: var(--background-dark);
+    background: var(--background-dark);
     color: var(--text-dark);
   }
 
-  .profile-card {
+  .profile-card,
+  .settings-form {
     background: var(--card-bg-dark);
     box-shadow: none;
   }
 
   .profile-avatar {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-dark);
   }
 
@@ -295,12 +451,9 @@ button:hover {
     color: var(--text-dark);
   }
 
-  .profile-handle {
-    color: rgba(255, 255, 255, 0.55);
-  }
-
+  .profile-handle,
   .stat-label {
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.55);
   }
 
   .stat-value {
@@ -308,35 +461,71 @@ button:hover {
   }
 
   .edit-profile-btn {
-    border-color: rgba(156, 163, 175, 0.6);
     color: var(--text-dark);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
-  .edit-profile-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .settings-form {
+  .modal-content,
+  .edit-profile-content {
     background: var(--card-bg-dark);
+    box-shadow: 0 8px 25px var(--shadow-dark);
   }
 
-  .settings-button {
-    background-color: transparent;
+  .modal-content h2,
+  .edit-profile-content h2 {
     color: var(--text-dark);
   }
 
-  #red-btn {
-    color: #d93a3a;
+  .modal-input,
+  .edit-input {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-dark);
+  }
+
+  .modal-input:focus,
+  .edit-input:focus {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .confirm-btn,
+  #save-profile-info {
+    color: var(--accent-color);
+    border: none;
+    font-weight: 400;
+  }
+
+  .cancel-btn,
+  #cancel-edit-profile {
+    color: var(--text-dark);
+  }
+
+  .upload-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-dark);
+  }
+
+  .upload-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .edit-avatar-img,
+  .edit-avatar-placeholder {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--text-dark);
   }
 
   .settings-footer {
     color: rgba(255, 255, 255, 0.45);
   }
+
+  .settings-button {
+    color: var(--text-dark);
+  }
 }
 
-/* =========================================
+/* =========================================================
    RESPONSIVE
-========================================= */
+========================================================= */
 @media (max-width: 900px) {
   .profile-card {
     flex-direction: column;
@@ -357,7 +546,6 @@ button:hover {
   }
 
   .settings-form {
-    width: 100%;
     padding: 1.5rem;
   }
 }

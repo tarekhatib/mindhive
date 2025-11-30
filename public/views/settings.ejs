@@ -4,14 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="/styles/main.css" />
     <link rel="stylesheet" href="/styles/settings.css" />
     <title>MindHive · Settings</title>
   </head>
+
   <body>
     <%- include('partials/sidebar', { page: 'settings' }) %>
 
@@ -33,13 +31,14 @@
       <!-- PROFILE CARD -->
       <section class="profile-card">
         <div class="profile-left">
-          <div class="profile-avatar">
-            <span>
-              <%= firstName.charAt(0).toUpperCase() %><%=
-                lastName.trim() ? lastName.trim().charAt(0).toUpperCase() : ''
-              %>
-            </span>
-          </div>
+
+          <% if (user && user.profile_image) { %>
+            <img src="<%= user.profile_image %>" class="profile-avatar-img" alt="Profile Picture" />
+          <% } else { %>
+            <div class="profile-avatar">
+              <span><%= firstName.charAt(0).toUpperCase() %><%= lastName.trim() ? lastName.trim().charAt(0).toUpperCase() : '' %></span>
+            </div>
+          <% } %>
 
           <div class="profile-main">
             <h2 class="profile-name"><%= firstName + lastName %></h2>
@@ -63,71 +62,85 @@
             <span class="stat-value" id="profile-score">0 pts</span>
           </div>
 
-          <button
-            type="button"
-            class="edit-profile-btn"
-            id="edit-profile-btn"
-          >
-            <i class="fa-solid fa-pen"></i>
-            Edit Profile
+          <button type="button" class="edit-profile-btn" id="edit-profile-btn">
+            <i class="fa-solid fa-pen"></i> Edit Profile
           </button>
         </div>
       </section>
 
       <!-- SETTINGS LIST -->
       <form id="settings-form" class="settings-form">
-        <div class="form-group">
-          <ul>
-            <li>
-              <button
-                type="button"
-                class="settings-button"
-                id="change-password"
-              >
-                <h3>Change Password</h3>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="settings-button" id="log-out">
-                <h3>Log Out</h3>
-              </button>
-            </li>
-            <li>
-              <button type="button" class="settings-button" id="red-btn">
-                <h3>Delete Account</h3>
-              </button>
-            </li>
-          </ul>
-        </div>
+        <ul>
+          <li><button type="button" class="settings-button" id="change-password"><h3>Change Password</h3></button></li>
+          <li><button type="button" class="settings-button" id="log-out"><h3>Log Out</h3></button></li>
+          <li><button type="button" class="settings-button" id="red-btn"><h3>Delete Account</h3></button></li>
+        </ul>
       </form>
 
       <footer class="settings-footer">
-        <p>&copy; 2025 MindHive. All rights reserved. <a href="https://mindhive.dev"><i>View Documentation</i></a></p>
+        <p>&copy; 2025 MindHive. All rights reserved. 
+          <a href="https://mindhive.dev"><i>View Documentation</i></a>
+        </p>
       </footer>
 
-      <!-- Password Change Modal -->
+      <!-- PASSWORD MODAL -->
       <div id="password-modal" class="password-modal hidden">
         <div class="modal-content">
           <h2>Change Password</h2>
 
-          <input
-            type="password"
-            id="current_password"
-            placeholder="Current Password"
-            class="modal-input"
-          />
+          <div class="modal-input-group">
+            <input type="password" id="current_password" placeholder="Current Password" class="modal-input" />
+            <input type="password" id="new_password" placeholder="New Password" class="modal-input" />
+          </div>
 
-          <input
-            type="password"
-            id="new_password"
-            placeholder="New Password"
-            class="modal-input"
-          />
+          <div class="modal-button-row">
+            <button id="submit-password" class="confirm-btn">Update Password</button>
+            <button id="cancel-modal" class="cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-          <button id="submit-password" class="confirm-btn">
-            Update Password
-          </button>
-          <button id="cancel-modal" class="cancel-btn">Cancel</button>
+    <!-- EDIT PROFILE MODAL -->
+    <div id="edit-profile-modal" class="edit-profile-modal hidden">
+      <div class="edit-profile-content">
+        <h2>Edit Profile</h2>
+
+        <!-- Avatar -->
+        <div class="edit-avatar-wrapper">
+          <% if (user && user.profile_image) { %>
+            <img id="edit-avatar-preview" src="<%= user.profile_image %>" class="edit-avatar-img" />
+          <% } else { %>
+            <div id="edit-avatar-preview" class="edit-avatar-placeholder">
+              <%= firstName.charAt(0).toUpperCase() %><%= lastName.trim() ? lastName.trim().charAt(0).toUpperCase() : '' %>
+            </div>
+          <% } %>
+
+          <!-- PHOTO ACTIONS ROW -->
+          <div class="photo-action-row">
+            <label for="profileImageInput" class="upload-btn">
+              <i class="fa-solid fa-camera"></i> Change Photo
+            </label>
+
+            <% if (user && user.profile_image) { %>
+              <button id="remove-profile-image" class="remove-img-btn">Remove Photo</button>
+            <% } %>
+          </div>
+
+          <input type="file" id="profileImageInput" name="profile_image" accept="image/*" hidden />
+        </div>
+
+        <!-- INPUTS -->
+        <div class="edit-fields">
+          <input type="text" id="edit-firstname" class="edit-input" placeholder="First Name" value="<%= firstName %>" />
+          <input type="text" id="edit-lastname" class="edit-input" placeholder="Last Name" value="<%= lastName.trim() %>" />
+          <input type="text" id="edit-username" class="edit-input" placeholder="Username" value="<%= handle %>" />
+        </div>
+
+        <!-- BUTTON ROW -->
+        <div class="edit-button-row">
+          <button id="save-profile-info" class="confirm-btn">Save Changes</button>
+          <button id="cancel-edit-profile" class="cancel-btn">Cancel</button>
         </div>
       </div>
     </div>

@@ -1,8 +1,13 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 
-const renderSettings = (req, res) => {
-  res.render("settings", { user: req.user });
+const renderSettings = async (req, res) => {
+  const [rows] = await db.query(
+    "SELECT id, first_name, last_name, username, email, profile_image FROM users WHERE id = ?",
+    [req.user.id]
+  );
+
+  res.render("settings", { user: rows[0] });
 };
 
 const changePassword = async (req, res) => {

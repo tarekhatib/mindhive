@@ -16,9 +16,19 @@ const authenticateToken = async (req, res, next) => {
 
     if (accessToken) {
       try {
-        const user = jwt.verify(accessToken, process.env.JWT_SECRET);
-        req.user = user;
+        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+
+        const [rows] = await db.query(
+          "SELECT id, first_name, last_name, username, email, profile_image FROM users WHERE id = ?",
+          [decoded.id]
+        );
+
+        if (rows.length === 0)
+          return res.status(401).json({ message: "Unauthorized" });
+
+        req.user = rows[0];
         return next();
+
       } catch (err) {
         if (err.name !== "TokenExpiredError") {
           return res.status(403).json({ message: "Invalid token" });
@@ -53,7 +63,13 @@ const authenticateToken = async (req, res, next) => {
       maxAge: 15 * 60 * 1000,
     });
 
-    req.user = payload;
+    const [userRows] = await db.query(
+      "SELECT id, first_name, last_name, username, email, profile_image FROM users WHERE id = ?",
+      [payload.id]
+    );
+
+    req.user = userRows[0];
+
     next();
   } catch (err) {
     return res.status(401).json({ message: "Unauthorized" });
