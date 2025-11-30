@@ -24,6 +24,11 @@ body {
     background: rgba(249, 199, 59, 0.12);
 }
 
+.leaderboard-card {
+    max-width: fit-content;
+    width: fit-content;
+}
+
 /* =========================================================
    TABLE CARD (Matches MindHive card style)
 ========================================================= */

@@ -429,3 +429,216 @@ body {
   opacity: 0.6;
   font-style: italic;
 }
+
+
+/* LEADERBOARD CARD WIDGET */
+
+.lb-card {
+  border-radius: 18px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  transition: background-color 0.3s ease;
+}
+
+.lb-table {
+  width: 100%;
+  max-width: 1000px;
+  background: var(--card-bg-light);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.lb-header {
+  display: flex;
+  padding: 0.65rem 1.25rem;
+
+  font-weight: 600;
+  font-size: 0.85rem;
+
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.lb-col {
+  display: flex;
+  align-items: center;
+}
+
+.rank-col {
+  width: 45px;
+}
+
+.user-col {
+  flex: 1;
+}
+
+.points-col {
+  width: 110px;
+  text-align: right;
+}
+
+/* =========================================================
+   ROWS (Smaller, cleaner)
+========================================================= */
+.lb-row:first-child {
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  padding: 0.7rem 1.5rem;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.12s ease;
+}
+
+.lb-row:last-child {
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  padding: 0.7rem 1.5rem;
+}
+
+.lb-row:hover {
+  background: rgba(0, 0, 0, 0.025);
+}
+
+/* =========================================================
+   USER CELL
+========================================================= */
+.user-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.lb-avatar,
+.lb-avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.lb-info {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.lb-username {
+  font-size: 0.8rem;
+  opacity: 0.55;
+}
+
+/* Rank and points */
+.rank-col {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.points-col {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+.lb-empty {
+  padding: 1.6rem;
+  text-align: center;
+  opacity: 0.6;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+@media (prefers-color-scheme: dark) {
+  .lb-card {
+    background: var(--card-bg-dark);
+    box-shadow: none;
+  }
+
+  .lb-row:last-child {
+    border: none;
+  }
+
+  .lb-table {
+    background: var(--card-bg-dark);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .lb-header {
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .lb-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .lb-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .lb-avatar-initials {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--text-dark);
+  }
+
+  .lb-name {
+    color: var(--text-dark);
+  }
+
+  .lb-username {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .rank-col {
+    color: var(--text-dark);
+  }
+
+  .points-col {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .lb-page-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-dark);
+  }
+
+  .lb-page-btn:hover:not([disabled]) {
+    background: rgba(255, 255, 255, 0.13);
+  }
+}
