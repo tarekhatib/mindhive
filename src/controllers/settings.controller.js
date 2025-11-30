@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
+const getRankBySessions = require("../utils/getRank");
 
 const renderSettings = async (req, res) => {
   const [rows] = await db.query(
@@ -14,9 +15,38 @@ const renderSettings = async (req, res) => {
     [req.user.id]
   );
 
+  const [rankRow] = await db.query(
+    `
+  SELECT rank_position FROM (
+      SELECT 
+          u.id,
+          COALESCE(SUM(p.points), 0) AS total_points,
+          DENSE_RANK() OVER (ORDER BY COALESCE(SUM(p.points), 0) DESC) AS rank_position
+      FROM users u
+      LEFT JOIN pomodoro_sessions p ON p.user_id = u.id
+      GROUP BY u.id
+  ) AS ranked
+  WHERE id = ?;
+`,
+    [req.user.id]
+  );
+
+  const [sessionsRow] = await db.query(
+    `SELECT COUNT(*) AS total_sessions
+   FROM pomodoro_sessions
+   WHERE user_id = ?`,
+    [req.user.id]
+  );
+
+  const rankData = getRankBySessions(sessionsRow[0].total_sessions);
+
   res.render("settings", {
     user: rows[0],
     totalPoints: scoreRow[0].total_points,
+    position: rankRow.length ? rankRow[0].rank_position : "—",
+    rankTitle: rankData.title,
+    rankEmoji: rankData.emoji,
+    totalSessions: sessionsRow[0].total_sessions,
   });
 };
 

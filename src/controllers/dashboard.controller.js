@@ -21,4 +21,15 @@ const completePomodoro = async (req, res) => {
   }
 };
 
-module.exports = { completePomodoro };
+const leaderboardService = require("../services/leaderboard.service");
+
+const renderDashboard = async (req, res) => {
+  const leaderboardSmall = await leaderboardService.getDashboardLeaderboard(req.user.id);
+
+  res.render("dashboard", {
+    user: req.user,
+    leaderboardSmall
+  });
+};
+
+module.exports = { completePomodoro, renderDashboard };

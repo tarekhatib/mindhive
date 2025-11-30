@@ -52,12 +52,16 @@
         <div class="profile-right">
           <div class="profile-stat">
             <span class="stat-label">Rank</span>
-            <span class="stat-value" id="profile-rank">Newbie 🐣</span>
+            <span class="stat-value" id="profile-rank">
+              <%= rankTitle %> <%= rankEmoji %>
+            </span>
           </div>
 
           <div class="profile-stat">
             <span class="stat-label">Position</span>
-            <span class="stat-value" id="profile-position">#—</span>
+            <span class="stat-value" id="profile-position"
+              >#<%= position %></span
+            >
           </div>
 
           <div class="profile-stat">

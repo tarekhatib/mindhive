@@ -20,19 +20,28 @@ body {
     margin-bottom: 1.8rem;
 }
 
+.lb-item.me {
+    background: rgba(249, 199, 59, 0.12);
+}
+
 /* =========================================================
    TABLE CARD (Matches MindHive card style)
 ========================================================= */
+.lb-card {
+    border-radius: 18px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    transition: background-color 0.3s ease;
+}
+
 .lb-table {
     width: 100%;
     max-width: 1000px;
-
-    /* MindHive card style */
     background: var(--card-bg-light);
     border-radius: 20px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 8px 28px var(--shadow-light);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.03);
@@ -73,16 +82,24 @@ body {
 /* =========================================================
    ROWS (Smaller, cleaner)
 ========================================================= */
+.lb-row:first-child {
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    padding: 0.7rem 1.5rem;
+}
+
 .lb-row {
     display: flex;
     align-items: center;
-    padding: 0.55rem 1.25rem;   /* smaller height */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.55rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: background 0.12s ease;
 }
 
 .lb-row:last-child {
-    border-bottom: none;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding: 0.7rem 1.5rem;
 }
 
 .lb-row:hover {
@@ -95,7 +112,7 @@ body {
 .user-flex {
     display: flex;
     align-items: center;
-    gap: 0.7rem; /* smaller gap */
+    gap: 0.8rem;
 }
 
 .lb-avatar,
@@ -118,8 +135,10 @@ body {
 
 .lb-info {
     display: flex;
-    flex-direction: column;
-    line-height: 1.1;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
 }
 
 .lb-name {
@@ -171,7 +190,8 @@ body {
     border-radius: 50%;
     border: none;
 
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
     cursor: pointer;
 
     display: flex;
@@ -201,6 +221,15 @@ body {
 @media (prefers-color-scheme: dark) {
     body {
         background: var(--background-dark);
+    }
+
+    .lb-card {
+        background: var(--card-bg-dark);
+        box-shadow: none;
+    }
+
+    .lb-row:last-child {
+        border: none;
     }
 
     .leaderboard-container {

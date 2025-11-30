@@ -133,7 +133,7 @@ body {
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
 }
 
 .task-item:hover,

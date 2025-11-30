@@ -85,8 +85,57 @@
         </section> -->
 
         <section class="card leaderboard-card">
-          <h2>Leaderboard</h2>
-        </section>
+  <h2>Leaderboard</h2>
+
+  <div class="lb-card">
+
+    <!-- Header -->
+    <div class="lb-row lb-header">
+      <div class="lb-col rank-col">#</div>
+      <div class="lb-col user-col">User</div>
+      <div class="lb-col points-col">Points</div>
+    </div>
+
+    <!-- 3 rows -->
+    <% leaderboardSmall.forEach((user) => { %>
+      <div class="lb-row lb-item">
+
+        <!-- Rank -->
+        <div class="lb-col rank-col">
+          <%= user.position %>
+        </div>
+
+        <!-- Avatar + name -->
+        <div class="lb-col user-col user-flex">
+
+          <% if (user.profile_image) { %>
+            <img class="lb-avatar" src="<%= user.profile_image %>" />
+          <% } else { %>
+            <div class="lb-avatar-initials">
+              <%= user.first_name.charAt(0).toUpperCase() + user.last_name.charAt(0).toUpperCase() %>
+            </div>
+          <% } %>
+
+          <div class="lb-info">
+            <p class="lb-name"><%= user.first_name %> <%= user.last_name %></p>
+            <p class="lb-username">@<%= user.username %></p>
+          </div>
+        </div>
+
+        <!-- Points -->
+        <div class="lb-col points-col">
+          <%= user.total_points %> pts
+        </div>
+
+      </div>
+    <% }) %>
+
+  </div>
+
+  <div class="lb-footer-link">
+    <a href="/leaderboard">View Full Leaderboard →</a>
+  </div>
+</section>
       </section>
       <br />
     </main>

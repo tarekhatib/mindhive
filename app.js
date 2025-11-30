@@ -5,7 +5,6 @@ const db = require("./src/config/db");
 const path = require("path");
 const authRoutes = require("./src/routes/auth.routes.js");
 const dashboardRoutes = require("./src/routes/dashboard.routes.js");
-const pomodoroRoutes = require("./src/routes/pomodoro.routes.js");
 const tasksRoutes = require("./src/routes/tasks.routes.js");
 const settingsRoutes = require("./src/routes/settings.routes.js");
 const notesRoutes = require("./src/routes/notes.routes.js");
@@ -27,7 +26,6 @@ app.set("views", path.join(__dirname, "public", "views"));
 
 app.use("/api/auth", authRoutes);
 app.use("/", dashboardRoutes);
-app.use("/", pomodoroRoutes);
 app.use("/", tasksRoutes);
 app.use("/", settingsRoutes);
 app.use("/", profileRoutes);
