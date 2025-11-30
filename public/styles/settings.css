@@ -16,31 +16,145 @@ body {
 
 .settings-container {
   margin-left: 260px;
-  padding: 2rem 3rem;
+  padding: 2.5rem 3rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  min-height: 100vh;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  max-height: 100vh;
   background-color: #f9f9f9;
   color: var(--text-light);
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow: hidden;
 }
 
 .settings-container h1 {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.settings-form {
+/* =========================================
+   PROFILE CARD
+========================================= */
+
+.profile-card {
   background: var(--card-bg-light);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
+  border-radius: 24px;
+  box-shadow: 0 8px 30px var(--shadow-light);
+  padding: 1.8rem 2.5rem;
+  max-width: 95%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* left: avatar + name/handle */
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #111827;
+}
+
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.profile-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  color: #111827;
+}
+
+.profile-handle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+/* right: stats + button */
+.profile-right {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+}
+
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 90px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+}
+
+.stat-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.edit-profile-btn {
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #111827;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+}
+
+.edit-profile-btn i {
+  font-size: 0.9rem;
+}
+
+.edit-profile-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  border-color: #9ca3af;
+}
+
+/* =========================================
+   SETTINGS PANEL (existing)
+========================================= */
+
+.settings-form {
+  background: var(--card-bg-light);
+  box-shadow: 0 8px 30px var(--shadow-light);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border-radius: 20px;
-  box-shadow: 0 4px 20px var(--shadow-light);
   padding: 2rem 2.5rem;
-  width: 100%;
-  max-width: 600px;
+  max-width: 95%;
 }
 
 .settings-form ul {
@@ -61,6 +175,14 @@ body {
   color: inherit;
 }
 
+/* Footer */
+.settings-footer {
+  margin: 0;
+  padding: 1.5rem 0 0.5rem;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
 /* ===== PASSWORD MODAL ===== */
 .password-modal {
   position: fixed;
@@ -68,7 +190,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 3000;
 }
 
@@ -84,7 +206,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content h2 {
@@ -114,7 +236,6 @@ body {
 .cancel-btn {
   padding: 14px;
   border-radius: 10px;
-  border: 1px solid var(--text-dark);
   border: none;
   background: transparent;
   color: var(--text-dark);
@@ -124,7 +245,7 @@ body {
 /* Buttons */
 
 button:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .settings-button {
@@ -147,7 +268,9 @@ button:hover {
   color: #d93a3a !important;
 }
 
-/* Dark mode */
+/* =========================================
+   DARK MODE
+========================================= */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: var(--background-dark);
@@ -158,17 +281,43 @@ button:hover {
     color: var(--text-dark);
   }
 
+  .profile-card {
+    background: var(--card-bg-dark);
+    box-shadow: none;
+  }
+
+  .profile-avatar {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-dark);
+  }
+
+  .profile-name {
+    color: var(--text-dark);
+  }
+
+  .profile-handle {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .stat-value {
+    color: var(--text-dark);
+  }
+
+  .edit-profile-btn {
+    border-color: rgba(156, 163, 175, 0.6);
+    color: var(--text-dark);
+  }
+
+  .edit-profile-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
   .settings-form {
     background: var(--card-bg-dark);
-    box-shadow: 0 4px 15px var(--shadow-dark);
-  }
-
-  .slider {
-    background-color: #555;
-  }
-
-  input:checked + .slider {
-    background-color: #555;
   }
 
   .settings-button {
@@ -178,6 +327,26 @@ button:hover {
 
   #red-btn {
     color: #d93a3a;
+  }
+
+  .settings-footer {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 900px) {
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-right {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }
 

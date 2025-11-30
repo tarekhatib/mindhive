@@ -1,0 +1,168 @@
+@import url('./main.css');
+
+body {
+    background: #f9f9f9;
+}
+
+.leaderboard-container {
+    margin-left: 260px;
+    padding: 2.5rem 3rem;
+    min-height: 100vh;
+    color: var(--text-light);
+}
+
+/* ---------------------------------------
+   Header
+---------------------------------------- */
+.leaderboard-container h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* ---------------------------------------
+   TOP 3 PODIUM WRAPPER
+---------------------------------------- */
+.podium-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.podium-card {
+    background: var(--card-bg-light);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    width: 200px;
+    padding: 1.8rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 25px var(--shadow-light);
+    transition: 0.25s ease;
+}
+
+.podium-card:hover {
+    transform: translateY(-4px);
+}
+
+.podium-card.first {
+    transform: translateY(-20px);
+}
+
+.podium-rank {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.podium-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin-bottom: 0.7rem;
+    object-fit: cover;
+}
+
+.podium-username {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.podium-points {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+/* ---------------------------------------
+   LEADERBOARD LIST
+---------------------------------------- */
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 650px;
+}
+
+.leaderboard-item {
+    background: var(--card-bg-light);
+    padding: 1.2rem 1.5rem;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 8px 20px var(--shadow-light);
+}
+
+.rank-number {
+    font-weight: 700;
+    width: 30px;
+    text-align: center;
+    color: #111827;
+}
+
+.lb-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.lb-info {
+    flex: 1;
+}
+
+.lb-username {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.lb-points {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* Empty */
+.no-users {
+    opacity: 0.6;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* ---------------------------------------
+   DARK MODE
+---------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: var(--background-dark);
+    }
+
+    .leaderboard-container {
+        color: var(--text-dark);
+    }
+
+    .podium-card,
+    .leaderboard-item {
+        background: var(--card-bg-dark);
+        box-shadow: none;
+    }
+
+    .podium-username,
+    .lb-username {
+        color: var(--text-dark);
+    }
+
+    .lb-points {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .podium-points {
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    .rank-number {
+        color: var(--text-dark);
+    }
+}

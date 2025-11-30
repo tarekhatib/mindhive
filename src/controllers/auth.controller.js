@@ -78,10 +78,27 @@ const logout = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  if (!req.user)
-    return res.status(401).json({ message: "Unauthorized" });
+  try {
+    const userId = req.user.id;
 
-  return res.json({ user: req.user });
+    const [rows] = await db.query(
+      `SELECT 
+         id, 
+         first_name, 
+         last_name, 
+         username, 
+         email,
+         profile_image
+       FROM users 
+       WHERE id = ?`,
+      [userId]
+    );
+
+    res.json({ user: rows[0] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Server error" });
+  }
 };
 
 module.exports = {

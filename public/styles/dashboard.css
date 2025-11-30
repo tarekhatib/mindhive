@@ -235,7 +235,8 @@ body {
 
   .card {
     background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(0, 0, 0, 0.05);
+    border: none;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
   }
 
   .search-bar input {

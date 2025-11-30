@@ -14,8 +14,67 @@
   </head>
   <body>
     <%- include('partials/sidebar', { page: 'settings' }) %>
+
     <div class="settings-container">
       <h1>Settings</h1>
+
+      <% 
+        const hasUser = typeof user !== 'undefined' && user;
+        const firstName = hasUser && user.first_name ? user.first_name : 'Student';
+        const lastName = hasUser && user.last_name ? (' ' + user.last_name) : '';
+        const handle =
+          hasUser && user.username
+            ? user.username
+            : hasUser && user.email
+            ? user.email.split('@')[0]
+            : 'username';
+      %>
+
+      <!-- PROFILE CARD -->
+      <section class="profile-card">
+        <div class="profile-left">
+          <div class="profile-avatar">
+            <span>
+              <%= firstName.charAt(0).toUpperCase() %><%=
+                lastName.trim() ? lastName.trim().charAt(0).toUpperCase() : ''
+              %>
+            </span>
+          </div>
+
+          <div class="profile-main">
+            <h2 class="profile-name"><%= firstName + lastName %></h2>
+            <p class="profile-handle">@<%= handle %></p>
+          </div>
+        </div>
+
+        <div class="profile-right">
+          <div class="profile-stat">
+            <span class="stat-label">Rank</span>
+            <span class="stat-value" id="profile-rank">Newbie 🐣</span>
+          </div>
+
+          <div class="profile-stat">
+            <span class="stat-label">Position</span>
+            <span class="stat-value" id="profile-position">#—</span>
+          </div>
+
+          <div class="profile-stat">
+            <span class="stat-label">Student Score</span>
+            <span class="stat-value" id="profile-score">0 pts</span>
+          </div>
+
+          <button
+            type="button"
+            class="edit-profile-btn"
+            id="edit-profile-btn"
+          >
+            <i class="fa-solid fa-pen"></i>
+            Edit Profile
+          </button>
+        </div>
+      </section>
+
+      <!-- SETTINGS LIST -->
       <form id="settings-form" class="settings-form">
         <div class="form-group">
           <ul>
@@ -41,8 +100,9 @@
           </ul>
         </div>
       </form>
+
       <footer class="settings-footer">
-        <p>&copy; 2025 MindHive. All rights reserved.</p>
+        <p>&copy; 2025 MindHive. All rights reserved. <a href="https://mindhive.dev"><i>View Documentation</i></a></p>
       </footer>
 
       <!-- Password Change Modal -->
@@ -71,6 +131,7 @@
         </div>
       </div>
     </div>
+
     <script src="/js/settings.js"></script>
   </body>
 </html>
