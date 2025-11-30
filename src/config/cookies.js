@@ -1,7 +1,7 @@
 const isProd = process.env.NODE_ENV === "production";
 
 const accessCookieOptions = {
-  httpOnly: true,
+  httpOnly: false,
   secure: isProd,
   sameSite: "lax",
   path: "/",
@@ -9,7 +9,7 @@ const accessCookieOptions = {
 };
 
 const refreshCookieOptions = {
-  httpOnly: true,
+  httpOnly: false,
   secure: isProd,
   sameSite: "lax",
   path: "/",
