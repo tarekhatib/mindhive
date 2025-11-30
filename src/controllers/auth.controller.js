@@ -1,4 +1,5 @@
 const authService = require("../services/auth.services");
+const { accessCookieOptions, refreshCookieOptions } = require("../config/cookies");
 
 const register = async (req, res) => {
   try {
@@ -13,20 +14,10 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { accessToken, refreshToken, user } = await authService.loginUser(
-      req.body
-    );
+    const { accessToken, refreshToken, user } = await authService.loginUser(req.body);
 
-    res.cookie("token", encodeURIComponent(accessToken), {
-      httpOnly: true,
-      secure: false,
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-    });
+    res.cookie("token", encodeURIComponent(accessToken), accessCookieOptions);
+    res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 
     return res.status(200).json({
       success: true,
@@ -46,11 +37,7 @@ const refresh = async (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
     const result = await authService.refreshAccessToken(refreshToken);
 
-    res.cookie("token", encodeURIComponent(result.accessToken), {
-      httpOnly: true,
-      secure: false,
-      maxAge: 15 * 60 * 1000,
-    });
+    res.cookie("token", encodeURIComponent(result.accessToken), accessCookieOptions);
 
     return res.json(result);
   } catch (err) {
@@ -64,13 +51,18 @@ const logout = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
-    const result = await authService.logoutUser(refreshToken);
+    if (refreshToken) {
+      await authService.logoutUser(refreshToken);
+    }
 
-    res.clearCookie("token");
-    res.clearCookie("refreshToken");
+    res.clearCookie("token", accessCookieOptions);
+    res.clearCookie("refreshToken", refreshCookieOptions);
 
-    return res.json(result);
+    return res.json({ message: "Logged out successfully." });
   } catch (err) {
+    res.clearCookie("token", accessCookieOptions);
+    res.clearCookie("refreshToken", refreshCookieOptions);
+
     return res
       .status(err.status || 500)
       .json({ message: err.message || "Server error" });

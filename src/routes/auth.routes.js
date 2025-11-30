@@ -90,7 +90,7 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/refresh", refresh);
-router.post("/logout", authenticateToken, logout);
+router.post("/logout", logout);
 router.get("/me", authenticateToken, getCurrentUser);
 
 module.exports = router;

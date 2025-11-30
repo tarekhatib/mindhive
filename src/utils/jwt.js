@@ -38,7 +38,6 @@ const verifyToken = (token, isRefresh = false) => {
     return null;
   }
 };
-
 const hashToken = (token) =>
   crypto.createHash("sha256").update(token).digest("hex");
 

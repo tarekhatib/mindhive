@@ -66,27 +66,29 @@ const loginUser = async ({ identifier, password }) => {
     const { password_hash, ...safeUser } = user;
 
     const accessToken = generateAccessToken(safeUser);
-    const refreshToken = generateRefreshToken(safeUser);
+  const refreshToken = generateRefreshToken(safeUser);
 
-    try {
-      const decoded = jwt.decode(refreshToken);
-      const expiresAt = decoded?.exp
-        ? new Date(decoded.exp * 1000)
-        : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  try {
+    const decoded = jwt.decode(refreshToken);
+    const expiresAt = decoded?.exp
+      ? new Date(decoded.exp * 1000)
+      : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-      await db.query(
-        "INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked) VALUES (?, ?, ?, 0)",
-        [user.id, hashToken(refreshToken), expiresAt]
-      );
-    } catch (e) {
-      console.error("Refresh token persistence failed", e);
-    }
+    await db.query(
+      "UPDATE refresh_tokens SET revoked = 1 WHERE user_id = ?",
+      [user.id]
+    );
 
-    return {
-      accessToken,
-      refreshToken,
-      user: safeUser,
-    };
+    await db.query(
+      "INSERT INTO refresh_tokens (user_id, token_hash, expires_at, revoked) VALUES (?, ?, ?, 0)",
+      [user.id, hashToken(refreshToken), expiresAt]
+    );
+  } catch (e) {
+    console.error("Refresh token persistence failed", e);
+  }
+
+  return { accessToken, refreshToken, user: safeUser };
+
   } catch (err) {
     console.log(err);
     if (err.status) throw err;
@@ -129,13 +131,19 @@ const logoutUser = async (refreshToken) => {
 
   try {
     const hash = hashToken(refreshToken);
-    const [result] = await db.query(
-      "UPDATE refresh_tokens SET revoked = 1 WHERE token_hash = ?",
+    const [[row]] = await db.query(
+      "SELECT user_id FROM refresh_tokens WHERE token_hash = ?",
       [hash]
     );
 
-    if (!result.affectedRows)
-      throw { status: 404, message: "Token not found." };
+    if (!row) {
+      return { message: "Logged out." };
+    }
+
+    await db.query(
+      "UPDATE refresh_tokens SET revoked = 1 WHERE user_id = ?",
+      [row.user_id]
+    );
 
     return { message: "Logged out successfully." };
   } catch (err) {
