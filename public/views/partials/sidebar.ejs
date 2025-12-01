@@ -66,3 +66,29 @@
     </ul>
   </div>
 </aside>
+
+<nav class="mobile-nav">
+  <a href="/dashboard" class="<%= page === 'home' ? 'active' : '' %>">
+    <i class="fa-solid fa-house"></i>
+  </a>
+
+  <a href="/notes" class="<%= page === 'notes' ? 'active' : '' %>">
+    <i class="fa-solid fa-note-sticky"></i>
+  </a>
+
+  <a href="/tasks" class="<%= page === 'tasks' ? 'active' : '' %>">
+    <i class="fa-solid fa-list-check"></i>
+  </a>
+
+  <a href="/leaderboard" class="<%= page === 'leaderboard' ? 'active' : '' %>">
+    <i class="fa-solid fa-trophy"></i>
+  </a>
+
+  <a href="/settings" class="<%= page === 'settings' ? 'active' : '' %>">
+    <i class="fa-solid fa-gear"></i>
+  </a>
+
+  <a href="/trash" class="<%= page === 'trash' ? 'active' : '' %>">
+    <i class="fa-solid fa-trash"></i>
+  </a>
+</nav>

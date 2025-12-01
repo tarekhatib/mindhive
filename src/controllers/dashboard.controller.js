@@ -1,11 +1,9 @@
 const db = require("../config/db");
 
-const db = require("../config/db");
-
 const completePomodoro = async (req, res) => {
   try {
     const userId = req.user.id;
-    const points = res.locals.pomodoroPoints;
+    const { points } = req.body;
 
     const [result] = await db.query(
       "INSERT INTO pomodoro_sessions (user_id, points) VALUES (?, ?)",

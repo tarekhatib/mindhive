@@ -2,7 +2,8 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -253,22 +254,6 @@ body {
   transform: scale(1.03);
 }
 
-
-@media (max-width: 1000px) {
-  .dashboard {
-    padding: 1.2rem;
-  }
-
-  .search-bar input {
-    width: 80%;
-  }
-
-  .dashboard-greeting h1 {
-    font-size: 2.2rem;
-  }
-}
-
-
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #111;
@@ -287,6 +272,14 @@ body {
   #decrease-btn,
   #increase-btn {
     color: var(--accent-color);
+  }
+
+  .cancel {
+    color: #b50000;
+  }
+
+  .finish {
+    color: #00a10d;
   }
 
 }
@@ -721,5 +714,74 @@ body {
 
   .lb-page-btn:hover:not([disabled]) {
     background: rgba(255, 255, 255, 0.13);
+  }
+}
+
+/* ============================================================
+   MOBILE DASHBOARD LAYOUT
+   For screens under 768px
+============================================================ */
+
+@media (max-width: 1024px) {
+
+  body {
+    display: block !important;
+  }
+
+  .dashboard {
+    justify-content: center;
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+    gap: 1rem;
+    padding-bottom: 120px;
+  }
+
+  .dashboard-header {
+    width: 100%;
+  }
+
+  .search-bar input {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .search-bar i {
+    display: none;
+  }
+
+  .dashboard-greeting h1 {
+    font-size: 2.2rem;
+  }
+
+  .dashboard-greeting p {
+    font-size: 1rem;
+  }
+
+  .card {
+    padding: 1.5rem !important;
+    width: 94% !important;
+  }
+
+  .todo-card,
+  .pomodoro-card,
+  .leaderboard-card {
+    width: 90%;
+  }
+
+  .pomodoro-time {
+    font-size: 3.5rem;
+  }
+
+  .lb-table {
+    width: 100% !important;
+  }
+
+  .lb-row {
+    padding: 0.5rem 1rem;
+  }
+
+  .lb-row:hover {
+    background: rgba(255, 255, 255, 0.05);
   }
 }

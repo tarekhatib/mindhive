@@ -10,6 +10,10 @@ const validatePomodoro = (req, res, next) => {
     return res.status(400).json({ message: "Points must be positive" });
   }
   
+  if (points > 350) {
+    return res.status(400).json({ message: "Points must be less than or equal to 350" });
+  }
+
   res.locals.pomodoroPoints = n;
 
   next();
