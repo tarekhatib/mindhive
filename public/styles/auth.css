@@ -1,6 +1,7 @@
 @import url("main.css");
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
   display: flex;
@@ -119,8 +120,9 @@ a:hover {
   color: #d4a91a;
 }
 
- 
+
 @media (prefers-color-scheme: light) {
+
   .auth-card,
   .login-card,
   .register-card {
@@ -129,8 +131,9 @@ a:hover {
   }
 }
 
- 
+
 @media (prefers-color-scheme: dark) {
+
   .auth-card,
   .login-card,
   .register-card {
@@ -143,7 +146,7 @@ a:hover {
   }
 }
 
- 
+
 @media (max-width: 480px) {
   .auth-card {
     padding: 1.5rem;
@@ -165,5 +168,80 @@ a:hover {
   button[type="submit"] {
     font-size: 1rem;
     padding: 0.65rem 0.9rem;
+  }
+}
+
+/* =========================================
+   FULLSCREEN LOGIN — MOBILE LAYOUT
+========================================= */
+@media (max-width: 480px) {
+
+  /* Remove the card wrapper entirely */
+  .auth-card,
+  .login-card,
+  .register-card {
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  /* Let the container fill the whole screen naturally */
+  .auth-container,
+  .login-container,
+  .register-container {
+    width: 100vw !important;
+    height: 100dvh !important;
+    margin: 0;
+    padding: 2rem 1.2rem !important;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto !important;
+  }
+
+  /* Logo smaller + spaced */
+  .logo {
+    width: 120px !important;
+    margin: 2rem 0 1.5rem 0;
+  }
+
+  /* Headings centered and clean */
+  h1 {
+    font-size: 1.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .subtitle {
+    margin-bottom: 1.8rem;
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  /* Inputs full width, more modern */
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--card-bg-light);
+  }
+
+  button[type="submit"] {
+    margin-top: 0.8rem;
+    padding: 0.85rem;
+    border-radius: 14px;
+    font-size: 1.15rem;
+  }
+
+  /* Fix name-row stacking */
+  .name-row {
+    flex-direction: column;
+    gap: 0.8rem;
   }
 }
