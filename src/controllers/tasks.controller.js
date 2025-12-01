@@ -126,10 +126,31 @@ const toggleComplete = async (req, res) => {
   }
 };
 
+const deleteTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const userId = req.user.id;
+
+    const [result] = await db.query(
+      "DELETE FROM tasks WHERE id = ? AND user_id = ?",
+      [taskId, userId]
+    );
+
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Task not found" });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   renderTasks,
   getTasks,
   addTask,
   updateTask,
   toggleComplete,
+  deleteTask,
 };
