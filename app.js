@@ -27,6 +27,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "public", "views"));
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", tasksRoutes);
@@ -46,9 +50,5 @@ app.use(
 app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
 app.get("/register", (req, res) => res.render("register"));
-
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
 
 module.exports = app;
