@@ -35,34 +35,34 @@
         />
 
         <div class="editor-actions">
+          
           <div class="course-input-wrapper">
-            <input
-              id="course-input"
-              type="text"
-              placeholder="Course…"
-              autocomplete="off"
-              value="<%= note.course_name || '' %>"
-            />
-            <div id="course-suggestions" class="suggestions"></div>
+              <div id="course-trash-wrapper">
+                <input
+                id="course-input"
+                type="text"
+                placeholder="Course…"
+                autocomplete="off"
+                value="<%= note.course_name || '' %>"
+              />
+              <div id="course-suggestions" class="suggestions"></div>
+              <button id="delete-note-btn" class="delete-note-btn">
+              <i class="fa-solid fa-trash"></i>
+            </div>
+            <br>
+              <div id="char-counter" class="char-counter">0/25,000</div>
+            </div>
           </div>
-
-          <button id="delete-note-btn" class="delete-note-btn">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
       </div>
 
-      <textarea id="note-body" class="editor-body" placeholder="Start typing">
-<%= note.content %></textarea
-      >
-
+      <textarea id="note-body" class="editor-body" placeholder="Start typing"> <%= note.content %></textarea>
       <% } %>
     </div>
 
     <button id="save-note-btn" class="save-note-btn" aria-label="Save note">
       <i class="fa-solid fa-check"></i>
     </button>
-
+    <div id="save-toast" class="save-toast hidden">Changes saved.</div>
     <script src="/js/notes.js"></script>
   </body>
 </html>

@@ -383,6 +383,50 @@ body {
     transform: scale(0.9);
 }
 
+.save-toast {
+    position: fixed;
+    bottom: 25px;
+
+    left: 50%;
+    transform: translateX(-50%);
+    /* X stays fixed — NO Y here */
+
+    background: #1d1d1f;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+    opacity: 0;
+
+    /* We animate ONLY Y */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 99999;
+
+    /* Start slightly lower */
+    translate: 0 10px;
+    /* 👉 this animates the slide */
+}
+
+.save-toast.shown {
+    opacity: 1;
+
+    translate: 0 0;
+    /* 👉 slide upward only */
+}
+
+@media (prefers-color-scheme: dark) {
+    #char-counter {
+        color: var(--text-dark);
+    }
+}
+
+
+.hidden {
+    display: none;
+}
+
 /*Back button*/
 
 .back-btn {
@@ -423,6 +467,20 @@ body {
 
 /* Align delete button in topbar */
 .editor-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+}
+
+#char-counter {
+    font-size: 16px;
+    opacity: 0.6;
+    color: var(--text-light);
+    text-align: right;
+}
+
+#course-trash-wrapper {
     display: flex;
     align-items: center;
     gap: 1rem;

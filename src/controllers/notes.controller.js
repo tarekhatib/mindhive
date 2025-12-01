@@ -101,6 +101,10 @@ const addNote = async (req, res) => {
     const userId = req.user.id;
     const { title, content, course_id } = req.body;
 
+    if (content && content.length > 25000) {
+      return res.status(400).json({ message: "25,000 characters limit exceeded" });
+    }
+
     if (course_id) {
       const [course] = await db.query(
         "SELECT id FROM courses WHERE id = ? AND user_id = ?",
@@ -132,6 +136,10 @@ const updateNote = async (req, res) => {
     const { id } = req.params;
     let { title, content, course_id } = req.body;
 
+    if (content && content.length > 25000) {
+      return res.status(400).json({ message: "25,000 characters limit exceeded" });
+    }
+    
     if (course_id === "" || course_id === "null") {
       course_id = null;
     }

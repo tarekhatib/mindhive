@@ -110,12 +110,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const noteId = document.getElementById("note-id").value;
     const titleInput = document.getElementById("note-title");
     const bodyInput = document.getElementById("note-body");
+    const charCounter = document.getElementById("char-counter");
+    const MAX_CHARS = 25000;
     const deleteBtn = document.getElementById("delete-note-btn");
     const saveBtn = document.getElementById("save-note-btn");
     const backBtn = document.getElementById("back-btn");
 
     const courseInput = document.getElementById("course-input");
     const suggestionsBox = document.getElementById("course-suggestions");
+
+    updateCharCounter();
 
     let courses = [];
     let saveTimer;
@@ -227,6 +231,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    function updateCharCounter() {
+      const count = bodyInput.value.length;
+
+      charCounter.textContent = `${count.toLocaleString()} / ${MAX_CHARS.toLocaleString()}`;
+
+      if (count > MAX_CHARS) {
+        charCounter.classList.add("over-limit");
+      } else {
+        charCounter.classList.remove("over-limit");
+      }
+    }
+
     courseInput.addEventListener("focus", () => {
       renderSuggestions(courses, courseInput.value.trim());
     });
@@ -293,9 +309,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveBtn.addEventListener("click", async () => {
       await save();
-      saveBtn.classList.add("saved");
-      setTimeout(() => saveBtn.classList.remove("saved"), 600);
-    });
+
+      const toast = document.getElementById("save-toast");
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("shown"), 10);
+
+      setTimeout(() => {
+        toast.classList.remove("shown");
+        setTimeout(() => {
+          window.location.href = "/notes";
+        }, 300);
+      }, 1000);
+});
 
     deleteBtn.addEventListener("click", async () => {
       if (!confirm("Delete this note?")) return;
@@ -317,7 +342,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     titleInput.addEventListener("input", autoSave);
-    bodyInput.addEventListener("input", autoSave);
+    bodyInput.addEventListener("input", () => {
+      updateCharCounter();
+
+      if (bodyInput.value.length > MAX_CHARS) {
+        bodyInput.value = bodyInput.value.substring(0, MAX_CHARS);
+      }
+
+      autoSave();
+    });
 
     loadCourses();
   }
