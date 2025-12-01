@@ -252,7 +252,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (13,'Tarek','Khatib','tarekhatib','tarekalkhatibb@gmail.com','$2b$10$242BosbpzaDyh4SxjwhfM.Skek7OXkuzUZa5OfeRMP3BzO2Sgtk2u','/uploads/profile_pics/13_pfp.png','2025-10-19 11:02:28');
+INSERT INTO `users` VALUES (13,'Tarek','Khatib','tarekhatib','tarekalkhatibb@gmail.com','$2b$10$242BosbpzaDyh4SxjwhfM.Skek7OXkuzUZa5OfeRMP3BzO2Sgtk2u', NULL ,'2025-10-19 11:02:28');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
