@@ -33,7 +33,7 @@ body {
    TABLE CARD (Matches MindHive card style)
 ========================================================= */
 .lb-card {
-    border-radius: 18px;
+    border-radius: 20px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
@@ -64,6 +64,8 @@ body {
 
     background: rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
 }
 
 .lb-col {
@@ -88,8 +90,6 @@ body {
    ROWS (Smaller, cleaner)
 ========================================================= */
 .lb-row:first-child {
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
     padding: 0.7rem 1.5rem;
 }
 
