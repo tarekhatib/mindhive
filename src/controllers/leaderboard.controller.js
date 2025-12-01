@@ -2,7 +2,7 @@ const leaderboardService = require("../services/leaderboard.service");
 
 const getLeaderboardPage = async (req, res) => {
   try {
-    const page = 1;
+    const page = parseInt(req.query.page) || 1;
 
     const data = await leaderboardService.getLeaderboardPage(page);
 
