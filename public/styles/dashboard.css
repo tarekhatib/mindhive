@@ -275,11 +275,11 @@ body {
   }
 
   .cancel {
-    color: #b50000;
+    color: #f93b3b;
   }
 
   .finish {
-    color: #00a10d;
+    color: #3bf957;
   }
 
 }
@@ -719,7 +719,6 @@ body {
 
 /* ============================================================
    MOBILE DASHBOARD LAYOUT
-   For screens under 768px
 ============================================================ */
 
 @media (max-width: 1024px) {
@@ -764,20 +763,32 @@ body {
   }
 
   .todo-card,
-  .pomodoro-card,
-  .leaderboard-card {
-    width: 90%;
+  .pomodoro-card {
+    width: 94% !important;
+    margin: 0 !important;
   }
 
   .pomodoro-time {
     font-size: 3.5rem;
   }
 
+  .leaderboard-card {
+    width: 86% !important;
+    margin: 0 !important;
+  }
+
   .lb-table {
     width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .lb-card {
+    width: 100% !important;
+    margin: 0 !important;
   }
 
   .lb-row {
+    width: auto !important;
     padding: 0.5rem 1rem;
   }
 

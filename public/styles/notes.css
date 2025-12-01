@@ -482,6 +482,7 @@ body {
 /* DARK MODE */
 @media (prefers-color-scheme: dark) {
     body {
+        overflow-x: hidden !important;
         background-color: #111;
     }
 
@@ -600,5 +601,128 @@ body {
     .select-wrapper select:hover,
     .select-wrapper select:focus {
         background: var(--card-bg-dark);
+    }
+}
+
+@media (max-width: 1024px) {
+    body {
+        display: block !important;
+    }
+
+    .notes-container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 1rem !important;
+        min-height: auto !important;
+    }
+}
+
+/* ==========================================
+   NOTES LIST — Mobile layout (Option A)
+========================================== */
+@media (max-width: 1024px) {
+
+    .notes-list {
+        padding-left: 0 !important;
+        width: 94% !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* Center the notes */
+        gap: 1rem;
+    }
+
+    .note-item {
+        width: 94% !important;
+        border-radius: 20px;
+        padding: 1.2rem 1.4rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .notes-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding-left: 0 !important;
+    }
+
+    .notes-controls {
+        width: 84% !important;
+        padding-right: 0 !important;
+        padding-left: 6% !important;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .notes-controls input {
+        width: 100% !important;
+    }
+
+    #search-notes,
+    .select-wrapper select {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    #add-note-btn {
+        bottom: 100px !important;
+        /* make space for bottom navbar */
+        right: 20px !important;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .editor-actions {
+        width: 94% !important;
+        align-items: flex-start !important;
+        padding-right: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .course-input-wrapper,
+    #course-trash-wrapper {
+        padding-right: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    #char-counter {
+        margin-left: auto !important;
+        text-align: left !important;
+    }
+
+    .save-toast {
+        margin-bottom: 100px;
+    }
+
+
+    .editor-container {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        width: 100% !important;
+    }
+
+    .editor-titlebar,
+    .editor-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .editor-title {
+        width: 100%;
+    }
+
+    .editor-body {
+        height: auto !important;
+        min-height: 300px;
+    }
+
+    .save-note-btn {
+        bottom: 100px !important;
+        right: 20px !important;
     }
 }

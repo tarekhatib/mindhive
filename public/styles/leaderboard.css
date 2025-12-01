@@ -304,3 +304,111 @@ body {
     border-top-left-radius: 0%;
     border-top-right-radius: 0%;
 }
+
+/* =========================================================
+   LEADERBOARD — Mobile Layout (max-width: 1024px)
+========================================================= */
+@media (max-width: 1024px) {
+
+    body {
+        overflow-x: hidden !important;
+        display: block !important;
+    }
+
+    /* Remove sidebar space */
+    .leaderboard-container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 1rem !important;
+        padding-bottom: 120px !important;
+        /* space for bottom navbar */
+        min-height: auto !important;
+    }
+
+    /* Header centered like Notes / Tasks */
+    .leaderboard-container h1 {
+        text-align: left;
+        width: 94%;
+        margin: 0 auto 1.5rem auto;
+        font-size: 1.8rem;
+    }
+
+    /* Main card centered */
+    .lb-card {
+        width: 94% !important;
+        margin: 0;
+        border-radius: 20px !important;
+        overflow: hidden;
+    }
+
+    /* Table rows full width */
+    .lb-row {
+        padding: 1rem 1.2rem !important;
+        width: auto !important;
+    }
+
+    .lb-header {
+        padding: 0.9rem 1.2rem !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Columns adjust for small width */
+    .rank-col {
+        width: 40px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .user-col {
+        gap: 0.2rem !important;
+    }
+
+    .points-col {
+        width: 70px !important;
+        font-size: 0.9rem !important;
+        justify-content: flex-end;
+    }
+
+    /* Avatar shrink */
+    .lb-avatar,
+    .lb-avatar-initials {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* Name + username stack vertically on smaller screens */
+    .lb-info {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+    }
+
+    .lb-name {
+        font-size: 1rem !important;
+    }
+
+    .lb-username {
+        font-size: 0.75rem !important;
+        opacity: 0.6;
+    }
+
+    /* Pagination centered */
+    .lb-pagination {
+        padding-top: 1.2rem;
+        width: 94%;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .lb-page-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .lb-page-number {
+        font-size: 0.85rem;
+    }
+}
