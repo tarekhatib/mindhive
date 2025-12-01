@@ -16,6 +16,7 @@
   <div class="leaderboard-container">
     
     <h1>🏆 Leaderboard</h1>
+
     <div class="lb-card">
       <div class="lb-row lb-header">
         <div class="lb-col rank-col">#</div>
@@ -23,58 +24,11 @@
         <div class="lb-col points-col">Points</div>
       </div>
 
-      <div id="leaderboard-body">
-
-        <% if (users && users.length > 0) { %>
-
-          <% users.forEach((user, i) => { %>
-
-            <div class="lb-row lb-item" data-user-id="<%= user.id %>">
-
-              <div class="lb-col rank-col">
-                <% if (user.position === 1) { %>
-                  🥇
-                <% } else if (user.position === 2) { %>
-                  🥈
-                <% } else if (user.position === 3) { %>
-                  🥉
-                <% } else { %>
-                  <%= user.position %>
-                <% } %>
-              </div>
-
-              <div class="lb-col user-col user-flex">
-                <% if (user.profile_image) { %>
-                  <img class="lb-avatar" src="<%= user.profile_image %>" />
-                <% } else { %>
-                  <div class="lb-avatar-initials">
-                    <%= user.first_name.charAt(0).toUpperCase() + user.last_name.charAt(0).toUpperCase() %>
-                  </div>
-                <% } %>
-
-                <div class="lb-info">
-                  <p class="lb-name"><%= user.first_name %> <%= user.last_name %></p>
-                  <p class="lb-username">@<%= user.username %></p>
-                </div>
-              </div>
-
-              <div class="lb-col points-col">
-                <%= user.total_points %> pts
-              </div>
-
-            </div>
-
-          <% }) %>
-
-        <% } else { %>
-          <div class="lb-empty">No ranked users yet.</div>
-        <% } %>
-
-      </div>
+      <!-- JS will fill this dynamically -->
+      <div id="leaderboard-body"></div>
     </div>
 
     <div class="lb-pagination">
-
       <button
         id="paginationPrev"
         class="lb-page-btn"
@@ -92,7 +46,6 @@
         <%= page >= totalPages ? "disabled" : "" %>>
         <i class="fa-solid fa-chevron-right"></i>
       </button>
-
     </div>
 
   </div>
