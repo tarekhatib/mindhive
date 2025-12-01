@@ -106,7 +106,15 @@
               <div class="lb-row lb-item <%= user.id === locals.user.id ? 'lb-current-user' : '' %>">
 
                 <div class="lb-col rank-col">
-                  <%= user.position %>
+                  <% if (user.position === 1) { %>
+                    🥇
+                  <% } else if (user.position === 2) { %>
+                    🥈
+                  <% } else if (user.position === 3) { %>
+                    🥉
+                  <% } else { %>
+                    <%= user.position %>
+                  <% } %>
                 </div>
 
                 <div class="lb-col user-col user-flex">

@@ -36,7 +36,15 @@
 
             <!-- Rank -->
             <div class="lb-col rank-col">
-              <%= user.position %>
+              <% if (user.position === 1) { %>
+                🥇
+              <% } else if (user.position === 2) { %>
+                🥈
+              <% } else if (user.position === 3) { %>
+                🥉
+              <% } else { %>
+                <%= user.position %>
+              <% } %>
             </div>
 
             <!-- Avatar + Name + Username -->
