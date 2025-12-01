@@ -2,7 +2,7 @@ const db = require("../config/db");
 const getRankBySessions = require("../utils/getRank");
 
 const getLeaderboardPage = async (page = 1) => {
-  const limit = 50;
+  const limit = 10;
   const offset = (page - 1) * limit;
 
   const [users] = await db.query(

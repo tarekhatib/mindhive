@@ -10,7 +10,7 @@ const getLeaderboardPage = async (req, res) => {
       user: req.user,
       users: data.users,
       page,
-      totalPages: Math.ceil(data.totalUsers / 50),
+      totalPages: Math.ceil(data.totalUsers / 10),
     });
   } catch (err) {
     console.error("Leaderboard render error:", err);
@@ -29,7 +29,7 @@ const getLeaderboardData = async (req, res) => {
       page,
       users: data.users,
       totalUsers: data.totalUsers,
-      totalPages: Math.ceil(data.totalUsers / 50),
+      totalPages: Math.ceil(data.totalUsers / 10),
     });
   } catch (err) {
     console.error("Leaderboard API error:", err);

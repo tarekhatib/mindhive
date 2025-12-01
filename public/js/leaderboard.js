@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderUsers(users, page) {
     tableBody.innerHTML = "";
 
-    const startPos = (page - 1) * 50;
+    const startPos = (page - 1) * 10;
 
     users.forEach((u, i) => {
       const row = document.createElement("div");
