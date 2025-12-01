@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: "New Task",
+        title: "",
         description: "",
         due_date: null
       }),
@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (newItem) {
       enterEditMode(newItem, {
         id: data.taskId,
-        title: "New Task",
+        title: "",
         description: "",
         due_date: null
       });
@@ -193,13 +193,20 @@ addBtn.addEventListener("click", createNewTask);
       <div class="task-left edit-wrapper">
         <input type="checkbox" disabled>
         <div class="task-info edit-mode">
-          <input class="task-edit-title" type="text" value="${task.title}">
+          <input 
+            class="task-edit-title" 
+            type="text" 
+            value="${task.title === 'New Task' ? '' : task.title}"
+            placeholder="New Task"
+          />
           <input class="task-edit-date" type="date" value="${
             task.due_date ? task.due_date.split("T")[0] : ""
           }">
-          <textarea class="task-edit-desc" rows="2">${
-            task.description || ""
-          }</textarea>
+          <textarea 
+            class="task-edit-desc" 
+            rows="2"
+            placeholder="Description"
+          >${task.description || ""}</textarea>
         </div>
         <button class="task-edit-delete"><i class="fa-solid fa-trash"></i></button>
       </div>
@@ -228,13 +235,13 @@ addBtn.addEventListener("click", createNewTask);
           submit();
         }
 
-        if (
+        /*if (
           (e.key === "Backspace" || e.key === "Delete") &&
           el === title &&
           title.value.trim() === ""
         ) {
           deleteTask(id);
-        }
+        }*/
       });
     });
 
@@ -246,14 +253,22 @@ addBtn.addEventListener("click", createNewTask);
 
     document.addEventListener(
       "click",
-      function outsideClick(e) {
+      async function outsideClick(e) {
         if (!activeEditItem) {
           document.removeEventListener("click", outsideClick);
           return;
         }
+
         if (activeEditItem.contains(e.target)) return;
 
+        const newTitle = title.value.trim();
+        const newDate = date.value;
+        const newDesc = desc.value.trim();
+
+        await saveTaskEdits(id, newTitle, newDate, newDesc);
+
         activeEditItem = null;
+
         fetchTasks(filterSelect.value);
         document.removeEventListener("click", outsideClick);
       },
@@ -267,8 +282,8 @@ addBtn.addEventListener("click", createNewTask);
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: title.trim(),
-          description: desc.trim(),
+          title: title.trim() || "New Task",
+          description: desc.trim() || "",
           due_date: date || null,
         }),
       });

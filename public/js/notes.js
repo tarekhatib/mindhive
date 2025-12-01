@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: "Untitled",
+          title: "",
           content: "",
           course_id: null,
         }),
@@ -300,8 +300,8 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: titleInput.value.trim(),
-          content: bodyInput.value.trim(),
+          title: titleInput.value.trim() || "Untitled",
+          content: bodyInput.value.trim() || "",
           course_id,
         }),
       });

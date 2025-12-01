@@ -7,4 +7,8 @@ const fileFilter = (req, file, cb) => {
   cb(null, allowed.includes(file.mimetype));
 };
 
-module.exports = multer({ storage, fileFilter });
+module.exports = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 1 * 1024 * 1024 }
+});

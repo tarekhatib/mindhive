@@ -115,10 +115,36 @@ document.addEventListener("DOMContentLoaded", () => {
   imgInput?.addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
-    photoRemoved = false;
+
+    const errorEl = document.getElementById("photo-error");
+
+    if (window._photoErrorTimeout) {
+      clearTimeout(window._photoErrorTimeout);
+    }
+
+    if (file.size > 1 * 1024 * 1024) {
+      errorEl.textContent = "Image too large. Maximum allowed size is 1MB.";
+      errorEl.classList.remove("hidden");
+      this.value = "";
+
+      window._photoErrorTimeout = setTimeout(() => {
+        errorEl.classList.add("hidden");
+      }, 3000);
+
+      const hideOnClick = (e) => {
+        errorEl.classList.add("hidden");
+        document.removeEventListener("click", hideOnClick);
+      };
+      setTimeout(() => {  // allow click to happen AFTER error appears
+        document.addEventListener("click", hideOnClick);
+      }, 50);
+
+      return;
+    }
+
+    errorEl.classList.add("hidden");
 
     const preview = document.getElementById("edit-avatar-preview");
-
     if (preview.tagName === "DIV") {
       const img = document.createElement("img");
       img.id = "edit-avatar-preview";

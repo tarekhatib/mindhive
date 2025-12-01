@@ -361,6 +361,16 @@ body {
   font-weight: 600;
 }
 
+.photo-error {
+  color: #e54848;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.photo-error.hidden {
+  display: none;
+}
+
 /* =========================================================
    EDIT PROFILE MODAL — AVATAR
 ========================================================= */

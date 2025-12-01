@@ -370,7 +370,7 @@ body {
     background-color: rgba(249, 198, 59, 0.33);
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
-    color: #111111;
+    color: rgb(169, 124, 1);
     transition: 0.25s ease;
 }
 
@@ -414,12 +414,6 @@ body {
 
     translate: 0 0;
     /* 👉 slide upward only */
-}
-
-@media (prefers-color-scheme: dark) {
-    #char-counter {
-        color: var(--text-dark);
-    }
 }
 
 
@@ -490,6 +484,10 @@ body {
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #111;
+    }
+
+    #char-counter {
+        color: var(--text-dark) !important;
     }
 
     .notes-container {

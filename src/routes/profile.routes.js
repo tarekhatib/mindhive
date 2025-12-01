@@ -26,7 +26,25 @@ const upload = require("../middleware/uploadProfilePic");
  *     summary: Update profile info
  *     tags: [Profile]
  */
+/**
+ * @swagger
+ * /profile/delete:
+ *   delete:
+ *     summary: Delete profile picture
+ *     tags: [Profile]
+ */
 
+router.post(
+  "/update",
+  upload.single("profile_image"),
+  async (req, res, next) => {
+    try {
+      await updateProfile(req, res);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 router.patch(
   "/api/profile",
   authenticateToken,
