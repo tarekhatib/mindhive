@@ -30,6 +30,10 @@ const getLeaderboardPage = async (page = 1) => {
       SELECT COUNT(*) AS total FROM users;
     `);
 
+    console.log("🔥 LEADERBOARD QUERY RAN");
+    console.log("🔥 SQL REQUESTED LEADERBOARD:");
+    console.log("🔥", users);
+    
     return {
       users,
       totalUsers: countRow.total
