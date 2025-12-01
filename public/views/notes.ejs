@@ -1,97 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
-  <link rel="stylesheet" href="/styles/main.css" />
-  <link rel="stylesheet" href="/styles/notes.css" />
-  <title>MindHive · Notes</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/notes.css" />
+    <title>MindHive · Notes</title>
+  </head>
 
-<body>
-  <%- include('partials/sidebar', { page: 'notes' }) %>
+  <body>
+    <%- include('partials/sidebar', { page: 'notes' }) %>
 
-  <div class="notes-container">
+    <div class="notes-container">
+      <div class="notes-header">
+        <h1>My Notes</h1>
 
-    <div class="notes-header">
-      <h1>My Notes</h1>
+        <div class="notes-controls">
+          <input
+            id="search-notes"
+            class="search-bar"
+            type="text"
+            placeholder="Search notes"
+            aria-label="Search notes"
+          />
 
-      <div class="notes-controls">
-  <input
-    id="search-notes"
-    class="search-bar"
-    type="text"
-    placeholder="Search notes"
-    aria-label="Search notes"
-  />
+          <div class="select-wrapper">
+            <select id="notes-filter">
+              <option value="all">All Courses</option>
+              <% if (typeof courses !== "undefined") { %> <% courses.forEach(c
+              => { %>
+              <option value="<%= c.id %>"><%= c.name %></option>
+              <% }) %> <% } %>
+            </select>
+          </div>
+        </div>
+      </div>
 
-  <div class="select-wrapper">
-    <select id="notes-filter">
-      <option value="all">All Courses</option>
-      <% if (typeof courses !== "undefined") { %>
-        <% courses.forEach(c => { %>
-          <option value="<%= c.id %>"><%= c.name %></option>
-        <% }) %>
-      <% } %>
-    </select>
-  </div>
-</div>
-    </div>
-
-    <div class="notes-list" id="notes-list">
-
-      <% if (typeof notes !== 'undefined' && notes && notes.length > 0) { %>
-
+      <div class="notes-list" id="notes-list">
+        <% if (typeof notes !== 'undefined' && notes && notes.length > 0) { %>
         <% notes.forEach(note => { %>
-          
-          <div class="note-item" data-id="<%= note.id %>">
 
-            <div class="note-info">
-              <h3 class="note-title"><%= note.title || "Untitled" %></h3>
+        <div class="note-item" data-id="<%= note.id %>">
+          <div class="note-info">
+            <h3 class="note-title"><%= note.title || "Untitled" %></h3>
 
-              <p class="note-preview">
-  <%= note.content
-        ? note.content.substring(0, 80) + (note.content.length > 80 ? "..." : "")
-        : "No content"
-  %>
-</p>
-            </div>
-
-            <%
-  const d = new Date(note.created_at);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  const formattedDate = `${day}/${month}/${year}`; 
-%>
-
-<div class="note-date"><%= formattedDate %></div>
-
+            <p class="note-preview">
+              <%= note.content ? note.content.substring(0, 80) +
+              (note.content.length > 80 ? "..." : "") : "No content" %>
+            </p>
           </div>
 
-        <% }) %>
+          <% const d = new Date(note.created_at); const day =
+          String(d.getDate()).padStart(2, "0"); const month =
+          String(d.getMonth() + 1).padStart(2, "0"); const year =
+          d.getFullYear(); const formattedDate = `${day}/${month}/${year}`; %>
 
-      <% } else { %>
+          <div class="note-date"><%= formattedDate %></div>
+        </div>
+
+        <% }) %> <% } else { %>
 
         <p class="no-notes">
           You have no notes yet. Create one with the button below!
         </p>
 
-      <% } %>
-
+        <% } %>
+      </div>
     </div>
-  </div>
 
-  <!-- Floating Add Note Button -->
-  <button id="add-note-btn" class="floating-btn" aria-label="Add new note">
-    <i class="fa-solid fa-plus"></i>
-  </button>
+    <!-- Floating Add Note Button -->
+    <button id="add-note-btn" class="floating-btn" aria-label="Add new note">
+      <i class="fa-solid fa-plus"></i>
+    </button>
 
-  <script src="/js/notes.js"></script>
-</body>
+    <script src="/js/notes.js"></script>
+  </body>
 </html>

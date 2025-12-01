@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -27,20 +27,22 @@
             aria-label="Search tasks"
           />
           <div class="select-wrapper">
-  <select id="task-filter">
-    <option value="all">All Tasks</option>
-    <option value="today">Today</option>
-    <option value="upcoming">Upcoming</option>
-  </select>
-</div>
+            <select id="task-filter">
+              <option value="all">All Tasks</option>
+              <option value="today">Today</option>
+              <option value="upcoming">Upcoming</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <div class="tasks-list">
         <% if (typeof tasks !== 'undefined' && tasks && tasks.length > 0) { %>
         <% tasks.forEach(task => { %>
-        <div class="task-item <%= task.completed ? 'completed' : '' %>" 
-     data-id="<%= task.id %>">
+        <div
+          class="task-item <%= task.completed ? 'completed' : '' %>"
+          data-id="<%= task.id %>"
+        >
           <div class="task-left">
             <input type="checkbox" class="task-checkbox" <%= task.completed ?
             'checked' : '' %> data-id="<%= task.id %>" />
