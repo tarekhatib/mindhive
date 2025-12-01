@@ -58,4 +58,31 @@ app.get("/", (req, res) => res.redirect("/login"));
 app.get("/login", (req, res) => res.render("login"));
 app.get("/register", (req, res) => res.render("register"));
 
+
+app.get("/debug/leaderboard-sum", async (req, res) => {
+  try {
+    const [[info]] = await db.query(
+      "SELECT DATABASE() AS db, @@hostname AS host, @@version AS version"
+    );
+
+    const [rows] = await db.query(`
+      SELECT 
+        u.id,
+        u.first_name,
+        u.last_name,
+        COALESCE(SUM(p.points), 0) AS total_points,
+        COUNT(p.id) AS total_sessions
+      FROM users u
+      LEFT JOIN pomodoro_sessions p ON p.user_id = u.id
+      GROUP BY u.id
+      ORDER BY u.id;
+    `);
+
+    res.json({ info, rows });
+  } catch (err) {
+    console.error("DEBUG LB ERROR", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = app;
