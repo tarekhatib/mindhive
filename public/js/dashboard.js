@@ -174,6 +174,48 @@ let remainingTime = timerDuration;
 let timerInterval = null;
 let isPaused = false;
 
+let pomodoroSound = new Audio("/assets/pomodoro-done.mp3");
+pomodoroSound.loop = true;
+pomodoroSound.volume = 0.7;
+
+["pointerdown", "click", "touchstart", "keydown", "mouseup"].forEach(event => {
+  document.addEventListener(event, () => {
+    pomodoroSound.play().then(() => {
+      pomodoroSound.pause();
+      pomodoroSound.currentTime = 0;
+      console.log("Audio unlocked ✔️");
+    }).catch(() => {});
+  }, { once: true });
+});
+
+function playCompletedSound() {
+  pomodoroSound.volume = 0.7;
+  pomodoroSound.loop = true;
+  pomodoroSound.play().catch(() => {});
+}
+
+function stopPlayingSound() {
+  pomodoroSound.pause();
+  pomodoroSound.currentTime = 0;
+}
+
+const closeBtn = document.getElementById("pomodoro-close");
+if (closeBtn) {
+  closeBtn.addEventListener("click", () => {
+    document.getElementById("pomodoro-popup").classList.remove("show");
+    stopPlayingSound();
+  });
+}
+
+function showPomodoroPopup() {
+  const popup = document.getElementById("pomodoro-popup");
+
+  popup.classList.add("show");
+
+  playCompletedSound();
+  navigator.vibrate?.([120, 80, 120]);
+}
+
 function saveState() {
   const state = {
     timerDuration,
@@ -245,7 +287,8 @@ function startTimer() {
       if (remainingTime <= 0) {
         clearInterval(timerInterval);
         timerInterval = null;
-        alert("Pomodoro session completed! 🎉");
+        playCompletedSound();
+        showPomodoroPopup();
         const userIdElement = document.getElementById("user_id");
         const user_id = userIdElement ? userIdElement.value : null;
         if (user_id) {
@@ -282,7 +325,9 @@ function pauseTimer() {
         if (remainingTime <= 0) {
           clearInterval(timerInterval);
           timerInterval = null;
-          alert("Pomodoro session completed! 🎉");
+          playCompletedSound();
+          navigator.vibrate?.([120, 80, 120]);
+          showPomodoroPopup();
           const userIdElement = document.getElementById("user_id");
           const user_id = userIdElement ? userIdElement.value : null;
           if (user_id) {
