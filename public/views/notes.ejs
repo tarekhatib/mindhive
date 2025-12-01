@@ -32,18 +32,21 @@
           <div class="select-wrapper">
             <select id="notes-filter">
               <option value="all">All Courses</option>
-              <% if (typeof courses !== "undefined") { %> <% courses.forEach(c
-              => { %>
-              <option value="<%= c.id %>"><%= c.name %></option>
-              <% }) %> <% } %>
+
+              <% if (typeof courses !== "undefined") { %>
+                <% courses.forEach(c => { %>
+                  <option value="<%= c.id %>"><%= c.name %></option>
+                <% }) %>
+              <% } %>
+
             </select>
           </div>
         </div>
       </div>
 
       <div class="notes-list" id="notes-list">
-        <% if (typeof notes !== 'undefined' && notes && notes.length > 0) { %>
-        <% notes.forEach(note => { %>
+        <% if (typeof notes !=='undefined' && notes && notes.length> 0) { %> <%
+        notes.forEach(note=> { %>
 
         <div class="note-item" data-id="<%= note.id %>">
           <div class="note-info">
@@ -51,14 +54,15 @@
 
             <p class="note-preview">
               <%= note.content ? note.content.substring(0, 80) +
-              (note.content.length > 80 ? "..." : "") : "No content" %>
+              (note.content.length> 80 ? "..." : "") : "No content" %>
             </p>
           </div>
 
-          <% const d = new Date(note.created_at); const day =
-          String(d.getDate()).padStart(2, "0"); const month =
-          String(d.getMonth() + 1).padStart(2, "0"); const year =
-          d.getFullYear(); const formattedDate = `${day}/${month}/${year}`; %>
+          <% const d=new Date(note.created_at); const
+          day=String(d.getDate()).padStart(2, "0" ); const
+          month=String(d.getMonth() + 1).padStart(2, "0" ); const
+          year=d.getFullYear(); const formattedDate=`${day}/${month}/${year}`;
+          %>
 
           <div class="note-date"><%= formattedDate %></div>
         </div>
