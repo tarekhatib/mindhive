@@ -226,15 +226,26 @@ body {
 }
 
 .pause {
-  background: rgba(45, 145, 252, 0.33);
-  color: #fff;
-  color: #007bff
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: rgba(249, 198, 59, 0.33);
+  color: rgb(169, 124, 1);
+  transition: 0.25s ease;
 }
 
 .cancel {
   background: rgba(255, 75, 75, 0.33);
-  color: #fff;
-  color: #ff4b4b
+  color: rgb(169, 1, 1);
+}
+
+.finish {
+  background: rgba(75, 255, 90, 0.33);
+  color: rgb(1, 169, 65);
 }
 
 .start:hover {

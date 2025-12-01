@@ -167,6 +167,7 @@ const pauseBtn = document.getElementById("pause-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const increaseBtn = document.getElementById("increase-btn");
 const decreaseBtn = document.getElementById("decrease-btn");
+const finishBtn = document.getElementById("finish-btn");
 
 let timerDuration = 25 * 60;
 let remainingTime = timerDuration;
@@ -202,11 +203,13 @@ function loadState() {
 
         if (remainingTime < timerDuration) {
           startBtn?.classList.add("hidden");
+          finishBtn?.classList.remove("hidden");
           pauseBtn?.classList.remove("hidden");
           cancelBtn?.classList.remove("hidden");
-          pauseBtn.textContent = "Resume";
+          pauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
         } else {
           startBtn?.classList.remove("hidden");
+          finishBtn?.classList.add("hidden");
           pauseBtn?.classList.add("hidden");
           cancelBtn?.classList.add("hidden");
         }
@@ -228,9 +231,10 @@ function startTimer() {
   if (timerInterval || !startBtn || !pauseBtn || !cancelBtn) return;
   isPaused = false;
   startBtn.classList.add("hidden");
+  finishBtn.classList.remove("hidden");
   pauseBtn.classList.remove("hidden");
   cancelBtn.classList.remove("hidden");
-  pauseBtn.textContent = "Pause";
+  pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
   saveState();
 
   timerInterval = setInterval(async () => {
@@ -253,7 +257,7 @@ function startTimer() {
               },
               body: JSON.stringify({
                 user_id,
-                points: timerDuration / 60,
+                points: Math.floor(timerDuration / 60),
               }),
             });
           } catch (err) {
@@ -290,7 +294,7 @@ function pauseTimer() {
                 },
                 body: JSON.stringify({
                   user_id,
-                  points: timerDuration / 60,
+                  points: Math.floor(timerDuration / 60),
                 }),
               });
             } catch (err) {
@@ -302,7 +306,9 @@ function pauseTimer() {
       }
     }, 1000);
   }
-  pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+  pauseBtn.innerHTML = isPaused 
+  ? '<i class="fa-solid fa-play"></i>' 
+  : '<i class="fa-solid fa-pause"></i>';
   saveState();
 }
 
@@ -317,10 +323,44 @@ function resetTimer() {
   remainingTime = timerDuration;
   updateTimerDisplay();
   startBtn?.classList.remove("hidden");
+  finishBtn.classList.add("hidden");
   pauseBtn?.classList.add("hidden");
   cancelBtn?.classList.add("hidden");
-  if (pauseBtn) pauseBtn.textContent = "Pause";
+  if (pauseBtn) pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
   isPaused = false;
+  saveState();
+}
+
+async function finishSession() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+
+  const workedSeconds = timerDuration - remainingTime;
+  const workedMinutes = Math.floor(workedSeconds / 60);
+
+  if (workedMinutes <= 0) {
+    alert("You must complete at least 1 minute.");
+    return;
+  }
+
+  const userIdElement = document.getElementById("user_id");
+  const user_id = userIdElement ? userIdElement.value : null;
+
+  try {
+    await fetch("/api/pomodoro/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id,
+        points: workedMinutes,
+      }),
+    });
+  } catch (err) {
+    console.error("Error sending partial pomodoro session:", err);
+  }
+
+  alert(`Session finished early! You earned ${workedMinutes} pts.`);
+  resetTimer();
   saveState();
 }
 
@@ -345,6 +385,7 @@ pauseBtn?.addEventListener("click", pauseTimer);
 cancelBtn?.addEventListener("click", cancelTimer);
 increaseBtn?.addEventListener("click", increaseTimer);
 decreaseBtn?.addEventListener("click", decreaseTimer);
+finishBtn?.addEventListener("click", finishSession);
 
 loadState();
 updateTimerDisplay();
