@@ -18,14 +18,28 @@ const updateProfile = async (req, res) => {
     let imagePath = null;
 
     if (req.file) {
-      const fileExt = req.file.originalname.split(".").pop();
-      const fileName = `${userId}_pfp.${fileExt}`;
+      
+      const [old] = await db.query(
+        "SELECT profile_image FROM users WHERE id = ?",
+        [userId]
+      );
+
+      if (old[0]?.profile_image) {
+        const oldPath = old[0].profile_image.split("/storage/v1/object/public/")[1];
+        await supabase.storage.from(BUCKET).remove([oldPath]);
+      }
+      const mime = req.file.mimetype;
+      const fileExt = mime.split("/")[1];
+
+      const crypto = require("crypto");
+      const randomName = crypto.randomBytes(16).toString("hex");
+      const fileName = `users/${userId}/${randomName}.${fileExt}`;
 
       const { data, error } = await supabase.storage
         .from(BUCKET)
         .upload(fileName, req.file.buffer, {
           contentType: req.file.mimetype,
-          upsert: true,
+          upsert: false,
         });
 
       if (error) {

@@ -1,11 +1,17 @@
 const db = require("../config/db");
 
-const db = require("../config/db");
-
 const completePomodoro = async (req, res) => {
   try {
     const userId = req.user.id;
-    const points = res.locals.pomodoroPoints;
+    const { points } = req.body;
+
+    if (!Number.isInteger(points)) {
+      return res.status(400).json({ message: "Points must be an integer" });
+    }
+
+    if (points < 1 || points > 60) {
+      return res.status(400).json({ message: "Invalid points amount" });
+    }
 
     const [result] = await db.query(
       "INSERT INTO pomodoro_sessions (user_id, points) VALUES (?, ?)",
@@ -17,6 +23,7 @@ const completePomodoro = async (req, res) => {
       sessionId: result.insertId,
       points,
     });
+
   } catch (error) {
     console.error("❌ Error recording pomodoro session:", error);
     res.status(500).json({ message: "Internal server error" });
