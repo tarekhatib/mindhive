@@ -15,31 +15,25 @@ document.addEventListener("DOMContentLoaded", () => {
     currentPage = data.page;
     pageIndicator.textContent = `Page ${currentPage} / ${data.totalPages}`;
 
-    renderUsers(data.users, currentPage);
+    renderUsers(data.users);
     updatePagination(data.totalPages);
   }
-  function renderUsers(users, page) {
+
+  function renderUsers(users) {
     tableBody.innerHTML = "";
 
-    const startPos = (page - 1) * 10;
-
-    users.forEach((u, i) => {
+    users.forEach((u) => {
       const row = document.createElement("div");
       row.className = "lb-row lb-item";
       row.dataset.userId = u.id;
 
-      const rankPosition = startPos + i + 1;
-
       row.innerHTML = `
         <div class="lb-col rank-col">
           ${
-            u.position === 1
-              ? "🥇"
-              : u.position === 2
-              ? "🥈"
-              : u.position === 3
-              ? "🥉"
-              : rankPosition
+            u.position === 1 ? "🥇" :
+            u.position === 2 ? "🥈" :
+            u.position === 3 ? "🥉" :
+            u.position
           }
         </div>
 
