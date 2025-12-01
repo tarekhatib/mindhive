@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       html = `<div class="sr-empty">No results found</div>`;
     }
 
+    window.latestSearchUsers = users;
     resultsBox.innerHTML = html;
     resultsBox.classList.remove("hidden");
   }
@@ -79,18 +80,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const type = item.dataset.type;
     const id = item.dataset.id;
 
-    if (type === "task") {
-      location.href = `/tasks?highlight=${id}`;
-    }
+  if (type === "user") {
+    const user = window.latestSearchUsers?.find(u => u.id == id);
+    const page = user?.page || 1;
+    location.href = `/leaderboard?page=${page}&focus=${id}`;
+    return;
+  }
 
-    if (type === "note") {
-      location.href = `/notes/edit/${id}`;
-    }
+  if (type === "task") {
+    location.href = `/tasks?highlight=${id}`;
+  }
 
-    if (type === "user") {
-      location.href = `/leaderboard?focus=${id}`;
-    }
-  });
+  if (type === "note") {
+    location.href = `/notes/edit/${id}`;
+  }
+});
 
   document.addEventListener("click", (e) => {
     if (!resultsBox.contains(e.target) && e.target !== searchInput) {

@@ -260,7 +260,10 @@ addBtn.addEventListener("click", createNewTask);
       });
     });
 
-    del.addEventListener("click", () => deleteTask(id));
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();     // ✨ IMPORTANT
+      deleteTask(id);
+    });
 
     item.querySelector(".edit-wrapper").addEventListener("click", (e) =>
       e.stopPropagation()

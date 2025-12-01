@@ -98,19 +98,33 @@ router.get("/api/search", authenticateToken, async (req, res) => {
     );
     const [users] = await db.query(
       `SELECT 
-          u.id,
-          u.first_name,
-          u.last_name,
-          u.username,
-          u.profile_image,
-          COALESCE(SUM(p.points), 0) AS total_points
-        FROM users u
-        LEFT JOIN pomodoro_sessions p ON p.user_id = u.id
-        WHERE (u.username LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)
-        GROUP BY u.id
+          t.id,
+          t.first_name,
+          t.last_name,
+          t.username,
+          t.profile_image,
+          t.total_points,
+          t.position
+        FROM (
+          SELECT 
+            u.id,
+            u.first_name,
+            u.last_name,
+            u.username,
+            u.profile_image,
+            COALESCE(SUM(p.points), 0) AS total_points,
+            DENSE_RANK() OVER (ORDER BY COALESCE(SUM(p.points), 0) DESC) AS position
+          FROM users u
+          LEFT JOIN pomodoro_sessions p ON p.user_id = u.id
+          GROUP BY u.id
+        ) AS t
+        WHERE (t.username LIKE ? OR t.first_name LIKE ? OR t.last_name LIKE ?)
         LIMIT 5`,
       [`%${q}%`, `%${q}%`, `%${q}%`]
     );
+    users.forEach(u => {
+      u.page = Math.ceil(u.position / 10); // 10 users per page
+    });
 
     res.json({ tasks, notes, users });
   } catch (err) {

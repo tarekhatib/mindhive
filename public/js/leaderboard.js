@@ -91,5 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadLeaderboard(currentPage + 1);
   });
 
-  loadLeaderboard(1);
+  const params = new URLSearchParams(window.location.search);
+  const startPage = parseInt(params.get("page")) || 1;
+  loadLeaderboard(startPage);
 });
