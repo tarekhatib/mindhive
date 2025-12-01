@@ -334,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       window.location.href = "/notes";
-      alert("Note moved to Trash");
     });
 
     backBtn.addEventListener("click", () => {

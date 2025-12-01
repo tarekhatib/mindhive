@@ -171,6 +171,10 @@ body {
   margin-top: 2px;
 }
 
+.task-item.completed {
+  opacity: 0.5;
+}
+
 .task-checkbox:checked {
   background: var(--accent-color);
   border-color: var(--accent-color);

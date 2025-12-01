@@ -29,13 +29,25 @@ const getTasks = async (req, res) => {
       .split("T")[0];
 
     const tasks = rows.filter(task => {
-      if (!task.due_date) return filter === "all";
+      const due = task.due_date
+        ? toUserDate(new Date(task.due_date), offset)
+        : null;
 
-      const due = toUserDate(new Date(task.due_date), offset);
+      if (filter === "completed") {
+        return task.completed === 1;
+      }
 
-      if (filter === "today") return due === today;
-      if (filter === "upcoming") return due > today;
-      if (filter === "past due") return due < today;
+      if (filter === "past") {
+        return due && due < today && task.completed === 0;
+      }
+
+      if (filter === "today") {
+        return due === today && task.completed === 0;
+      }
+
+      if (filter === "upcoming") {
+        return due && due > today && task.completed === 0;
+      }
 
       return true;
     });
@@ -89,23 +101,28 @@ const updateTask = async (req, res) => {
   }
 };
 
-const deleteTask = async (req, res) => {
+const toggleComplete = async (req, res) => {
   try {
     const taskId = req.params.id;
     const userId = req.user.id;
+    const { completed } = req.body;
+
+    const completedAt = completed ? new Date() : null;
 
     const [result] = await db.query(
-      "DELETE FROM tasks WHERE id = ? AND user_id = ?",
-      [taskId, userId]
+      `UPDATE tasks
+       SET completed = ?, completed_at = ?
+       WHERE id = ? AND user_id = ?`,
+      [completed, completedAt, taskId, userId]
     );
 
     if (result.affectedRows === 0)
       return res.status(404).json({ message: "Task not found" });
 
-    res.status(200).json({ message: "Task deleted successfully" });
-  } catch (error) {
-    console.error("❌ Error deleting task:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -114,5 +131,5 @@ module.exports = {
   getTasks,
   addTask,
   updateTask,
-  deleteTask,
+  toggleComplete,
 };

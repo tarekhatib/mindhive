@@ -5,7 +5,7 @@ const {
   getTasks,
   addTask,
   updateTask,
-  deleteTask,
+  toggleComplete,
 } = require("../controllers/tasks.controller");
 
 const router = express.Router();
@@ -87,9 +87,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/tasks/{id}/delete:
- *   delete:
- *     summary: Delete a task
+ * /api/tasks/{id}/complete:
+ *   patch:
+ *     summary: Complete a task
  *     tags: [Tasks]
  *     parameters:
  *       - name: id
@@ -104,6 +104,6 @@ router.get("/tasks", authenticateToken, renderTasks);
 router.get("/api/tasks", authenticateToken, getTasks);
 router.post("/api/tasks/add", authenticateToken, addTask);
 router.patch("/api/tasks/:id/update", authenticateToken, updateTask);
-router.delete("/api/tasks/:id/delete", authenticateToken, deleteTask);
+router.patch("/api/tasks/:id/complete", authenticateToken, toggleComplete);
 
 module.exports = router;

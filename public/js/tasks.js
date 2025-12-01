@@ -87,6 +87,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  tasks.sort((a, b) => {
+    if (a.completed && !b.completed) return 1;
+    if (!a.completed && b.completed) return -1;
+    return 0;
+  });
+
   tasks.forEach(task => {
     const item = document.createElement("div");
     item.className = "task-item";
@@ -102,6 +108,12 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </div>
     `;
+
+    if (task.completed) {
+      item.classList.add("completed");
+      const checkbox = item.querySelector(".task-checkbox");
+      checkbox.checked = true;
+    }
 
     attachItemEvents(item, task);
     tasksList.appendChild(item);
@@ -161,20 +173,23 @@ addBtn.addEventListener("click", createNewTask);
 
     checkbox.addEventListener("click", (e) => {
       e.stopPropagation();
-      const id = task.id;
+    });
+    checkbox.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+    });
 
-      if (completeTimeouts[id]) {
-        clearTimeout(completeTimeouts[id]);
-        delete completeTimeouts[id];
-        checkbox.checked = false;
-        return;
-      }
+    checkbox.addEventListener("change", async (e) => {
+      e.stopPropagation();
 
-      completeTimeouts[id] = setTimeout(async () => {
-        await deleteTask(id);
-        await fetchTasks(filterSelect.value);
-        delete completeTimeouts[id];
-      }, 2000);
+      const completed = checkbox.checked;
+
+      await fetch(`/api/tasks/${task.id}/complete`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed })
+      });
+
+      fetchTasks(filterSelect.value);
     });
 
     item.addEventListener("click", () => {
