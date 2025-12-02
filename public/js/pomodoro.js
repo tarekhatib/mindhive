@@ -15,18 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let pauseAt = null;
   let timerInterval = null;
 
-  let pomodoroSound = new Audio("/assets/pomodoro-done.mp3");
+  const pomodoroSound = new Audio("/assets/pomodoro-done.mp3");
   pomodoroSound.loop = true;
   pomodoroSound.volume = 0.7;
-
-  ["pointerdown","click","touchstart","keydown","mouseup"].forEach(ev => {
-    document.addEventListener(ev, () => {
-      pomodoroSound.play().then(() => {
-        pomodoroSound.pause();
-        pomodoroSound.currentTime = 0;
-      }).catch(() => {});
-    }, { once: true });
-  });
+  let audioUnlocked = false;
+  let needsReplayAfterUnlock = false;
 
   function playCompletedSound() {
     pomodoroSound.currentTime = 0;
@@ -39,23 +32,64 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showPopup() {
-    popup?.classList.add("show");
+    if (popup) {
+      popup.classList.add("show");
+    }
     playCompletedSound();
     navigator.vibrate?.([120, 80, 120]);
   }
 
   closeBtn?.addEventListener("click", () => {
-    popup?.classList.remove("show");
+    if (popup) {
+      popup.classList.remove("show");
+    }
     stopSound();
   });
 
+  // ---- UNIVERSAL AUDIO UNLOCK FOR ALL PAGES ----
+  function unlockAudio() {
+    if (audioUnlocked) return;
+
+    pomodoroSound
+      .play()
+      .then(() => {
+        pomodoroSound.pause();
+        pomodoroSound.currentTime = 0;
+        audioUnlocked = true;
+
+        if (needsReplayAfterUnlock) {
+          needsReplayAfterUnlock = false;
+          showPopup();
+        }
+        localStorage.setItem("pomodoroAudioUnlocked", "1");
+      })
+      .catch(() => {});
+  }
+
+  if (localStorage.getItem("pomodoroAudioUnlocked") === "1") {
+    audioUnlocked = true;
+  }
+
+  ["click", "keydown", "touchstart", "mousemove", "scroll"].forEach((ev) => {
+    document.addEventListener(
+      ev,
+      () => {
+        unlockAudio();
+      },
+      { once: true }
+    );
+  });
+
   function saveState() {
-    localStorage.setItem("pomodoroState", JSON.stringify({
-      timerDuration,
-      endAt,
-      pauseAt,
-      startAt
-    }));
+    localStorage.setItem(
+      "pomodoroState",
+      JSON.stringify({
+        timerDuration,
+        endAt,
+        pauseAt,
+        startAt,
+      })
+    );
   }
 
   function loadState() {
@@ -81,8 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const now = Date.now();
-    let remaining = Math.max(0, Math.floor((endAt - now) / 1000));
-
+    const remaining = Math.max(0, Math.floor((endAt - now) / 1000));
     const m = String(Math.floor(remaining / 60)).padStart(2, "0");
     const s = String(remaining % 60).padStart(2, "0");
     timeDisplay.textContent = `${m}:${s}`;
@@ -94,18 +127,21 @@ document.addEventListener("DOMContentLoaded", () => {
     timerInterval = setInterval(() => {
       if (!endAt) return;
 
-      updateTimerDisplay();
-
-      if (Date.now() >= endAt) {
+      const now = Date.now();
+      if (now >= endAt) {
         clearInterval(timerInterval);
         timerInterval = null;
         finishPomodoro(true);
+        return;
       }
+
+      updateTimerDisplay();
     }, 500);
   }
 
   function startTimer() {
     if (!startBtn) return;
+
     startAt = Date.now();
     endAt = Date.now() + timerDuration * 1000;
     pauseAt = null;
@@ -115,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     finishBtn?.classList.remove("hidden");
     pauseBtn?.classList.remove("hidden");
     cancelBtn?.classList.remove("hidden");
-    pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    if (pauseBtn) pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 
     startInterval();
     updateTimerDisplay();
@@ -143,64 +179,86 @@ document.addEventListener("DOMContentLoaded", () => {
   function cancelTimer() {
     endAt = null;
     pauseAt = null;
+    startAt = null;
 
     timerDuration = 25 * 60;
 
-    clearInterval(timerInterval);
-    timerInterval = null;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
 
     startBtn?.classList.remove("hidden");
     finishBtn?.classList.add("hidden");
     pauseBtn?.classList.add("hidden");
     cancelBtn?.classList.add("hidden");
-    pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+    if (pauseBtn) pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+
     updateTimerDisplay();
     saveState();
   }
 
   function finishPomodoro(isAutoFinish = false) {
-    if (isAutoFinish === true) {
-        showPopup();
+    if (isAutoFinish) {
+      showPopup();
+      if (!audioUnlocked) {
+        needsReplayAfterUnlock = true;
+      }
     } else {
-        stopSound();
+      stopSound();
     }
 
-    const userIdElement = document.getElementById("user_id");
-    const user_id = userIdElement?.value;
+    const now = Date.now();
+    let points = Math.floor(timerDuration / 60);
 
-    if (user_id) {
+    if (!isAutoFinish && startAt) {
+      const workedMinutes = Math.floor((now - startAt) / 60000);
+      points = workedMinutes > 0 ? workedMinutes : 0;
+    }
+
+    if (points > 0) {
+      const userIdElement = document.getElementById("user_id");
+      const user_id = userIdElement?.value;
+      const payload = { points };
+      if (user_id) payload.user_id = user_id;
+
       fetch("/api/pomodoro/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id,
-          points: Math.floor(timerDuration / 60)
-        })
+        body: JSON.stringify(payload),
       }).catch(() => {});
     }
 
     endAt = null;
     pauseAt = null;
     startAt = null;
+    timerDuration = 25 * 60;
 
     startBtn?.classList.remove("hidden");
     finishBtn?.classList.add("hidden");
     pauseBtn?.classList.add("hidden");
     cancelBtn?.classList.add("hidden");
+    if (pauseBtn) pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 
     updateTimerDisplay();
     saveState();
-}
+  }
 
   function finishSession() {
     if (!finishBtn) return;
 
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = null;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
 
     const now = Date.now();
-    let remaining = endAt ? Math.max(0, Math.floor((endAt - now) / 1000)) : 0;
-    let workedMinutes = Math.floor((now - startAt) / 60000);
+    if (!startAt) {
+      alert("You must complete at least 1 minute.");
+      return;
+    }
+
+    const workedMinutes = Math.floor((now - startAt) / 60000);
 
     if (workedMinutes <= 0) {
       alert("You must complete at least 1 minute.");
@@ -209,11 +267,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const userIdElement = document.getElementById("user_id");
     const user_id = userIdElement?.value;
+    const payload = { points: workedMinutes };
+    if (user_id) payload.user_id = user_id;
 
     fetch("/api/pomodoro/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ points: workedMinutes })
+      body: JSON.stringify(payload),
     }).catch(() => {});
 
     alert(`Session finished early! You earned ${workedMinutes} pts.`);
@@ -228,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   decreaseBtn?.addEventListener("click", () => {
-  if (endAt) return;
+    if (endAt) return;
     if (timerDuration > 60) {
       timerDuration -= 60;
       saveState();
@@ -241,41 +301,113 @@ document.addEventListener("DOMContentLoaded", () => {
   cancelBtn?.addEventListener("click", cancelTimer);
   finishBtn?.addEventListener("click", finishSession);
 
+  /*EDITABLE TIMER INPUT*/
+
+  const timerEl = document.getElementById("pomodoro-time");
+
+  timerEl?.addEventListener("click", () => {
+    if (endAt) return;
+
+    timerEl.contentEditable = "true";
+    timerEl.classList.add("editing");
+    timerEl.focus();
+
+    const range = document.createRange();
+    range.selectNodeContents(timerEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  });
+
+  function applyEditedTime() {
+    timerEl.contentEditable = "false";
+    timerEl.classList.remove("editing");
+
+    let val = timerEl.textContent.trim();
+
+    val = val.replace(/[^\d:]/g, "");
+
+    let minutes = 0;
+    let seconds = 0;
+
+    if (/^\d+$/.test(val)) {
+      minutes = parseInt(val);
+    } else if (/^\d*:\d*$/.test(val)) {
+      const parts = val.split(":");
+      minutes = parseInt(parts[0] || "0");
+      seconds = parseInt(parts[1] || "0");
+      if (seconds > 59) seconds = 59;
+    } else {
+      timerEl.textContent = "25:00";
+      timerDuration = 25 * 60;
+      updateTimerDisplay();
+      return;
+    }
+
+    if (minutes < 0) minutes = 0;
+    if (minutes > 90) minutes = 90;
+
+    timerDuration = minutes * 60 + seconds;
+
+    const m = String(minutes).padStart(2, "0");
+    const s = String(seconds).padStart(2, "0");
+    timerEl.textContent = `${m}:${s}`;
+
+    saveState();
+  }
+
+  timerEl?.addEventListener("blur", applyEditedTime);
+
+  timerEl?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      timerEl.blur();
+    }
+  });
+
+  timerEl?.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      timerEl.contentEditable = "false";
+      timerEl.classList.remove("editing");
+      updateTimerDisplay();
+    }
+  });
+
   loadState();
 
-  setInterval(() => {
-    if (endAt && Date.now() >= endAt) {
-        finishPomodoro(true);
-    }
-    }, 1000);
-
-    if (endAt && Date.now() >= endAt) {
-        finishPomodoro(true);
-        return;
-    }
-
-    if (endAt) {
-        startBtn?.classList.add("hidden");
-        finishBtn?.classList.remove("hidden");
-        pauseBtn?.classList.remove("hidden");
-        cancelBtn?.classList.remove("hidden");
-
-    if (pauseAt) {
-        pauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+  if (endAt) {
+    if (Date.now() >= endAt) {
+      finishPomodoro(true);
     } else {
-        pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    }
+      startBtn?.classList.add("hidden");
+      finishBtn?.classList.remove("hidden");
+      pauseBtn?.classList.remove("hidden");
+      cancelBtn?.classList.remove("hidden");
+      if (pauseBtn) {
+        pauseBtn.innerHTML = pauseAt
+          ? '<i class="fa-solid fa-play"></i>'
+          : '<i class="fa-solid fa-pause"></i>';
+      }
 
-    } else {
-        startBtn?.classList.remove("hidden");
-        finishBtn?.classList.add("hidden");
-        pauseBtn?.classList.add("hidden");
-        cancelBtn?.classList.add("hidden");
+      if (!pauseAt) {
+        startInterval();
+      }
     }
-
-  if (endAt && !pauseAt) {
-    startInterval();
+  } else {
+    startBtn?.classList.remove("hidden");
+    finishBtn?.classList.add("hidden");
+    pauseBtn?.classList.add("hidden");
+    cancelBtn?.classList.add("hidden");
   }
+
+  setInterval(() => {
+    if (!endAt) return;
+
+    const now = Date.now();
+    if (now >= endAt) {
+      finishPomodoro(true);
+    }
+  }, 1000);
 
   updateTimerDisplay();
 });

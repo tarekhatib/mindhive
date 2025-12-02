@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 const renderTasks = async (req, res) => {
   try {
-    res.render("tasks", { tasks: [] });
+    res.render("tasks", { user: req.user, tasks: [] });
   } catch (err) {
     console.error("❌ Error loading tasks page:", err);
     res.status(500).send("Error loading tasks page");

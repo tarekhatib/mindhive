@@ -50,7 +50,7 @@ const renderNoteEditor = async (req, res) => {
       });
     }
 
-    res.render("editor", { note: rows[0], errorMessage: null });
+    res.render("editor", { user: req.user, note: rows[0], errorMessage: null });
   } catch (err) {
     console.error("❌ Error loading editor:", err);
     res.status(500).render("editor", {

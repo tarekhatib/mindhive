@@ -9,7 +9,7 @@ const renderTrash = async (req, res) => {
       [userId]
     );
 
-    res.render("trash", { trash: rows });
+    res.render("trash", { user: req.user, trash: rows });
   } catch (err) {
     console.error("❌ Error loading trash:", err);
     res.status(500).send("Error loading trash");

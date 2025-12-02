@@ -235,8 +235,14 @@ body {
   justify-content: center;
   padding: 0;
   background: rgba(249, 198, 59, 0.33);
-  color: rgb(169, 124, 1);
+  color: var(--accent-color);
   transition: 0.25s ease;
+}
+
+@media (prefers-color-scheme: light) {
+  .pause {
+    color: rgb(169, 124, 1);
+  }
 }
 
 .cancel {
@@ -254,43 +260,8 @@ body {
   transform: scale(1.03);
 }
 
-.pomodoro-popup {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--card-bg-dark);
-  color: white;
-  backdrop-filter: blur(12px);
-  padding: 18px 24px;
-  border-radius: 14px;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s ease;
-  z-index: 9999;
-}
-
-.pomodoro-popup.show {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
-}
-
-#pomodoro-close {
-  height: 24px;
-  width: 24px;
-  background: none;
-  color: rgb(169, 1, 1);
-  border: none;
-  border-radius: 50%;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
+.editable-timer {
+  cursor: text;
 }
 
 @media (prefers-color-scheme: light) {
