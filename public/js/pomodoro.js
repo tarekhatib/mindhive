@@ -14,26 +14,53 @@ document.addEventListener("DOMContentLoaded", () => {
   let endAt = null;
   let pauseAt = null;
   let timerInterval = null;
-  const pomodoroSound = document.getElementById("pomoro-audio");
 
   function playCompletedSound() {
-    pomodoroSound.currentTime = 0;
-    pomodoroSound.play().catch(() => {});
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      function beep(freq, duration, delay) {
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.frequency.value = freq;
+        oscillator.type = "sine";
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        const start = audioCtx.currentTime + delay;
+        const end = start + duration;
+
+        gainNode.gain.setValueAtTime(0.3, start);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, end);
+
+        oscillator.start(start);
+        oscillator.stop(end);
+      }
+
+      beep(880, 0.15, 0);
+      beep(880, 0.15, 0.25);
+    } catch (e) {}
   }
 
-  function stopSound() {
-    pomodoroSound.pause();
-    pomodoroSound.currentTime = 0;
-    pomodoroSound.muted = true;
-    localStorage.removeItem("pomodoroAudioUnlocked");
-  }
+  function stopSound() {}
 
   function showPopup() {
     if (popup) {
       popup.classList.add("show");
     }
     playCompletedSound();
-    navigator.vibrate?.([120, 80, 120]);
+
+    if (window.pomodoroAutoCloseTimeout) {
+      clearTimeout(window.pomodoroAutoCloseTimeout);
+    }
+
+    window.pomodoroAutoCloseTimeout = setTimeout(() => {
+      if (popup?.classList.contains("show")) {
+        popup.classList.remove("show");
+      }
+      stopSound();
+    }, 2500);
   }
 
   closeBtn?.addEventListener("click", () => {
@@ -42,38 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     stopSound();
   });
-
-  function enableAudio() {
-    if (!pomodoroSound) return;
-    pomodoroSound.muted = false;
-    pomodoroSound
-      .play()
-      .then(() => {
-        pomodoroSound.pause();
-        pomodoroSound.currentTime = 0;
-        localStorage.setItem("pomodoroAudioUnlocked", "1");
-      })
-      .catch(() => {});
-  }
-
-  [
-    "click",
-    "mousedown",
-    "mouseup",
-    "mousemove",
-    "wheel",
-    "scroll",
-    "keydown",
-    "touchstart",
-    "touchmove",
-    "touchend",
-  ].forEach((ev) => {
-    document.addEventListener(ev, enableAudio, { once: true });
-  });
-
-  if (localStorage.getItem("pomodoroAudioUnlocked") === "1") {
-    enableAudio();
-  }
 
   function saveState() {
     localStorage.setItem(
