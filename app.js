@@ -49,7 +49,6 @@ app.use("/", leaderboardRoutes);
 
 app.use(
   "/api-docs",
-  authenticateToken,
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec)
 );
