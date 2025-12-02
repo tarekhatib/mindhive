@@ -14,12 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let endAt = null;
   let pauseAt = null;
   let timerInterval = null;
-
-  const pomodoroSound = new Audio("/assets/pomodoro-done.mp3");
-  pomodoroSound.loop = true;
-  pomodoroSound.volume = 0.7;
-  let audioUnlocked = false;
-  let needsReplayAfterUnlock = false;
+  const pomodoroSound = document.getElementById("pomoro-audio");
 
   function playCompletedSound() {
     pomodoroSound.currentTime = 0;
@@ -29,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function stopSound() {
     pomodoroSound.pause();
     pomodoroSound.currentTime = 0;
+    pomodoroSound.muted = true;
+    localStorage.removeItem("pomodoroAudioUnlocked");
   }
 
   function showPopup() {
@@ -46,39 +43,37 @@ document.addEventListener("DOMContentLoaded", () => {
     stopSound();
   });
 
-  // ---- UNIVERSAL AUDIO UNLOCK FOR ALL PAGES ----
-  function unlockAudio() {
-    if (audioUnlocked) return;
-
+  function enableAudio() {
+    if (!pomodoroSound) return;
+    pomodoroSound.muted = false;
     pomodoroSound
       .play()
       .then(() => {
         pomodoroSound.pause();
         pomodoroSound.currentTime = 0;
-        audioUnlocked = true;
-
-        if (needsReplayAfterUnlock) {
-          needsReplayAfterUnlock = false;
-          showPopup();
-        }
         localStorage.setItem("pomodoroAudioUnlocked", "1");
       })
       .catch(() => {});
   }
 
-  if (localStorage.getItem("pomodoroAudioUnlocked") === "1") {
-    audioUnlocked = true;
-  }
-
-  ["click", "keydown", "touchstart", "mousemove", "scroll"].forEach((ev) => {
-    document.addEventListener(
-      ev,
-      () => {
-        unlockAudio();
-      },
-      { once: true }
-    );
+  [
+    "click",
+    "mousedown",
+    "mouseup",
+    "mousemove",
+    "wheel",
+    "scroll",
+    "keydown",
+    "touchstart",
+    "touchmove",
+    "touchend",
+  ].forEach((ev) => {
+    document.addEventListener(ev, enableAudio, { once: true });
   });
+
+  if (localStorage.getItem("pomodoroAudioUnlocked") === "1") {
+    enableAudio();
+  }
 
   function saveState() {
     localStorage.setItem(
@@ -201,9 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function finishPomodoro(isAutoFinish = false) {
     if (isAutoFinish) {
       showPopup();
-      if (!audioUnlocked) {
-        needsReplayAfterUnlock = true;
-      }
     } else {
       stopSound();
     }
