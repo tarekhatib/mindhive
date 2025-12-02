@@ -20,7 +20,15 @@ const swaggerSpec = require("./swagger");
 
 const app = express();
 
-app.use(helmet());
+dotenv.config({ quiet: true });
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
 app.use((req, res, next) => {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.setHeader("Pragma", "no-cache");
@@ -78,7 +86,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res) => {
-  res.status(404).render("404");
+  res.status(404).render("404", { page: null, user: req.user || null });
 });
 
 module.exports = app;
