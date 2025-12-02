@@ -2,10 +2,15 @@ const multer = require("multer");
 
 const storage = multer.memoryStorage();
 
-const fileFilter = (req, file, cb) => {
-  const allowed = ["image/jpeg", "image/png", "image/webp"];
+const path = require("path");
 
-  if (!allowed.includes(file.mimetype)) {
+const fileFilter = (req, file, cb) => {
+  const allowedMimes = ["image/jpeg", "image/png", "image/webp"];
+  const allowedExt = [".jpg", ".jpeg", ".png", ".webp"];
+
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (!allowedMimes.includes(file.mimetype) || !allowedExt.includes(ext)) {
     return cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE"), false);
   }
 
