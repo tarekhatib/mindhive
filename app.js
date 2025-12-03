@@ -1,7 +1,9 @@
+require("dotenv").config();
+
 const express = require("express");
 const multer = require("multer");
-const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const helmet = require("helmet");
 const path = require("path");
 const rateLimit = require("express-rate-limit");
@@ -19,8 +21,6 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
 
 const app = express();
-
-dotenv.config({ quiet: true });
 
 app.use(
   helmet({
@@ -43,6 +43,19 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "public", "views"));
+app.set("trust proxy", 1);
+
+app.get("/", (req, res) => {
+  try {
+    if (req.cookies.accessToken) {
+      jwt.verify(req.cookies.accessToken, process.env.JWT_SECRET);
+      return res.redirect("/dashboard");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return res.redirect("/login");
+});
 
 app.get("/health", (req, res) => res.status(200).send("OK"));
 app.get("/login", (req, res) => res.render("login"));
@@ -56,9 +69,7 @@ app.use(
     message: "Too many login attempts. Please try again in 1 minute.",
   })
 );
-
 app.use("/api/auth", authRoutes);
-
 app.use("/", dashboardRoutes);
 app.use("/", tasksRoutes);
 app.use("/", settingsRoutes);
@@ -87,6 +98,11 @@ app.use((err, req, res, next) => {
 
 app.use((req, res) => {
   res.status(404).render("404", { page: null, user: req.user || null });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  next(err);
 });
 
 module.exports = app;
