@@ -164,14 +164,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function loadDashboardTasks() {
-  try {
-    const res = await fetch(`/api/tasks?filter=today&offset=${new Date().getTimezoneOffset()}`)
+  const todoList = document.getElementById("todo-list");
+  if (!todoList) return;
 
+  todoList.innerHTML = "<li class='loading'>Loading...</li>";
+
+  try {
+    const res = await fetch(`/api/tasks?filter=today&offset=${new Date().getTimezoneOffset()}`);
     const data = await res.json();
     const tasks = Array.isArray(data.tasks) ? data.tasks : [];
-
-    const todoList = document.getElementById("todo-list");
-    if (!todoList) return;
 
     todoList.innerHTML = "";
 
@@ -192,11 +193,7 @@ async function loadDashboardTasks() {
       todoList.appendChild(li);
     });
   } catch (err) {
-    const todoList = document.getElementById("todo-list");
-    if (todoList) {
-      todoList.innerHTML =
-        "<li class='no-tasks'>Error loading today's tasks.</li>";
-    }
+    todoList.innerHTML = "<li class='no-tasks'>Error loading today's tasks.</li>";
   }
 }
 
